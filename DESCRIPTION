@@ -18,3 +18,5 @@ Imports:
     stats,
     utils,
     rlang
+URL: https://github.com/trangnguyen74/tnMediation
+BugReports: https://github.com/trangnguyen74/tnMediation/issues
