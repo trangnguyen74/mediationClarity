@@ -10,7 +10,7 @@
 \alias{.plot_psYpredMR}
 \alias{.plot_YpredMR}
 \alias{dot-plot_w.dat}
-\title{Plot weight distributions and mean balance}
+\title{(For maintainer) Plot weight distributions and mean balance}
 \usage{
 .plot_med(w.dat, c.vars, m.vars, c.vars.std, m.vars.std, estimate.wtd = FALSE)
 
@@ -44,5 +44,6 @@
 \item{cross.world}{blah}
 }
 \description{
-Plot weight distributions and mean balance
+(For maintainer) Plot weight distributions and mean balance
 }
+\keyword{internal}

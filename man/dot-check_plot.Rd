@@ -7,7 +7,7 @@
 \alias{.check_plot.cm.odds}
 \alias{.check_plot.Ypred}
 \alias{dot-check_plot}
-\title{Check inputs for plotting}
+\title{(For maintainer) Check inputs for plotting}
 \usage{
 .check_plot.med(env)
 
@@ -28,3 +28,4 @@ Checks if c.vars.std and m.vars.std are not NULL (ie specified by user) and are 
 
 Check if variables named in c.vars.std and m.vars.std in data can be standardized (ie are continuous variables).
 }
+\keyword{internal}

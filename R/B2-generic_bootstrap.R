@@ -60,6 +60,7 @@
 #' @param seed Seed for reproducibility
 #' @param method Bootstrap method. Currently allows "dirichlet", i.e., continuous weights bootstrapping where there weights are drawn from a Dirichlet distribution. TOADD: "multinmial" (or "resample")
 #' @return A matrix of bootstrap weights where number of column is number of observations, and each row contains the set of bootstrap weights that forms a bootstrap sample.
+#' @noRd
 
 .get_boot.wts <- function(s.weights,
                           stratify,

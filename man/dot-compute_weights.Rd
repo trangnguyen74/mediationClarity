@@ -7,7 +7,7 @@
 \alias{.compute_weights.cm.odds}
 \alias{.compute_weights.psYpred}
 \alias{dot-compute_weights}
-\title{Compute weights}
+\title{(For maintainer) Compute weights}
 \usage{
 .compute_weights.med(data, cross.world, a.c.form, a.cm.form, max.stabilized.wt)
 
@@ -32,3 +32,4 @@ A data frame for the pseudo samples with estimated weights, in stacked format.
 \description{
 Internal functions that compute weights using cleaned inputs.
 }
+\keyword{internal}

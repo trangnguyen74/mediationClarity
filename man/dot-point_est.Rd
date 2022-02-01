@@ -11,7 +11,7 @@
 \alias{.point_est.Y2pred}
 \alias{.point_est.Y2predR}
 \alias{dot-point_est}
-\title{Point estimation}
+\title{(For maintainer) Point estimation}
 \usage{
 .point_est.wtd(
   data,
@@ -144,3 +144,4 @@ If \code{plot==FALSE}, effect estimates (numeric vector). If \code{plot==TRUE}, 
 \description{
 Internal functions to be called within \code{estimate_\*} to obtain the point estimate of effects.
 }
+\keyword{internal}

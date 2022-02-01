@@ -11,7 +11,7 @@
 \alias{.clean_y.forms.Y2pred}
 \alias{.clean_y.forms.Y2predR}
 \alias{dot-clean_y}
-\title{Clean outcome-related inputs}
+\title{(For maintainer) Clean outcome-related inputs}
 \usage{
 .clean_y.var(env)
 
@@ -33,3 +33,4 @@
 \description{
 Internal functions called by \code{estimate_} functions to clean inputs related to the outcome including \code{y.var}, \code{y.c.form}, \code{y.cm.form}, etc.
 }
+\keyword{internal}

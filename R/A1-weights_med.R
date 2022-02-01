@@ -79,10 +79,11 @@ weights_med <- function(
 
 #### OK  .prep_med #############################################################
 
-#' Prep work within main functions
+#' (For maintainer) Prep work within main functions
 #'
 #' A set of internal functions to do the prep work for the main functions before the key computing takes place.
 #' @name dot-prep
+#' @keywords internal
 NULL
 
 #' @rdname dot-prep
@@ -108,7 +109,7 @@ NULL
 
 #### OK  .clean_weights.med ####################################################
 
-#' Clean inputs for weighting
+#' (For maintainer) Clean inputs for weighting
 #'
 #' Internal functions called by \code{get_weights.} or \code{estimate_} functions to clean the inputs used for the weighting method such as \code{max.stabilized.wt, a.c.form, a.cm.form}.
 #' @inheritParams env-block
@@ -116,6 +117,7 @@ NULL
 #' @details  \code{.clean.weights.te()} is called by \code{get_weights.te} and \code{estimate_psYpred}.
 #' @details  \code{.clean.weights.Ypred()} is called by \code{get_weights.Ypred} and \code{estimate_Ypred}.
 #' @name dot-clean_weights
+#' @keywords internal
 NULL
 
 #' @rdname dot-clean_weights
@@ -163,13 +165,14 @@ NULL
 
 #### OK  .check_plot.med #######################################################
 
-#' Check inputs for plotting
+#' (For maintainer) Check inputs for plotting
 #'
 #' Internal function to check plot inputs within functions \code{get_weights_med} and \code{estimate_wtd}
 #' @inheritParams env-block
 #' @details Checks if c.vars.std and m.vars.std are not NULL (ie specified by user) and are part of c.vars and m.vars respectively.
 #' @details Check if variables named in c.vars.std and m.vars.std in data can be standardized (ie are continuous variables).
 #' @name dot-check_plot
+#' @keywords internal
 NULL
 
 #' @rdname dot-check_plot
@@ -255,7 +258,7 @@ NULL
 
 #### OK  .compute_weights.med ##################################################
 
-#' Compute weights
+#' (For maintainer) Compute weights
 #'
 #' Internal functions that compute weights using cleaned inputs.
 #' @param data Prepared internal dataset (e.g., result of \code{.pred_data()}).
@@ -264,6 +267,7 @@ NULL
 #' @param max.stabilized.wt A scalar.
 #' @return A data frame for the pseudo samples with estimated weights, in stacked format.
 #' @name dot-compute_weights
+#' @keywords internal
 NULL
 
 #' @rdname dot-compute_weights
@@ -352,9 +356,10 @@ NULL
 
 #### OK  .plot_med #############################################################
 
-#' Plot weight distributions and mean balance
+#' (For maintainer) Plot weight distributions and mean balance
 #'
 #' @name dot-plot_w.dat
+#' @keywords internal
 NULL
 
 
@@ -398,7 +403,7 @@ NULL
 
 #### OK  .plot_balance.med #####################################################
 
-#' .plot_balance.med
+#' (For maintainer) Plot balance
 #'
 #' Internal functions that makes balance plots for weighted data.
 #' @inheritParams .plot_med
@@ -406,6 +411,7 @@ NULL
 #' @importFrom rlang .data
 #' @return Plot of balance on the means of covariates and mediators between relevant pseudo samples and full sample. If \code{estimate_wtd==TRUE}, add "(anchor)" and "(for <effect>)" notes to plot labels to draw attention to how each balance matters to the estimator.
 #' @name dot-plot_balance
+#' @keywords internal
 NULL
 
 #' @rdname dot-plot_balance
@@ -466,12 +472,13 @@ NULL
 
 #### OK  .get_smd.med ##########################################################
 
-#' Compute  (standardized) mean differences
+#' (For maintainer) Compute  (standardized) mean differences
 #'
 #' Internal functions called by \code{.plot_balance.} functions to compute (standardized) mean differences to be plotted.
 #' @return A data frame containing the (standardized) mean differences.
 #' @keywords internal
 #' @name dot-get_smd
+#' @keywords internal
 NULL
 
 #' @rdname dot-get_smd
@@ -749,6 +756,8 @@ NULL
 
 #### .check_a.forms ### MAY RETIRE #############################################
 
+#' @noRd
+#'
 .check_a.forms <- function(data, a.c.form, a.cm.form) {
 
     if (!formula(a.c.form)[[2]]==formula(a.cm.form)[[2]])
@@ -782,7 +791,7 @@ NULL
 
 
 
-
+#### OK  param env #############################################################
 
 #' @param env An environment
 #' @name env-block

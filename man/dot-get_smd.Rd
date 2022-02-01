@@ -7,7 +7,7 @@
 \alias{.get_smd.cm.odds}
 \alias{.get_smd.psYpred}
 \alias{dot-get_smd}
-\title{Compute  (standardized) mean differences}
+\title{(For maintainer) Compute  (standardized) mean differences}
 \usage{
 .get_smd.med(w.dat, c.vars, m.vars, c.vars.std, m.vars.std)
 

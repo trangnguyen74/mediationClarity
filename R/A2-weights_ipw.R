@@ -422,28 +422,6 @@ weights_ipw <- function(
 
 
 
-#### .check_a.c #### MAY RETIRE ################################################
-
-.check_a.c <- function(data, a.c.form) {
-
-
-    a.var  <- as.character(formula(a.c.form)[[2]])
-    c.vars <- all.vars(formula(a.c.form)[[3]])
-
-    stray.vars <- setdiff(c(a.var, c.vars), names(data))
-
-    if (length(stray.vars)>0)
-        stop(paste("Variable(s)", paste(stray.vars, collapse = ", "), "not found in dataset."))
-
-    if (!is_binary01(data[, a.var]))
-        stop(paste("Treatment variable (", a.var, ") must be numeric and in binary 0/1 form."))
-
-    data$.a <- data[, a.var]
-
-    list(data   = data,
-         c.vars = c.vars)
-}
-
 
 
 

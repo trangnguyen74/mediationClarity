@@ -209,6 +209,7 @@ estimate_effects <- function(
 #'
 #' @param estimator Name of estimator.
 #' @param arg.list A list of objects containing (but not necessarily limited to) the inputs needed for the estimator.
+#' @noRd
 
 .grab_args <- function(estimator,
                        arg.list) {
@@ -226,6 +227,7 @@ estimate_effects <- function(
 #'
 #' @param fun.name Name of a function.
 #' @return A vector of names of the required arguments of the function
+#' @noRd
 
 .get_fun_arg.names <- function(fun.name) {
     required <- names(as.list(args(fun.name)))

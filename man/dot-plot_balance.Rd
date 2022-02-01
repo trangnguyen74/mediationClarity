@@ -10,7 +10,7 @@
 \alias{.plot_balance.psYpredMR}
 \alias{.plot_balance.YpredMR}
 \alias{dot-plot_balance}
-\title{Plot balance}
+\title{(For maintainer) Plot balance}
 \usage{
 .plot_balance.med(
   w.dat,
@@ -70,7 +70,6 @@ Plot of balance on the means of covariates and mediators between pseudo subsampl
 Plot of balance on the means of covariates and mediators between relevant pseudo samples and full sample. If \code{estimate_wtd==TRUE}, add "(anchor)" and "(for <effect>)" notes to plot labels to draw attention to how each balance matters to the estimator.
 }
 \description{
-Internal function that makes balance plot for mediation weights and TE weights.
-
 Internal functions that makes balance plots for weighted data.
 }
+\keyword{internal}

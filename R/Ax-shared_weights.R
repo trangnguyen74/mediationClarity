@@ -71,6 +71,7 @@
 #' @param weight A weight vector to be standardized
 #' @param s.weight Optional. A vector of sampling weight.
 #' @param group Optional. A character vector indicating group membership.
+#' @noRd
 
 
 stabilize_weight <- function(weight,
@@ -105,7 +106,7 @@ stabilize_weight <- function(weight,
 
 #### OK  .plot_wt_dist #########################################################
 
-#' .plot_wt_dist
+#' (For maintainer) Plot weight distributions
 #'
 #' Internal function called by \code{weights_\*()} and \code{estimate_\*()} to make weight distribution plot(s).
 #' @param w.dat The weighted dataset.
@@ -115,6 +116,7 @@ stabilize_weight <- function(weight,
 #' @return If constant sampling weights, plot the densities of distribution-morphing weights in the pseudo samples
 #' @return If non-constant sampling weights, output two plots, one of the distribution-morphing weights, one of the final weights (product of sampling and distribution-morphing weights)
 #' @name dot-plot_wt_dist
+#' @keywords internal
 NULL
 
 #' @rdname dot-plot_wt_dist

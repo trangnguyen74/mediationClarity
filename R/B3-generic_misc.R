@@ -114,6 +114,7 @@ maybe_continuous <- function(x) {
 #' @param vec A numeric vector.
 #' @param max A single value of a numeric vector of the same size as \code{vec} indicating the max value(s) used to right-truncate \code{vec}.
 #' @return Vector of truncated values.
+#' @noRd
 
 .trunc_right <- function(vec, max) {
     (vec <= max) * vec + (vec > max) * max
@@ -226,16 +227,13 @@ maybe_continuous <- function(x) {
 #' @param x A numeric vector
 #' @param w A vector of weights
 #' @return \code{.wtd_mean()} returns weighted mean. \code{.wtd_var()} returns weighted variance.
-#' @name dot-wtd_
-NULL
+#' @noRd
 
-
-#' @rdname dot-wtd_
 .wtd_mean <- function(x, w) {
     mean(x*w, na.rm = TRUE) / mean(w, na.rm = TRUE)
 }
 
-#' @rdname dot-wtd_
+#' @noRd
 .wtd_var <- function(x, w) {
     m <- .wtd_mean(x, w)
     v <- .wtd_mean((x-m)^2, w)
@@ -254,6 +252,7 @@ NULL
 #' @param size Number of seeds wanted.
 #' @param master Master seed for reproducibility
 #' @return A vector of sampled integers (or a single integer if  \code{size=1}).
+#' @noRd
 
 .get_seed <- function(size = 1,
                       master = NULL) {
@@ -287,6 +286,7 @@ NULL
 #'
 #' Includes \code{.current_RNG()} which obtains current RNG state, and \code{.restore_RNG()} which restores to a previous RNG state
 #' @param RNGstate A RNG state, e.g., the output of a previous \code{get_cur_RNG()} call.
+#' @noRd
 
 .current_RNG <- function() {
 
@@ -298,7 +298,7 @@ NULL
     RNGstate
 }
 
-#' @describeIn  dot-current_RNG
+#' @noRd
 .restore_RNG <- function(RNGstate) {
 
     if (!is.null(RNGstate)) { .GlobalEnv$.Random.seed <- RNGstate
@@ -317,6 +317,7 @@ NULL
 #' @param dat1,dat0 Treated and control subsamples.
 #' @param variable Name of the variable (covariate or mediator) for which to compute pooled SD.
 #' @return Pooled SD.
+#' @noRd
 
 .get_sd.pooled <- function(variable, dat1, dat0) {
 

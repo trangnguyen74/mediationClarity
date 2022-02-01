@@ -80,6 +80,7 @@
 #' @param w.dat Pseudo sample data
 #' @param effect.scale The contrast type
 #' @return A named vector of potential outcome means and effects
+#' @noRd
 
 .get_means.and.effects <- function(w.dat,
                                    effect.scale) {
@@ -129,6 +130,7 @@
 #' @param b The mean of the second potential outcome.
 #' @param type The type of contrast. Options allowed: "MD", "MR", "OR".
 #' @return The contrast value.
+#' @noRd
 
 .get_contrast <- function(a, b, type) {
 

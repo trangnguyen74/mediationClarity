@@ -6,7 +6,7 @@
 \alias{.plot_wt_dist.cm.odds}
 \alias{.plot_wt_dist.psYpred}
 \alias{dot-plot_wt_dist}
-\title{.plot_wt_dist}
+\title{(For maintainer) Plot weight distributions}
 \usage{
 .plot_wt_dist(w.dat, point.alpha = 0.1, jitter.width = 0.3)
 
@@ -27,3 +27,4 @@ If non-constant sampling weights, output two plots, one of the distribution-morp
 \description{
 Internal function called by \code{weights_\*()} and \code{estimate_\*()} to make weight distribution plot(s).
 }
+\keyword{internal}

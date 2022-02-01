@@ -7,7 +7,7 @@
 \alias{.clean_weights.cm.odds}
 \alias{.clean_a.var}
 \alias{dot-clean_weights}
-\title{Clean inputs for weighting}
+\title{(For maintainer) Clean inputs for weighting}
 \usage{
 .clean_weights.med(env)
 
@@ -30,3 +30,4 @@ Internal functions called by \code{get_weights.} or \code{estimate_} functions t
 
 \code{.clean.weights.Ypred()} is called by \code{get_weights.Ypred} and \code{estimate_Ypred}.
 }
+\keyword{internal}

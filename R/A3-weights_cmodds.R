@@ -371,9 +371,6 @@ weights_cm.odds <- function(
 #### .plot_balance.cm.odds #####################################################
 
 
-#' Plot balance
-#'
-#' Internal function that makes balance plot for mediation weights and TE weights.
 #' @param w.dat Data for (pseudo) subsamples, e.g. \code{output of .compute_weights.Ypred()}
 #' @param cm.vars Names of covariates and mediators, already cleaned.
 #' @param cm.vars.std Names of mediators whose mean differences are to be standardized, already cleaned

@@ -15,7 +15,7 @@
 \alias{.prep_Y2pred}
 \alias{.prep_Y2predR}
 \alias{dot-prep}
-\title{Prep work within main functions}
+\title{(For maintainer) Prep work within main functions}
 \usage{
 .prep_med()
 
@@ -40,3 +40,4 @@
 \description{
 A set of internal functions to do the prep work for the main functions before the key computing takes place.
 }
+\keyword{internal}

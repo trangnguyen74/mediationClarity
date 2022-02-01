@@ -148,10 +148,11 @@ estimate_wtd <- function(
 
 #### OK  .clean_y.var ##########################################################
 
-#' Clean outcome-related inputs
+#' (For maintainer) Clean outcome-related inputs
 #'
 #' Internal functions called by \code{estimate_} functions to clean inputs related to the outcome including \code{y.var}, \code{y.c.form}, \code{y.cm.form}, etc.
 #' @name dot-clean_y
+#' @keywords internal
 NULL
 
 #' @rdname dot-clean_y
@@ -173,7 +174,7 @@ NULL
 
 #### OK  .point_est.wtd ########################################################
 
-#' Point estimation
+#' (For maintainer) Point estimation
 #'
 #' Internal functions to be called within \code{estimate_\*} to obtain the point estimate of effects.
 #' @param data A dataset that has been prepared to have the sampling with variable named s.wt (e.g., using function \code{.clean_inputs_generic()}.
@@ -183,6 +184,7 @@ NULL
 #' @param output.data Whether to output the weighted data in addition to the estimated potential outcome means and effects. Defaults to FALSE.
 #' @return If \code{plot==FALSE}, effect estimates (numeric vector). If \code{plot==TRUE}, a list including this vector of effect estimates and the weight distribution and mean balance plots.
 #' @name dot-point_est
+#' @keywords internal
 NULL
 
 #' @rdname dot-point_est
