@@ -52,7 +52,7 @@
 
     cross.world <- env$cross.world
 
-    if ("both" %in% cross.world) {
+    if (length(cross.world)==1 && cross.world=="both") {
 
         env$cross.world <- c("10", "01")
 

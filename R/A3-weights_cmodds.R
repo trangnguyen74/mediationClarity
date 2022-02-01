@@ -386,8 +386,8 @@ weights_cm.odds <- function(
 
 
     smd.dat <- .get_smd.cm.odds(w.dat   = w.dat,
-                              vars     = cm.vars,
-                              standardize = cm.vars.std)
+                                vars     = cm.vars,
+                                standardize = cm.vars.std)
 
 
     ggplot(data = smd.dat,
@@ -406,6 +406,7 @@ weights_cm.odds <- function(
         xlim(min(-.3, min(smd.dat$mean.diff)),
              max( .3, max(smd.dat$mean.diff))) +
         facet_wrap(~ .data$contrast, ncol = 3)
+
 }
 
 
@@ -437,8 +438,8 @@ weights_cm.odds <- function(
 
     w.dat <- w.dat[, c(".samp", ".s.wt", ".f.wt", vars)]
 
-    yes.s10 <- (sum(w.dat$.samp=="s10") > 0)
-    yes.s01 <- (sum(w.dat$.samp=="s01") > 0)
+    yes.s10 <- any(w.dat$.samp=="s10")
+    yes.s01 <- any(w.dat$.samp=="s01")
 
     s00 <- w.dat[w.dat$.samp=="s00", ]
     s11 <- w.dat[w.dat$.samp=="s11", ]
@@ -463,6 +464,8 @@ weights_cm.odds <- function(
     # compute (standardized) mean differences
     smd <- lapply(list(unw = ".s.wt", wtd = ".f.wt"), function(w) {
 
+        diff <- NULL
+
         if (yes.s10) {
 
             means.s10 <- sapply(vars,
@@ -470,7 +473,8 @@ weights_cm.odds <- function(
             means.s00 <- sapply(vars,
                                 function(z) .wtd_mean(s00[, z], s00[, w]))
 
-            diff <- cbind(s10.s00  = (means.s10 - means.s00) / std.denom)
+            diff <- cbind(diff,
+                          s10.s00  = (means.s10 - means.s00) / std.denom)
             rm(means.s10, means.s00)
         }
 

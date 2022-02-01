@@ -406,7 +406,7 @@ estimate_psYpred <- function(
     if ("01" %in% cross.world) {
         p11 <- tmp[tmp$.a==1, ]
 
-        s00 <- tmp[tmp$.a==1, ]
+        s00 <- tmp[tmp$.a==0, ]
         s00$.samp <- "s00"
         s00$.w.wt <- 1
         s00$.f.wt <- s00$.s.wt
@@ -593,7 +593,7 @@ estimate_psYpred <- function(
     yes01 <- any(w.dat$.samp=="p11")
 
     if (yes10) { full <- w.dat[w.dat$.samp %in% c("p00", "s11"), ]
-    } else     { full <- w.dat[w.dat$.samp %in% c("p11", "s00"), ]
+    } else     { full <- w.dat[w.dat$.samp %in% c("s00", "p11"), ]
 
     }
     full$.w.wt <- 1
@@ -626,7 +626,8 @@ estimate_psYpred <- function(
             means.p00 <- sapply(c.vars,
                                 function(z) .wtd_mean(p00[, z], p00[, w]))
 
-            diff <- cbind(p00.full = (means.p00 - means.full) / std.denom)
+            diff <- cbind(diff,
+                          p00.full = (means.p00 - means.full) / std.denom)
 
             rm(means.p00)
         }
@@ -666,9 +667,9 @@ estimate_psYpred <- function(
 
 
 
-    smd$contrast <-factor(smd$contrast,
-                          levels = c("p00.full", "p11.full"),
-                          labels = c("p00 - full", "p11 - full"))
+    smd$contrast <- factor(smd$contrast,
+                           levels = c("p00.full", "p11.full"),
+                           labels = c("p00 - full", "p11 - full"))
 
 
     smd$variable <- ifelse(smd$variable %in% c.vars.std,

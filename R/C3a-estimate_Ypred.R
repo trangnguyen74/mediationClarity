@@ -341,10 +341,8 @@ estimate_Ypred <- function(
 
     if ("10" %in% cross.world) {
 
-        s10 <- w.dat[w.dat$.samp=="s10", ]
-
         y10.c.s10 <- glm(formula = y10.c.form,
-                         data = s10,
+                         data = w.dat[w.dat$.samp=="s10", ],
                          weights = data$.f.wt,
                          family = y.family)
 
@@ -354,10 +352,8 @@ estimate_Ypred <- function(
 
     if ("01" %in% cross.world) {
 
-        s01 <- w.dat[w.dat$.samp=="s01", ]
-
         y01.c.s01 <- glm(formula = y01.c.form,
-                         data = s01,
+                         data = w.dat[w.dat$.samp=="s01", ],
                          weights = data$.f.wt,
                          family = y.family)
 
@@ -366,7 +362,7 @@ estimate_Ypred <- function(
 
 
     pred <- reshape_gather(pred,
-                           columns = c("p00", "p10", "p01", "p11"),
+                           columns = setdiff(colnames(pred), ".f.wt"),
                            key = ".samp",
                            value = ".y",
                            wide.row = FALSE)

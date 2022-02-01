@@ -354,7 +354,7 @@ estimate_YpredMR <- function(
 
 
     pred <- reshape_gather(pred,
-                           columns = c("p00", "p10", "p01", "p11"),
+                           columns = setdiff(colnames(pred), ".f.wt"),
                            key = ".samp",
                            value = ".y",
                            wide.row = FALSE)
