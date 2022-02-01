@@ -21,7 +21,7 @@ weights_ipw(
 
 \item{a.c.form}{Formula for the P(A|C) model (the propensity score model).}
 
-\item{max.stabilized.wt}{Level at which weights (on stabilized scale) should be right-truncated. Default to 30, meaning no unit should count more than as 30 persons.}
+\item{max.stabilized.wt}{Max stabilized weight allowed. Larger weights are truncated to this level. Default is 30.}
 
 \item{plot}{Whether to output weight distribution and balance plots. Defaults to TRUE.}
 

@@ -11,7 +11,7 @@
 #' @inheritParams estimate_effects
 #' @param a.c.form Formula for the P(A|C) model (the propensity score model).
 #' @param a.cm.form Formula for the P(A|C,M) model.
-#' @param max.stabilized.wt Level at which weights (on stabilized scale) should be right-truncated. Default to 30, meaning no unit should count more than as 30 persons.
+#' @param max.stabilized.wt Max stabilized weight allowed. Larger weights are truncated to this level. Default is 30.
 #' @param plot Whether to output weight distribution and balance plots. Defaults to TRUE.
 #' @param c.order Order in which covariates are to be plotted. If not specify, use the order that appears in \code{a.c.form}.
 #' @param m.order Order in which mediators are to be plotted. If not specify, use the order that appears in \code{a.cm.form}.
@@ -633,6 +633,8 @@ NULL
 
     smd <- do.call("rbind", smd)
 
+    rownames(smd) <- NULL
+
 
     smd$contrast <-
         factor(smd$contrast,
@@ -645,7 +647,6 @@ NULL
 
     smd$var.type <- "covariate"
 
-    rownames(smd) <- NULL
     smd <- smd[,c("var.type", "variable", "contrast.type", "contrast", "mean.diff")]
 
     smd$variable <- ifelse(smd$variable %in% standardize,
@@ -734,6 +735,8 @@ NULL
 
     smd <- do.call("rbind", smd)
 
+    rownames(smd) <- NULL
+
 
     smd$contrast <-
         factor(smd$contrast,
@@ -742,7 +745,6 @@ NULL
 
     smd$var.type <- "mediator"
 
-    rownames(smd) <- NULL
     smd <- smd[,c("var.type", "variable", "contrast.type", "contrast", "mean.diff")]
 
     smd$variable <- ifelse(smd$variable %in% standardize,
@@ -752,41 +754,6 @@ NULL
     smd
 
 }
-
-
-#### .check_a.forms ### MAY RETIRE #############################################
-
-#' @noRd
-#'
-.check_a.forms <- function(data, a.c.form, a.cm.form) {
-
-    if (!formula(a.c.form)[[2]]==formula(a.cm.form)[[2]])
-        stop("Treatment variable not the same in a.c.form and a.cm.form.")
-
-    if (!all(all.vars(formula(a.c.form)[[3]]) %in%
-             all.vars(formula(a.cm.form)[[3]])))
-        stop("Some C variable(s) in a.c.form but not in a.cm.form")
-
-    a.var  <- as.character(formula(a.c.form)[[2]])
-    c.vars <- all.vars(formula(a.c.form)[[3]])
-    m.vars <- setdiff(all.vars(formula(a.cm.form)[[3]]),
-                      all.vars(formula(a.c.form)[[3]]))
-
-    stray.vars <- setdiff(c(a.var, c.vars, m.vars), names(data))
-
-    if (length(stray.vars)>0)
-        stop(paste("Variable(s)", paste(stray.vars, collapse = ", "), "not found in dataset."))
-
-    if (!is_binary01(data[, a.var]))
-        stop(paste("Treatment variable (", a.var, ") must be numeric and in binary 0/1 form."))
-
-    data$.a <- data[, a.var]
-
-    list(data   = data,
-         c.vars = c.vars,
-         m.vars = m.vars)
-}
-
 
 
 
