@@ -39,6 +39,12 @@ estimate_effects <- function(
 
 ) {
 
+    message("This function is under development. Check back later.")
+
+    return()
+
+
+
     estimator <- .clean_estimator(estimator = estimator)
 
     args.specific <- .grab_args(estimator = estimator,
