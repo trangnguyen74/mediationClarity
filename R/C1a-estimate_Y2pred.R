@@ -9,6 +9,7 @@
 #' Function that implements estimator Y2pred
 #' @inheritParams estimate_psYpred
 #' @inheritParams estimate_Ypred
+#' @param a.var Name of treatment variable.
 #' @family estimators
 #' @export
 
@@ -280,6 +281,7 @@ estimate_Y2pred <- function(
 
 #' @rdname dot-point_est
 #' @order 6
+#' @param a.var Name of treatment variable.
 
 .point_est.Y2pred <- function(
     data,
