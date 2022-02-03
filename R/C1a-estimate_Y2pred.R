@@ -42,14 +42,11 @@ estimate_Y2pred <- function(
 
     .prep_Y2pred()
 
-    key.inputs <- mget(c("cross.world",
-                         "effect.scale",
-                         "y.c1.form",
-                         "y.c0.form",
-                         "y.cm1.form",
-                         "y.cm0.form",
-                         "y10.c.form",
-                         "y01.c.form",
+    key.inputs <- mget(c("effect.scale",
+                         "cross.world",
+                         "y.c1.form", "y.c0.form",
+                         "y.cm1.form", "y.cm0.form",
+                         "y10.c.form", "y01.c.form",
                          "y.family"))
 
 
@@ -281,21 +278,18 @@ estimate_Y2pred <- function(
 
 #' @rdname dot-point_est
 #' @order 6
-#' @param a.var Name of treatment variable.
 
 .point_est.Y2pred <- function(
     data,
     cross.world,
     effect.scale,
-    a.var,
     y.c1.form,
     y.c0.form,
     y.cm1.form,
     y.cm0.form,
     y10.c.form,
     y01.c.form,
-    y.family,
-    output.data = FALSE
+    y.family
 ) {
 
     data$.w.wt <- 1

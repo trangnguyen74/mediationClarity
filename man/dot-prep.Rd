@@ -2,7 +2,8 @@
 % Please edit documentation in R/A1-weights_med.R, R/A2-weights_ipw.R,
 %   R/A3-weights_cmodds.R, R/C0-estimate_wtd.R, R/C2a-estimate_psYpred.R,
 %   R/C2b-estimate_psYpredMR.R, R/C3a-estimate_Ypred.R,
-%   R/C3b-estimate_YpredMR.R, R/C1a-estimate_Y2pred.R, R/C1b-estimate_Y2predR.R
+%   R/C3b-estimate_YpredMR.R, R/C1a-estimate_Y2pred.R, R/C1b-estimate_Y2predR.R,
+%   R/D1a-NDEpred.R
 \name{.prep_med}
 \alias{.prep_med}
 \alias{.prep_ipw}
@@ -14,6 +15,7 @@
 \alias{.prep_YpredMR}
 \alias{.prep_Y2pred}
 \alias{.prep_Y2predR}
+\alias{.prep_NDEpred}
 \alias{dot-prep}
 \title{(For maintainer) Prep work within main functions}
 \usage{
@@ -36,6 +38,8 @@
 .prep_Y2pred()
 
 .prep_Y2predR()
+
+.prep_NDEpred()
 }
 \description{
 A set of internal functions to do the prep work for the main functions before the key computing takes place.

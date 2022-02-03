@@ -77,6 +77,7 @@ Function that implements the pure weighting estimator of natural (in)direct effe
 }
 \seealso{
 Other estimators: 
+\code{\link{estimate_NDEpred}()},
 \code{\link{estimate_Y2predR}()},
 \code{\link{estimate_Y2pred}()},
 \code{\link{estimate_YpredMR}()},

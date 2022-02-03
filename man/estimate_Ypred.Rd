@@ -72,6 +72,7 @@ Function that implements estimator Ypred
 [estimate_YpredMR()] which is closely related but more robust
 
 Other estimators: 
+\code{\link{estimate_NDEpred}()},
 \code{\link{estimate_Y2predR}()},
 \code{\link{estimate_Y2pred}()},
 \code{\link{estimate_YpredMR}()},

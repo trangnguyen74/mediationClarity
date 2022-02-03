@@ -88,6 +88,7 @@ Function that implements estimator Y2pred.MR
 }
 \seealso{
 Other estimators: 
+\code{\link{estimate_NDEpred}()},
 \code{\link{estimate_Y2pred}()},
 \code{\link{estimate_YpredMR}()},
 \code{\link{estimate_Ypred}()},

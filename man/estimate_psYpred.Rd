@@ -65,6 +65,7 @@ Function that implements estimator psYpred
 }
 \seealso{
 Other estimators: 
+\code{\link{estimate_NDEpred}()},
 \code{\link{estimate_Y2predR}()},
 \code{\link{estimate_Y2pred}()},
 \code{\link{estimate_YpredMR}()},
