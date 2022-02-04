@@ -1,0 +1,154 @@
+---
+title: "tnMediation vignette"
+subtitle: "Computing appendix to Nguyen et al. (2022). Causal mediation analysis: from simple to more robust strategies for estimation of marginal natural (in)direct effects (arXiv:2102.06048)"
+output: rmarkdown::html_vignette 
+vignette: >
+  %\VignetteIndexEntry{vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(tnMediation)
+library(ggplot2)
+```
+
+
+# Data
+
+We use a synthetic dataset <tt>synth</tt> that was created based on the PAS trial. It is available when you load the package. See description in the paper. 
+
+Let's have a quick look at the data. The variables include:
+
+- the intervention indicator <tt>treat</tt> (combined intervention vs. usual care)
+- baseline covariates: <tt>sex</tt>, <tt>age</tt>, <tt>edu</tt> (binary variable for academic or vocational education track), <tt>religion</tt>, <tt>att0</tt> (binary, attitude against alcohol use), <tt>rul0</tt> (binary, strict parental rules about alcohol use), <tt>sfc0</tt> (self-control when it comes to situations with alcohol, on a 0-to-4 scale), <tt>drink0</tt> (weekly drinking: yes, no, no response)
+- mediators: <tt>att</tt>, <tt>rul</tt>, <tt>sfc</tt> (attitude, rules and self-control at six months)
+- outcome: <tt>drink</tt> (weekly drinking at 22 months, binary)
+
+
+```{r}
+head(synth)
+```
+
+```{r, warning=FALSE}
+table1::table1(~ age + sex + edu + religion + drink0 + att0 + rul0 + sfc0 | factor(treat), 
+               data = synth, 
+               overall = "all")
+```
+
+
+# Everything weights
+
+Our focus will be on the weighting required for the pure weighting estimator, which we call *mediation weighting*. For completeness, we will also briefly cover inverse probability weighting to standardize the distribution of C to that of the full sample, and odds weighting to mimic the (C,M) distribution in a subsample.
+
+In each section below, we explain how this is done manually to give a clear view of the method, and then show how it is done automatically using a function in the <tt>tnMediation</tt> package.
+
+## Mediation weighting
+
+Mediation weighting is weighting subsamples to create pseudo treated sample (herein <tt>p11</tt>) and pseudo control sample (<tt>p00</tt>) that mimic the C distribution of the full sample, and to create pseudo cross-world sample(s) (<tt>p10</tt> and/or <tt>p01</tt>) that mimic the full sample C distribution and the M given C distribution of the controls (if <tt>p10</tt>) or the treated (if <tt>p01</tt>).
+
+Following the paper, we show all analysis just for the (NDE0, NIE1) decomposition, which requires <tt>p10</tt> but not <tt>p01</tt>.
+
+### Manual implementation
+
+```{r}
+p11 <- synth[synth$treat==1, ]; p11$samp <- "p11"
+p00 <- synth[synth$treat==0, ]; p00$samp <- "p00"
+p10 <- synth[synth$treat==1, ]; p10$samp <- "p10"
+
+a.c.form  <- "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)"
+a.cm.form <- "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)"
+
+a.c.fu  <- glm(formula = a.c.form,  data = synth, family = binomial)
+a.cm.fu <- glm(formula = a.cm.form, data = synth, family = binomial)
+
+p11$wt <-  1 /      predict(a.c.fu, newdata = p11, type = "response")
+p00$wt <-  1 / (1 - predict(a.c.fu, newdata = p00, type = "response"))
+
+p10.a.c.prob  <-     predict(a.c.fu,  newdata = p10, type = "response")
+p10.a.cm.odds <- exp(predict(a.cm.fu, newdata = p10, type = "link"))
+
+p10$wt <- (1 / p10.a.cm.odds) / (1 - p10.a.c.prob)
+
+w.med.dat <- rbind(p11, p00, p10)
+
+rm(p11, p00, p10, a.c.form, a.cm.form, a.c.fu, a.cm.fu,
+   p10.a.c.prob, p10.a.cm.odds)
+
+ggplot(data = w.med.dat[, c("samp", "wt")], aes(x = samp, y = wt)) +
+    geom_violin() +
+    geom_jitter(alpha = .01) +
+    labs(x = "", y = "distribution morphing weights (raw)")
+```
+
+
+### Using the package
+
+```{r}
+w.med <- weights_med(
+    data = synth,
+    cross.world = "10",
+    a.c.form = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.cm.form = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    plot        = TRUE,
+    c.vars.std  = "sfc0",
+    m.vars.std  = "sfc")
+names(w.med)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
