@@ -467,7 +467,7 @@ estimate_psYpred <- function(
                         width = jitter.width,
                         alpha = point.alpha) +
             geom_violin(color = "red", fill = NA) +
-            labs(x = "pseudo sample",
+            labs(x = "",
                  y = "distribution morphing weights (stabilized)") +
             theme_bw()
 
@@ -494,7 +494,7 @@ estimate_psYpred <- function(
                     alpha = point.alpha,
                     aes(size = .data$.s.wt)) +
         geom_violin(color = "red", fill = NA) +
-        labs(x = "pseudo sample",
+        labs(x = "",
              y = "distribution morphing weights (stabilized)",
              size = "sampling weight (stabilized)") +
         theme_bw() +
@@ -517,7 +517,7 @@ estimate_psYpred <- function(
                     width = jitter.width,
                     alpha = point.alpha) +
         geom_violin(color = "red", fill = NA) +
-        labs(x = "subsample/pseudo sample",
+        labs(x = "",
              y = "final weights (stabilized)\n(combining sampling and distribution morphing)") +
         theme_bw()
 

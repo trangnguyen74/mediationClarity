@@ -633,6 +633,11 @@ gridExtra::grid.arrange(
 
 ### Point estimation manual code (not run)
 
+```{r, eval=FALSE}
+
+```
+
+
 
 ### Package code
 
@@ -653,7 +658,7 @@ est.Ypred <- estimate_Ypred(
     y.link      = "logit",
     
     boot.num    = 9,
-    boot.method = "cont-wt",  # defaul
+    boot.method = "cont-wt",  # default
     boot.seed   = 77777
 )
 
