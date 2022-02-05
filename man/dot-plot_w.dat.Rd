@@ -16,7 +16,7 @@
 
 .plot_ipw(w.dat, c.vars, c.vars.std)
 
-.plot_cm.odds(w.dat, cm.vars, cm.vars.std)
+.plot_cm.odds(w.dat, cm.vars, cm.vars.std, estimate.Ypred = FALSE)
 
 .plot_psYpred(w.dat, c.vars, c.vars.std)
 

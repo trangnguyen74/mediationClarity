@@ -93,7 +93,8 @@
   y.cm0.form,
   y10.c.form,
   y01.c.form,
-  y.family
+  y.family,
+  output.data = FALSE
 )
 
 .point_est.Y2predR(

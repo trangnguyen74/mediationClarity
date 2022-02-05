@@ -264,12 +264,17 @@ weights_cm.odds <- function(
 
 .plot_cm.odds <- function(w.dat,
                           cm.vars,
-                          cm.vars.std) {
+                          cm.vars.std,
+                          estimate.Ypred = FALSE) {
 
     out <- .plot_wt_dist.cm.odds(w.dat)
-    out$balance <- .plot_balance.cm.odds(w.dat = w.dat,
-                                         cm.vars = cm.vars,
-                                         cm.vars.std = cm.vars.std)
+
+    if (estimate.Ypred) { bal.name <- "key.balance"
+    } else              { bal.name <- "balance"
+    }
+    out[[bal.name]] <- .plot_balance.cm.odds(w.dat = w.dat,
+                                             cm.vars = cm.vars,
+                                             cm.vars.std = cm.vars.std)
 
     out
 }

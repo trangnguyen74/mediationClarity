@@ -80,7 +80,8 @@ estimate_Ypred <- function(
 
         plots <- .plot_cm.odds(w.dat       = tmp$w.dat,
                                cm.vars     = cm.vars,
-                               cm.vars.std = cm.vars.std);  rm(tmp)
+                               cm.vars.std = cm.vars.std,
+                               estimate.Ypred = TRUE);  rm(tmp)
     }
 
 

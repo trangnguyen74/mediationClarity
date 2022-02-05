@@ -289,7 +289,9 @@ estimate_Y2pred <- function(
     y.cm0.form,
     y10.c.form,
     y01.c.form,
-    y.family
+    y.family,
+    output.data = FALSE # this is to work nice with boot function
+                        # (to revisit later)
 ) {
 
     data$.w.wt <- 1
