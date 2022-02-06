@@ -1,11 +1,10 @@
 Package: tnMediation
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Simple and more robust estimation of marginal natural (in)direct effects 
 Version: 0.1.0
 Author: Trang Nguyen
 Maintainer: Trang Nguyen <trang.nguyen@jhu.edu>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: This package implements estimators covered in Nguyen et al. (2022), arXiv:2102.06048. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -17,7 +16,9 @@ Imports:
     ggplot2,
     stats,
     utils,
-    rlang
+    rlang,
+    table1,
+    gridExtra
 URL: https://github.com/trangnguyen74/tnMediation
 BugReports: https://github.com/trangnguyen74/tnMediation/issues
 Suggests: 

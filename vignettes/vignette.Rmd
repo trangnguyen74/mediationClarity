@@ -303,7 +303,7 @@ point.wtd <- c(y11.mean = y11.mean,
 
 It is better to use the package, specifically the function `estimate_wtd()`. It provides both point estimate and confidence interval via bootstrapping.
 
-```{r}
+```{r wtd, cache=TRUE}
 est.wtd <- estimate_wtd(
     data        = synth,
     cross.world = "10",  # default
@@ -317,7 +317,7 @@ est.wtd <- estimate_wtd(
     c.vars.std  = "sfc0",
     m.vars.std  = "sfc",
     
-    boot.num    = 9,
+    boot.num    = 999,        # default
     boot.method = "cont-wt",  # default
     boot.seed   = 77777
 )
@@ -408,7 +408,7 @@ point.Y2pred <- c(y11.mean = y11.mean,
 ### Package code
 
 
-```{r Y2pred}
+```{r Y2pred, cache=TRUE}
 # the nonrobust Y2pred estimator
 est.Y2pred <- estimate_Y2pred(
     data        = synth,
@@ -423,11 +423,14 @@ est.Y2pred <- estimate_Y2pred(
     y10.c.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.link      = "logit",
     
-    boot.num    = 9,
+    boot.num    = 999,        # default
     boot.method = "cont-wt",  # default
     boot.seed   = 77777
 )
+```
 
+
+```{r Y2predR, cache=TRUE}
 # the robust Y2pred.R estimator
 est.Y2predR <- estimate_Y2predR(
     data        = synth,
@@ -447,7 +450,7 @@ est.Y2predR <- estimate_Y2predR(
     y10.c.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.link      = "logit",
     
-    boot.num    = 9,
+    boot.num    = 999,        # default
     boot.method = "cont-wt",  # default
     boot.seed   = 77777
 )
@@ -540,7 +543,7 @@ point.Y2pred <- c(y11.mean = y11.mean,
 
 ### Package code
 
-```{r}
+```{r psYpred, cache=TRUE}
 # the nonrobust psYpred estimator
 est.psYpred <- estimate_psYpred(
     data        = synth,
@@ -548,17 +551,19 @@ est.psYpred <- estimate_psYpred(
     
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     
-    plot        = TRUE,  # defult
+    plot        = TRUE,  # default
     c.vars.std  = "sfc0",
     
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
     y.link      = "logit",
     
-    boot.num    = 9,
-    boot.method = "cont-wt",  # defaul
+    boot.num    = 999,        # default
+    boot.method = "cont-wt",  # default
     boot.seed   = 77777)
+```
 
+```{r psYpredMR, cache=TRUE}
 # the more robust psYpred.MR estimator
 est.psYpredMR <- estimate_psYpredMR(
     data        = synth,
@@ -567,7 +572,7 @@ est.psYpredMR <- estimate_psYpredMR(
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
-    plot        = TRUE,  # defaul
+    plot        = TRUE,  # default
     c.vars.std  = "sfc0",
     m.vars.std  = "sfc",
     
@@ -575,8 +580,8 @@ est.psYpredMR <- estimate_psYpredMR(
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
     y.link = "logit",
     
-    boot.num    = 9,
-    boot.method = "cont-wt",  # defaul
+    boot.num    = 999,        # default
+    boot.method = "cont-wt",  # default
     boot.seed   = 77777)
 ```
 
@@ -641,7 +646,7 @@ gridExtra::grid.arrange(
 
 ### Package code
 
-```{r}
+```{r Ypred, cache=TRUE}
 # the nonrobust Ypred estimator
 est.Ypred <- estimate_Ypred(
     data        = synth,
@@ -657,11 +662,13 @@ est.Ypred <- estimate_Ypred(
     y10.c.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.link      = "logit",
     
-    boot.num    = 9,
+    boot.num    = 999,        # default
     boot.method = "cont-wt",  # default
     boot.seed   = 77777
 )
+```
 
+```{r YpredMR, cache=TRUE}
 # the more robust Ypred.MR estimator
 est.YpredMR <- estimate_YpredMR(
     data        = synth,
@@ -679,13 +686,13 @@ est.YpredMR <- estimate_YpredMR(
     y10.c.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.link      = "logit",
     
-    boot.num    = 9,
+    boot.num    = 999,        # default
     boot.method = "cont-wt",  # default
     boot.seed   = 77777
 )
 ```
 
-Here if the same model form is used for the different outcome given covariates models, the short cut argument `y.c.form` can be used instead of `y.c0.form`, `y.c1.form`, `y10.c.form`.
+Here if the same model form is used for the different outcome given covariates models, the shortcut argument `y.c.form` can be used instead of `y.c0.form`, `y.c1.form`, `y10.c.form`.
 
 ### Outputs
 

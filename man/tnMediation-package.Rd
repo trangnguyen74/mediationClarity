@@ -4,9 +4,9 @@
 \name{tnMediation-package}
 \alias{tnMediation}
 \alias{tnMediation-package}
-\title{tnMediation: What the Package Does (Title Case)}
+\title{tnMediation: Simple and more robust estimation of marginal natural (in)direct effects}
 \description{
-More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
+This package implements estimators covered in Nguyen et al. (2022), arXiv:2102.06048.
 }
 \seealso{
 Useful links:
