@@ -14,7 +14,6 @@ estimate_NDEpredR <- function(
     data,
     s.wt.var     = NULL,
     cross.world  = "10",
-    effect.scale = "additive",
 
     boot.num      = 999,
     boot.seed     = NULL,
@@ -57,7 +56,6 @@ estimate_NDEpredR <- function(
     .prep_NDEpredR()
 
     key.inputs <- mget(c("cross.world",
-                         "effect.scale",
                          "a.c.form", "a.cm.form",
                          "max.stabilized.wt",
                          "y.c1.form", "y.c0.form",
@@ -138,8 +136,6 @@ estimate_NDEpredR <- function(
 
     .clean_cross.world(top.env)
 
-    .clean_effect.scale(top.env)
-
     .clean_boot(top.env)
 
     .clean_weights.med(top.env)
@@ -160,7 +156,6 @@ estimate_NDEpredR <- function(
 .point_est.NDEpredR <- function(
     data,
     cross.world,
-    effect.scale,
     a.c.form,
     a.cm.form,
     max.stabilized.wt = 30,

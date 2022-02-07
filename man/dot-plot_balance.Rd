@@ -21,7 +21,7 @@
   estimate.wtd = FALSE
 )
 
-.plot_balance.ipw(w.dat, c.vars, c.vars.std)
+.plot_balance.ipw(w.dat, vars, vars.std)
 
 .plot_balance.cm.odds(w.dat, cm.vars, cm.vars.std)
 

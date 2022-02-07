@@ -22,19 +22,19 @@
 weights_ipw <- function(
     data,
     s.wt.var = NULL,
-    a.c.form,
+    a.form,
 
     max.stabilized.wt = 30,
 
     plot = TRUE,
-    c.order = NULL,
-    c.vars.std = NULL
+    vars.std = NULL,
+    vars.order = NULL
 ) {
 
 
     # CLEAN INPUTS
 
-    c.vars <- NULL
+    vars <- NULL
 
     .prep_ipw()
 
@@ -42,17 +42,17 @@ weights_ipw <- function(
     # COMPUTE WEIGHTS
 
     w.dat <- .compute_weights.ipw(data              = data,
-                                   a.c.form          = a.c.form,
-                                   max.stabilized.wt = max.stabilized.wt)
+                                  a.form            = a.form,
+                                  max.stabilized.wt = max.stabilized.wt)
 
 
     # MAKE PLOTS
 
     if (plot) {
 
-        plots <- .plot_ipw(w.dat = w.dat,
-                           c.vars = c.vars,
-                           c.vars.std = c.vars.std)
+        plots <- .plot_ipw(w.dat    = w.dat,
+                           vars     = vars,
+                           vars.std = vars.std)
     }
 
 
@@ -97,10 +97,10 @@ weights_ipw <- function(
     if (!is.numeric(env$max.stabilized.wt))
         stop("max.stabilized.wt must be a numeric value.")
 
-    a.c <- env$a.c.form
+    a.form <- env$a.form
 
-    a.var  <- all.vars(formula(a.c)[[2]])
-    c.vars <- all.vars(formula(a.c)[[3]])
+    a.var  <- all.vars(formula(a.form)[[2]])
+    c.vars <- all.vars(formula(a.form)[[3]])
 
     stray.vars <- setdiff(c(a.var, c.vars), names(env$data))
 
@@ -112,7 +112,7 @@ weights_ipw <- function(
 
     env$data$.a <- env$data[, a.var]
 
-    env$c.vars <- c.vars
+    env$vars <- c.vars
 
 }
 
@@ -126,26 +126,26 @@ weights_ipw <- function(
 
 .check_plot.ipw <- function(env) {
 
-    c.vars     <- env$c.vars
-    c.order    <- env$c.order
-    c.vars.std <- env$c.vars.std
+    vars       <- env$vars
+    vars.order <- env$vars.order
+    vars.std   <- env$vars.std
 
 
-    if (!is.null(c.order)) {
+    if (!is.null(vars.order)) {
 
-        if (!setequal(c.vars, c.order)) {
+        if (!setequal(vars, vars.order)) {
             warning("Variables in c.order do not match covariates from a.c.form. Ignoring c.order.")
         } else
-            env$c.vars <- c.vars <- c.order
+            env$vars <- vars <- vars.order
     }
 
 
 
 
 
-    if (is.null(c.vars.std)) {
+    if (is.null(vars.std)) {
 
-        maybe.cont <- sapply(c.vars,
+        maybe.cont <- sapply(vars,
                              function(z) maybe_continuous(env$data[, z]))
 
         if (any(maybe.cont))
@@ -159,20 +159,20 @@ weights_ipw <- function(
     }
 
 
-    if (length(c.vars.std)==1 && c.vars.std=="")  return()
+    if (length(vars.std)==1 && vars.std=="")  return()
 
 
-    c.vars.std <- setdiff(c.vars.std, "")
+    vars.std <- setdiff(vars.std, "")
 
-    if (length(setdiff(c.vars.std, c.vars))>0)
+    if (length(setdiff(vars.std, vars))>0)
         stop("Variables specified in c.vars.std are not all contained in model formula a.c.form.")
 
 
-    ok.std <- sapply(c.vars.std, function(z) maybe_continuous(env$data[, z]))
+    ok.std <- sapply(vars.std, function(z) maybe_continuous(env$data[, z]))
 
     if (!all(ok.std))
         stop(paste("Check variable(s)",
-                   paste(c.vars.std[which(!ok.std)], collapse = ", "),
+                   paste(vars.std[which(!ok.std)], collapse = ", "),
                    "before proceeding. Only include continuous variables in c.vars.std."))
 
 }
@@ -187,12 +187,12 @@ weights_ipw <- function(
 
 .compute_weights.ipw <- function(
     data,
-    a.c.form,
+    a.form,
     max.stabilized.wt
 
 ) {
 
-    a.c.fu <- glm(formula = a.c.form,
+    a.fu <- glm(formula = a.form,
                   data    = data,
                   weights = data$.s.wt,
                   family  = quasibinomial)
@@ -208,8 +208,8 @@ weights_ipw <- function(
     p00 <- data[data$.a==0, ];  p00$.samp <- "p00"
     p11 <- data[data$.a==1, ];  p11$.samp <- "p11"
 
-    p00$.w.wt <- 1 + exp( predict(a.c.fu, newdata = p00, type = "link"))
-    p11$.w.wt <- 1 + exp(-predict(a.c.fu, newdata = p11, type = "link"))
+    p00$.w.wt <- 1 + exp( predict(a.fu, newdata = p00, type = "link"))
+    p11$.w.wt <- 1 + exp(-predict(a.fu, newdata = p11, type = "link"))
 
     p00$.w.wt <- .trunc_right(p00$.w.wt, max.wt$control)
     p11$.w.wt <- .trunc_right(p11$.w.wt, max.wt$treat)
@@ -230,13 +230,13 @@ weights_ipw <- function(
 #' @order 2
 
 .plot_ipw <- function(w.dat,
-                      c.vars,
-                      c.vars.std) {
+                      vars,
+                      vars.std) {
 
     c(.plot_wt_dist(w.dat),
       .plot_balance.ipw(w.dat = w.dat,
-                        c.vars = c.vars,
-                        c.vars.std = c.vars.std))
+                        vars = vars,
+                        vars.std = vars.std))
 }
 
 
@@ -248,13 +248,13 @@ weights_ipw <- function(
 #' @order 2
 
 .plot_balance.ipw <- function(w.dat,
-                              c.vars,
-                              c.vars.std) {
+                              vars,
+                              vars.std) {
 
 
     smd.dat <- .get_smd.ipw(w.dat = w.dat,
-                            vars = c.vars,
-                            standardize = c.vars.std)
+                            vars = vars,
+                            standardize = vars.std)
 
 
     p <-
@@ -300,7 +300,7 @@ weights_ipw <- function(
                          warning = FALSE)
 
     w.dat <- tmp$data
-    vars   <- tmp$columns; rm(tmp)
+    vars  <- tmp$columns; rm(tmp)
 
 
     w.dat <- w.dat[, c(".samp", ".s.wt", ".f.wt", vars)]

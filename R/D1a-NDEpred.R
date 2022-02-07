@@ -19,7 +19,6 @@ estimate_NDEpred <- function(
     data,
     s.wt.var     = NULL,
     cross.world  = "10",
-    effect.scale = "additive",
 
     boot.num      = 999,
     boot.seed     = NULL,
@@ -103,8 +102,6 @@ estimate_NDEpred <- function(
     .setup_data(top.env)
 
     .clean_cross.world(top.env)
-
-    .clean_effect.scale(top.env)
 
     .clean_boot(top.env)
 
@@ -276,7 +273,6 @@ estimate_NDEpred <- function(
 .point_est.NDEpred <- function(
     data,
     cross.world,
-    effect.scale,
     y.c1.form,
     y.c0.form,
     y.cm1.form,

@@ -7,11 +7,11 @@
 weights_ipw(
   data,
   s.wt.var = NULL,
-  a.c.form,
+  a.form,
   max.stabilized.wt = 30,
   plot = TRUE,
-  c.order = NULL,
-  c.vars.std = NULL
+  vars.std = NULL,
+  vars.order = NULL
 )
 }
 \arguments{
@@ -19,15 +19,9 @@ weights_ipw(
 
 \item{s.wt.var}{Optional, name of variable containing sampling weights.}
 
-\item{a.c.form}{Formula for the P(A|C) model (the propensity score model).}
-
 \item{max.stabilized.wt}{Max stabilized weight allowed. Larger weights are truncated to this level. Default is 30.}
 
 \item{plot}{Whether to output weight distribution and balance plots. Defaults to TRUE.}
-
-\item{c.order}{Order in which covariates are to be plotted. If not specify, use the order that appears in \code{a.c.form}.}
-
-\item{c.vars.std}{Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
 }
 \value{
 A list including\tabular{ll}{

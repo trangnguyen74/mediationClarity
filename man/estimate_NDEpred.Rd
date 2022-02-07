@@ -8,7 +8,6 @@ estimate_NDEpred(
   data,
   s.wt.var = NULL,
   cross.world = "10",
-  effect.scale = "additive",
   boot.num = 999,
   boot.seed = NULL,
   boot.method = "cont-wt",
@@ -32,8 +31,6 @@ estimate_NDEpred(
 \item{s.wt.var}{Optional, name of variable containing sampling weights.}
 
 \item{cross.world}{The cross-world condition involved in the effect decomposition of choice. Should be "10" if want the (NDE0, NIE1) pair, "01" if want the (NIE0, NDE1) pair, or "both" if want both decompositions.}
-
-\item{effect.scale}{The scale of effect of choice. Defaults to "MD" (i.e., mean/risk difference or additive). If outcome is non-negative, also allows "mean ratio" (which could also be specified as "ratio", "MR", "risk ratio", "rate ratio", "RR"). If outcome is binary or bounded within the (0,1) interval, also allows "odds ratio" (which could also be specified as "OR").}
 
 \item{boot.num}{Number of bootstrap samples used for interval estimation, defaults to 999. If just want point estimate, set to 0.}
 

@@ -118,7 +118,6 @@
 .point_est.NDEpred(
   data,
   cross.world,
-  effect.scale,
   y.c1.form,
   y.c0.form,
   y.cm1.form,
@@ -132,7 +131,6 @@
 .point_est.NDEpredR(
   data,
   cross.world,
-  effect.scale,
   a.c.form,
   a.cm.form,
   max.stabilized.wt = 30,

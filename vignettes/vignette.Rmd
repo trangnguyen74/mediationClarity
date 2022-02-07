@@ -238,12 +238,15 @@ w.dat <- rbind(s00, s11, s10)
 ```{r}
 # C-based inverse probability weighting
 w.c.ipw <- weights_ipw(
-    data       = synth,
-    a.c.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
-    plot       = TRUE,  # default
-    c.vars.std = "sfc0"
+    data     = synth,
+    a.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    plot     = TRUE,  # default
+    vars.std = "sfc0"
 )
+```
 
+
+```{r}
 # CM-based odds weighting
 w.cm.odds <- weights_cm.odds(
     data        = synth,
@@ -868,6 +871,30 @@ est.NDEpredR <- estimate_NDEpredR(
     boot.method = "cont-wt",  # default
     boot.seed   = 77777
 )
+```
+
+### Outputs
+
+**The nonrobust NDEpred**
+
+```{r}
+names(est.NDEpred)
+```
+
+```{r}
+est.NDEpred$estimates
+```
+
+
+**The robust NDEpredR**
+
+```{r}
+names(est.NDEpredR)
+names(est.NDEpredR$plots)
+```
+
+```{r}
+est.NDEpredR$estimates
 ```
 
 

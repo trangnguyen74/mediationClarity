@@ -11,7 +11,7 @@
 \usage{
 .compute_weights.med(data, cross.world, a.c.form, a.cm.form, max.stabilized.wt)
 
-.compute_weights.ipw(data, a.c.form, max.stabilized.wt)
+.compute_weights.ipw(data, a.form, max.stabilized.wt)
 
 .compute_weights.cm.odds(data, cross.world, a.cm.form, max.stabilized.wt)
 
