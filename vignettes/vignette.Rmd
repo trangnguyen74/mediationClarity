@@ -820,7 +820,7 @@ point.Y2pred <- c(TE   = TE,
 
 ### Package code
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,eval=FALSE}
 # the nonrobust NDEpred estimator
 est.NDEpred <- estimate_NDEpred(
     data        = synth,
@@ -843,9 +843,9 @@ est.NDEpred <- estimate_NDEpred(
 ```
 
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,eval=FALSE}
 # the robust NDEpred.R estimator
-est.NDEpred <- estimate_NDEpredR(
+est.NDEpredR <- estimate_NDEpredR(
     data        = synth,
     cross.world = "10",  # default
 

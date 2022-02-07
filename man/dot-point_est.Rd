@@ -2,7 +2,7 @@
 % Please edit documentation in R/C0-estimate_wtd.R, R/C2a-estimate_psYpred.R,
 %   R/C2b-estimate_psYpredMR.R, R/C3a-estimate_Ypred.R,
 %   R/C3b-estimate_YpredMR.R, R/C1a-estimate_Y2pred.R, R/C1b-estimate_Y2predR.R,
-%   R/D1a-NDEpred.R
+%   R/D1a-NDEpred.R, R/D1b-NDEpredR.R
 \name{.point_est.wtd}
 \alias{.point_est.wtd}
 \alias{.point_est.psYpred}
@@ -12,6 +12,7 @@
 \alias{.point_est.Y2pred}
 \alias{.point_est.Y2predR}
 \alias{.point_est.NDEpred}
+\alias{.point_est.NDEpredR}
 \alias{dot-point_est}
 \title{(For maintainer) Point estimation}
 \usage{
@@ -118,6 +119,24 @@
   data,
   cross.world,
   effect.scale,
+  y.c1.form,
+  y.c0.form,
+  y.cm1.form,
+  y.cm0.form,
+  nde0.c.form,
+  nde1.c.form,
+  y.family,
+  output.data = FALSE
+)
+
+.point_est.NDEpredR(
+  data,
+  cross.world,
+  effect.scale,
+  a.c.form,
+  a.cm.form,
+  max.stabilized.wt = 30,
+  output.data = FALSE,
   y.c1.form,
   y.c0.form,
   y.cm1.form,

@@ -2,7 +2,7 @@
 
 
 
-#### estimate_NDEpred ####################################################
+#### OK  estimate_NDEpred ######################################################
 
 #' Estimator NDEpred
 #'
@@ -19,6 +19,7 @@ estimate_NDEpred <- function(
     data,
     s.wt.var     = NULL,
     cross.world  = "10",
+    effect.scale = "additive",
 
     boot.num      = 999,
     boot.seed     = NULL,
@@ -26,22 +27,29 @@ estimate_NDEpred <- function(
     boot.stratify = TRUE,
 
     a.var,
-    y.cm1.form = NULL,
-    y.cm0.form = NULL,
-    y.cm.form  = NULL,
+
+    # detailed outcome/effect models
     y.c1.form = NULL,
     y.c0.form = NULL,
-    y.c.form  = NULL,
+
+    y.cm1.form = NULL,
+    y.cm0.form = NULL,
+
     nde0.c.form = NULL,
     nde1.c.form = NULL,
+
+    # or shortcuts
+    y.c.form  = NULL,
+    y.cm.form  = NULL,
     nde.c.form  = NULL,
+
     y.link = "identity"
 
 ) {
 
     # CLEAN INPUTS
 
-    y.family <- NULL
+    c.vars <- m.vars <- y.family <- NULL
 
     .prep_NDEpred()
 
@@ -275,7 +283,9 @@ estimate_NDEpred <- function(
     y.cm0.form,
     nde0.c.form,
     nde1.c.form,
-    y.family
+    y.family,
+    output.data = FALSE # this is to work nice with boot function
+    # (to revisit later)
 ) {
 
     y.c1.s11 <- glm(formula = y.c1.form,

@@ -21,14 +21,14 @@ estimate_Y2predR(
   m.vars.std = NULL,
   c.order = NULL,
   m.order = NULL,
-  y.cm.form = NULL,
-  y.cm1.form = NULL,
-  y.cm0.form = NULL,
-  y.c.form = NULL,
   y.c1.form = NULL,
   y.c0.form = NULL,
+  y.cm1.form = NULL,
+  y.cm0.form = NULL,
   y10.c.form = NULL,
   y01.c.form = NULL,
+  y.c.form = NULL,
+  y.cm.form = NULL,
   y.link = "identity"
 )
 }
@@ -65,21 +65,21 @@ estimate_Y2predR(
 
 \item{m.order}{Order in which mediators are to be plotted. If not specify, use the order that appears in \code{a.cm.form}.}
 
-\item{y.cm.form}{blah}
+\item{y.c1.form}{blah}
+
+\item{y.c0.form}{blah}
 
 \item{y.cm1.form}{blah}
 
 \item{y.cm0.form}{blah}
 
-\item{y.c.form}{blah}
-
-\item{y.c1.form}{blah}
-
-\item{y.c0.form}{blah}
-
 \item{y10.c.form}{Model formula for E[Y(1,M0)|C]}
 
 \item{y01.c.form}{Model formula for E[Y(0,M1)|C]}
+
+\item{y.c.form}{blah}
+
+\item{y.cm.form}{blah}
 
 \item{y.link}{blah}
 }
@@ -95,5 +95,9 @@ Other estimators:
 \code{\link{estimate_psYpredMR}()},
 \code{\link{estimate_psYpred}()},
 \code{\link{estimate_wtd}()}
+
+Other more-robust estimators: 
+\code{\link{estimate_NDEpred}()}
 }
 \concept{estimators}
+\concept{more-robust estimators}

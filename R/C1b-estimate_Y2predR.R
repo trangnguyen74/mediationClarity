@@ -10,6 +10,7 @@
 #' @inheritParams estimate_Y2pred
 #' @inheritParams estimate_wtd
 #' @family estimators
+#' @family more-robust estimators
 #' @export
 
 estimate_Y2predR <- function(
@@ -33,14 +34,20 @@ estimate_Y2predR <- function(
     c.order    = NULL,
     m.order    = NULL,
 
-    y.cm.form = NULL,
-    y.cm1.form = NULL,
-    y.cm0.form = NULL,
-    y.c.form = NULL,
+    # detailed outcome models
     y.c1.form = NULL,
     y.c0.form = NULL,
+
+    y.cm1.form = NULL,
+    y.cm0.form = NULL,
+
     y10.c.form = NULL,
     y01.c.form = NULL,
+
+    # or shotcuts
+    y.c.form = NULL,
+    y.cm.form = NULL,
+
     y.link = "identity") {
 
 
