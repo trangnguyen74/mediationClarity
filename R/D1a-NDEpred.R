@@ -138,16 +138,12 @@ estimate_NDEpred <- function(
 
     if (is.null(y.c)) {
 
-        if (is.null(y.c1))
-            stop("Must specify either y.c1.form or y.c.form.")
-
-        if (is.null(y.c0))
-            stop("Must specify either y.c0.form or y.c.form.")
+        if (is.null(y.c1)) stop("Must specify either y.c1.form or y.c.form.")
+        if (is.null(y.c0)) stop("Must specify either y.c0.form or y.c.form.")
 
     } else {
 
         if (is.null(y.c1))  env$y.c1.form <- y.c1 <- y.c
-
         if (is.null(y.c0))  env$y.c0.form <- y.c0 <- y.c
     }
 
@@ -164,7 +160,6 @@ estimate_NDEpred <- function(
     } else {
 
         if (yes10 && is.null(env$y.cm1.form))  env$y.cm1.form <- y.cm1 <- y.cm
-
         if (yes01 && is.null(env$y.cm0.form))  env$y.cm0.form <- y.cm0 <- y.cm
     }
 
@@ -181,7 +176,6 @@ estimate_NDEpred <- function(
     } else {
 
         if (yes10 && is.null(nde0.c))  env$nde0.c.form <- nde0.c <- y.c
-
         if (yes01 && is.null(nde1.c))  env$nde1.c.form <- nde1.c <- y.c
     }
 
@@ -197,21 +191,15 @@ estimate_NDEpred <- function(
     cm.vars <- NULL
 
     if (yes10) {
-        y.var <- unique(c(y.var,
-                          all.vars(formula(y.cm1)[[2]])))
-        c.vars <- unique(c(c.vars,
-                           all.vars(formula(nde0.c)[[3]])))
-        cm.vars <- unique(c(cm.vars,
-                            all.vars(formula(y.cm1)[[3]])))
+        y.var   <- unique(c(y.var,   all.vars(formula(y.cm1)[[2]])))
+        c.vars  <- unique(c(c.vars,  all.vars(formula(nde0.c)[[3]])))
+        cm.vars <- unique(c(cm.vars, all.vars(formula(y.cm1)[[3]])))
     }
 
     if (yes01) {
-        y.var <- unique(c(y.var,
-                          all.vars(formula(y.cm0)[[2]])))
-        c.vars <- unique(c(c.vars,
-                           all.vars(formula(nde1.c)[[3]])))
-        cm.vars <- unique(c(cm.vars,
-                            all.vars(formula(y.cm0)[[3]])))
+        y.var   <- unique(c(y.var,  all.vars(formula(y.cm0)[[2]])))
+        c.vars  <- unique(c(c.vars,  all.vars(formula(nde1.c)[[3]])))
+        cm.vars <- unique(c(cm.vars, all.vars(formula(y.cm0)[[3]])))
     }
 
     if (length(y.var)>1)

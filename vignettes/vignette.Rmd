@@ -43,7 +43,7 @@ For each weighting method or each estimator, this vignette includes three elemen
 - presents the specific function from the package that should be used to implement the weighting or estimator and explain its arguments.
 - shows the outputs of the function.
 
-To fasten the building of this document, we put the number of bootstrap samples in each call of an estimator function at 99, which is clearly too small. The defaul in the package is 999.
+To speed up the building of this document, we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
 
 
 # A bit about data
@@ -248,13 +248,13 @@ w.c.ipw <- weights_ipw(
 
 ```{r}
 # CM-based odds weighting
-w.cm.odds <- weights_cm.odds(
+w.cm.odds <- weights_odds(
     data        = synth,
-    cross.world = "10",  # default
-    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    cross.world = "01",  # default
+    a.form      = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     plot        = TRUE,  # default
-    cm.vars.std = c("sfc0", "sfc"),
-    cm.order    = c("sex", "age", "edu", "religion", "drink0", "rul0", "att0", "sfc0", "rul", "att", "sfc")
+    vars.std    = c("sfc0", "sfc"),
+    vars.order  = c("sex", "age", "edu", "religion", "drink0", "rul0", "att0", "sfc0", "rul", "att", "sfc")
 )
 ```
 
@@ -285,7 +285,7 @@ Here we present the estimators in a different order from that in the paper. Afte
 
 ## Pure weighting
 
-### Point estimation manual code (not run)
+### Manual code (point estimation only, not run)
 
 The code chunk below obtains the point estimate of the pure weighting estimator wtd.
 
@@ -371,14 +371,14 @@ est.wtd$boot.seed
 est.wtd$plots$key.balance
 ```
 
-This balance plot is the same plot as that from `weights_med()`, but there are two subtle differences: 
+This balance plot is the same plot as that from `weights_med()`, with two subtle differences: 
 
 - It is now named `key.balance`, signaling that all balance components in this plot are important to the estimator.
 - The tab labels have been added to with comments "(anchor)" meaning the specific balance is to anchor the pseudo sample on the covariate distribution of the full sample, and "(for \<effect\>)" meaning the specific balance is important to the estimation of said \<effect\>.
 
 ## Y2pred pair
 
-### Point estimation manual code (not run)
+### Manual code (point estimation only, not run)
 
 The code chunk below obtains the point estimate of the nonrobust estimator Y2pred. 
 
@@ -521,14 +521,14 @@ round(est.Y2predR$estimates, 4)
 
 The paper mentions two versions, here we implement the second version.
 
-### Point estimation manual code (not run)
+### Manual code (point estimation only, not run)
 
 ```{r, eval=FALSE}
 # get pseudo sample p00, on which we will estimate potential outcome means
 w.c.ipw <- weights_ipw(
     data       = synth,
     a.form     = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
-    c.vars.std = "sfc0"
+    vars.std = "sfc0"
 )
 
 w.dat <- w.c.ipw$w.dat
@@ -658,7 +658,7 @@ gridExtra::grid.arrange(
 ## Ypred pair
 
 
-### Point estimation manual code (not run)
+### Manual code (point estimation only, not run)
 
 ```{r, eval=FALSE}
 
@@ -765,12 +765,14 @@ gridExtra::grid.arrange(
 
 ## MsimYpred pair
 
+The paper mentioned two versions. Here we implement the first version.
+
 
 # Estimators -- if additive effects
 
 ## NDEpred pair
 
-### Point estimation manual code (not run)
+### Manual code (point estimation only, not run)
 
 The code chunk below obtains the point estimate of the nonrobust estimator NDEpred.
 
@@ -823,7 +825,7 @@ point.Y2pred <- c(TE   = TE,
 
 ### Package code
 
-```{r, cache=TRUE,eval=FALSE}
+```{r, cache=TRUE}
 # the nonrobust NDEpred estimator
 est.NDEpred <- estimate_NDEpred(
     data        = synth,
@@ -846,7 +848,7 @@ est.NDEpred <- estimate_NDEpred(
 ```
 
 
-```{r, cache=TRUE,eval=FALSE}
+```{r, cache=TRUE}
 # the robust NDEpred.R estimator
 est.NDEpredR <- estimate_NDEpredR(
     data        = synth,
@@ -882,7 +884,7 @@ names(est.NDEpred)
 ```
 
 ```{r}
-est.NDEpred$estimates
+round(est.NDEpred$estimates, 4)
 ```
 
 
@@ -894,7 +896,7 @@ names(est.NDEpredR$plots)
 ```
 
 ```{r}
-est.NDEpredR$estimates
+round(est.NDEpredR$estimates, 4)
 ```
 
 

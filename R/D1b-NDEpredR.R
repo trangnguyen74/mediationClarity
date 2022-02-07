@@ -79,9 +79,9 @@ estimate_NDEpredR <- function(
 
         estimates <- tmp$estimates
 
-        plots <- .plot_med(w.dat = tmp$w.dat,
-                           c.vars = c.vars,
-                           m.vars = m.vars,
+        plots <- .plot_med(w.dat      = tmp$w.dat,
+                           c.vars     = c.vars,
+                           m.vars     = m.vars,
                            c.vars.std = c.vars.std,
                            m.vars.std = m.vars.std);  rm(tmp)
     }
@@ -284,7 +284,7 @@ estimate_NDEpredR <- function(
     if (!output.data) return(estimates)
 
     list(estimates = estimates,
-         w.dat    = w.dat)
+         w.dat     = w.dat)
 }
 
 
