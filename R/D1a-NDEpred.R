@@ -62,8 +62,8 @@ estimate_NDEpred <- function(
 
     # POINT ESTIMATION
 
-    estimates<- do.call(".point_est.NDEpred", c(key.inputs,
-                                               list(data = data)))
+    estimates <- do.call(".point_est.NDEpred", c(key.inputs,
+                                                 list(data = data)))
 
 
     # BOOTSTRAP
@@ -285,16 +285,19 @@ estimate_NDEpred <- function(
     nde1.c.form,
     y.family,
     output.data = FALSE # this is to work nice with boot function
-    # (to revisit later)
+    #                   # (to revisit later)
 ) {
 
+    s11 <- data[data$.a==1, ]
+    s00 <- data[data$.a==0, ]
+
     y.c1.s11 <- glm(formula = y.c1.form,
-                    data    = data[data$.a==1, ],
+                    data    = s11,
                     weights = data$.s.wt,
                     family  = y.family)
 
     y.c0.s00 <- glm(formula = y.c0.form,
-                    data    = data[data$.a==0, ],
+                    data    = s00,
                     weights = data$.s.wt,
                     family  = y.family)
 
@@ -309,13 +312,13 @@ estimate_NDEpred <- function(
     if ("10" %in% cross.world) {
 
         y.cm1.s11 <- glm(formula = y.cm1.form,
-                         data    = data[data$.a==1, ],
+                         data    = s11,
                          weights = data$.s.wt,
                          family  = y.family)
 
-        s00 <- data[data$.a==0, ]
+        s00.tmp <- s00
 
-        s00$nde0.prox <-
+        s00.tmp$nde0.prox <-
             predict(y.cm1.s11, newdata = s00, type = "response") - s00$.y
 
 
@@ -324,10 +327,10 @@ estimate_NDEpred <- function(
                                    collapse = " + "))
 
         if (y.family=="quasibinomial")
-            s00$nde0.prox <- (s00$nde0.prox + 1) / 2
+            s00.tmp$nde0.prox <- (s00.tmp$nde0.prox + 1) / 2
 
         nde0.c.s00 <- glm(formula = nde0.c.form,
-                          data    = s00,
+                          data    = s00.tmp,
                           weights = data$.s.wt,
                           family  = y.family)
 
@@ -347,13 +350,13 @@ estimate_NDEpred <- function(
     if ("01" %in% cross.world) {
 
         y.cm0.s00 <- glm(formula = y.cm0.form,
-                         data    = data[data$.a==0, ],
+                         data    = s00,
                          weights = data$.s.wt,
                          family  = y.family)
 
-        s11 <- data[data$.a==1, ]
+        s11.tmp <- s11
 
-        s11$nde1.prox <-
+        s11.tmp$nde1.prox <-
             s11$.y - predict(y.cm0.s00, newdata = s11, type = "response")
 
 
@@ -362,10 +365,10 @@ estimate_NDEpred <- function(
                                    collapse = " + "))
 
         if (y.family=="quasibinomial")
-            s11$nde1.prox <- (s11$nde1.prox + 1) / 2
+            s11.tmp$nde1.prox <- (s11.tmp$nde1.prox + 1) / 2
 
         nde1.c.s11 <- glm(formula = nde1.c.form,
-                          data    = s11,
+                          data    = s11.tmp,
                           weights = data$.s.wt,
                           family  = y.family)
 
@@ -382,7 +385,7 @@ estimate_NDEpred <- function(
 
 
 
-    out
+    unlist(out)
 }
 
 

@@ -1,6 +1,6 @@
-#### estimate_NDEpred.R ####################################################
+#### estimate_NDEpredR ########################################################
 
-#' Estimator NDEpred.R
+#' Estimator NDEpredR
 #'
 #' Function that implements estimator NDEYpred.R
 #' @inheritParams estimate_Y2predR
@@ -10,10 +10,11 @@
 #' @family more-robust estimators
 #' @export
 
-estimate_NDEpred <- function(
+estimate_NDEpredR <- function(
     data,
     s.wt.var     = NULL,
     cross.world  = "10",
+    effect.scale = "additive",
 
     boot.num      = 999,
     boot.seed     = NULL,
@@ -205,7 +206,7 @@ estimate_NDEpred <- function(
         predict(y.c0.p00, newdata = full, type = "response")
 
 
-    out <- list(TE = .wtd_mean(pred.te, data$.s.wt))
+    estimates <- list(TE = .wtd_mean(pred.te, data$.s.wt))
 
 
     if ("10" %in% cross.world) {
@@ -239,8 +240,8 @@ estimate_NDEpred <- function(
         if (y.family=="quasibinomial")
             pred.nde0 <- pred.nde0 * 2 - 1
 
-        out$NDE0 <- .wtd_mean(pred.nde0, full$.s.wt)
-        out$NIE1 <- out$TE - out$NDE0
+        estimates$NDE0 <- .wtd_mean(pred.nde0, full$.s.wt)
+        estimates$NIE1 <- estimates$TE - estimates$NDE0
 
     }
 
@@ -277,14 +278,18 @@ estimate_NDEpred <- function(
         if (y.family=="quasibinomial")
             pred.nde1 <- pred.nde1 * 2 - 1
 
-        out$NDE1 <- .wtd_mean(pred.nde1, data$.s.wt)
-        out$NIE0 <- out$TE - out$NDE1
+        estimates$NDE1 <- .wtd_mean(pred.nde1, data$.s.wt)
+        estimates$NIE0 <- estimates$TE - estimates$NDE1
 
     }
 
+    estimates <- unlist(estimates)
 
 
-    out
+    if (!output.data) return(estimates)
+
+    list(estimates = estimates,
+         w.dat    = w.dat)
 }
 
 
