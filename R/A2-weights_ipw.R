@@ -10,6 +10,9 @@
 #'
 #' This function estimates weights that form two pseudo treated and pseudo control samples (as if for total effect estimation)
 #' @inheritParams weights_med
+#' @param a.form Formula for model of treatment given the variables that need to be balanced.
+#' @param vars.std Variables whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.
+#' @param vars.order Order in which variables are to appear in the balance plot. If not specify, use the order that appears in \code{a.form}.
 #' @importFrom stats formula glm quasibinomial predict
 #' @return A list including\tabular{ll}{
 #' \code{w.dat} \tab A data frame for the pseudo samples with estimated weights. \cr
@@ -136,7 +139,7 @@ weights_ipw <- function(
     if (!is.null(vars.order)) {
 
         if (!setequal(vars, vars.order)) {
-            warning("Variables in c.order do not match covariates from a.c.form. Ignoring c.order.")
+            warning("Variables in vars.order do not match covariates from a.form. Ignoring vars.order.")
         } else
             env$vars <- vars <- vars.order
     }
@@ -152,10 +155,10 @@ weights_ipw <- function(
 
         if (any(maybe.cont))
             message(paste("Consider whether the balance plot should use standardized mean differences for numeric covariates",
-                          paste(c.vars[which(maybe.cont)],
+                          paste(vars[which(maybe.cont)],
                                 collapse = ", "),
                           "(if they are continuous variables).",
-                          "To turn off this message, specify c.vars.std=\"\"."))
+                          "To turn off this message, specify vars.std=\"\"."))
 
         return()
     }
@@ -167,7 +170,7 @@ weights_ipw <- function(
     vars.std <- setdiff(vars.std, "")
 
     if (length(setdiff(vars.std, vars))>0)
-        stop("Variables specified in c.vars.std are not all contained in model formula a.c.form.")
+        stop("Variables specified in vars.std are not all contained in model formula a.form.")
 
 
     ok.std <- sapply(vars.std, function(z) maybe_continuous(env$data[, z]))
@@ -175,7 +178,7 @@ weights_ipw <- function(
     if (!all(ok.std))
         stop(paste("Check variable(s)",
                    paste(vars.std[which(!ok.std)], collapse = ", "),
-                   "before proceeding. Only include continuous variables in c.vars.std."))
+                   "before proceeding. Only include continuous variables in vars.std."))
 
 }
 

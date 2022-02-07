@@ -19,9 +19,15 @@ weights_ipw(
 
 \item{s.wt.var}{Optional, name of variable containing sampling weights.}
 
+\item{a.form}{Formula for model of treatment given the variables that need to be balanced.}
+
 \item{max.stabilized.wt}{Max stabilized weight allowed. Larger weights are truncated to this level. Default is 30.}
 
 \item{plot}{Whether to output weight distribution and balance plots. Defaults to TRUE.}
+
+\item{vars.std}{Variables whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
+
+\item{vars.order}{Order in which variables are to appear in the balance plot. If not specify, use the order that appears in \code{a.form}.}
 }
 \value{
 A list including\tabular{ll}{

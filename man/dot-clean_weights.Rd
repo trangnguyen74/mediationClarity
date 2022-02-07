@@ -24,7 +24,7 @@
 \item{env}{An environment}
 }
 \description{
-Functions called by \code{.prep_} functions within \code{weights_} and \code{estimate_} functions. If not weighting is required, grab treatment variable.
+Functions called by \code{.prep_} functions within \code{weights_} and \code{estimate_} functions. If no weighting is required, grab treatment variable.
 }
 \details{
 \code{.clean_weights.med()} is used by \code{.prep_med()}.

@@ -111,7 +111,7 @@ NULL
 
 #' Internal functions: clean inputs for weighting
 #'
-#' Functions called by \code{.prep_} functions within \code{weights_} and \code{estimate_} functions. If not weighting is required, grab treatment variable.
+#' Functions called by \code{.prep_} functions within \code{weights_} and \code{estimate_} functions. If no weighting is required, grab treatment variable.
 #' @inheritParams env-block
 #' @name dot-clean_weights
 #' @keywords internal
