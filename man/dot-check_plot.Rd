@@ -7,7 +7,7 @@
 \alias{.check_plot.cm.odds}
 \alias{.check_plot.Ypred}
 \alias{dot-check_plot}
-\title{(For maintainer) Check inputs for plotting}
+\title{Internal functions: check inputs for plotting}
 \usage{
 .check_plot.med(env)
 
@@ -21,11 +21,15 @@
 \item{env}{An environment}
 }
 \description{
-Internal function to check plot inputs within functions \code{get_weights_med} and \code{estimate_wtd}
+Functions called by \code{.prep_} functions within \code{weights_} an \code{estimate_} functions.
 }
 \details{
-Checks if c.vars.std and m.vars.std are not NULL (ie specified by user) and are part of c.vars and m.vars respectively.
+\code{.check_plot.med()} is called by \code{.prep_med()}.
 
-Check if variables named in c.vars.std and m.vars.std in data can be standardized (ie are continuous variables).
+\code{.check_plot.ipw()} is called by \code{.prep_ipw()}.
+
+\code{.check_plot.odds()} is called by \code{.prep_odds()}.
+
+\code{.check_plot.Ypred()} is called by \code{.prep_Ypred()}.
 }
 \keyword{internal}

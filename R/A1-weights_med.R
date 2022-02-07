@@ -109,19 +109,19 @@ NULL
 
 #### OK  .clean_weights.med ####################################################
 
-#' (For maintainer) Clean inputs for weighting
+#' Internal functions: clean inputs for weighting
 #'
-#' Internal functions called by \code{get_weights.} or \code{estimate_} functions to clean the inputs used for the weighting method such as \code{max.stabilized.wt, a.c.form, a.cm.form}.
+#' Functions called by \code{.prep_} functions within \code{weights_} and \code{estimate_} functions. If not weighting is required, grab treatment variable.
 #' @inheritParams env-block
-#' @details \code{.clean_weights.med()} is called by \code{get_weights.med}, \code{estimate_wtd}, \code{estimate_psYpredMR}, \code{estimate_YpredMR}, \code{estimate_Y2predR}, \code{estimate_MsimYpredMR}.
-#' @details  \code{.clean.weights.te()} is called by \code{get_weights.te} and \code{estimate_psYpred}.
-#' @details  \code{.clean.weights.Ypred()} is called by \code{get_weights.Ypred} and \code{estimate_Ypred}.
 #' @name dot-clean_weights
 #' @keywords internal
 NULL
 
+
+
 #' @rdname dot-clean_weights
 #' @order 1
+#' @details \code{.clean_weights.med()} is used by \code{.prep_med()}.
 
 .clean_weights.med <- function(env) {
 
@@ -165,18 +165,17 @@ NULL
 
 #### OK  .check_plot.med #######################################################
 
-#' (For maintainer) Check inputs for plotting
+#' Internal functions: check inputs for plotting
 #'
-#' Internal function to check plot inputs within functions \code{get_weights_med} and \code{estimate_wtd}
+#' Functions called by \code{.prep_} functions within \code{weights_} an \code{estimate_} functions.
 #' @inheritParams env-block
-#' @details Checks if c.vars.std and m.vars.std are not NULL (ie specified by user) and are part of c.vars and m.vars respectively.
-#' @details Check if variables named in c.vars.std and m.vars.std in data can be standardized (ie are continuous variables).
 #' @name dot-check_plot
 #' @keywords internal
 NULL
 
 #' @rdname dot-check_plot
 #' @order 1
+#' @details \code{.check_plot.med()} is called by \code{.prep_med()}.
 
 .check_plot.med <- function(env) {
 

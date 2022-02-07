@@ -8,7 +8,7 @@
 \alias{.clean_a.var}
 \alias{.clean_weights.psYpred}
 \alias{dot-clean_weights}
-\title{(For maintainer) Clean inputs for weighting}
+\title{Internal functions: clean inputs for weighting}
 \usage{
 .clean_weights.med(env)
 
@@ -24,13 +24,17 @@
 \item{env}{An environment}
 }
 \description{
-Internal functions called by \code{get_weights.} or \code{estimate_} functions to clean the inputs used for the weighting method such as \code{max.stabilized.wt, a.c.form, a.cm.form}.
+Functions called by \code{.prep_} functions within \code{weights_} and \code{estimate_} functions. If not weighting is required, grab treatment variable.
 }
 \details{
-\code{.clean_weights.med()} is called by \code{get_weights.med}, \code{estimate_wtd}, \code{estimate_psYpredMR}, \code{estimate_YpredMR}, \code{estimate_Y2predR}, \code{estimate_MsimYpredMR}.
+\code{.clean_weights.med()} is used by \code{.prep_med()}.
 
-\code{.clean.weights.te()} is called by \code{get_weights.te} and \code{estimate_psYpred}.
+\code{.clean_weights.ipw()} is used by \code{.prep_ipw()}.
 
-\code{.clean.weights.Ypred()} is called by \code{get_weights.Ypred} and \code{estimate_Ypred}.
+\code{.clean_weights.odds()} is used by \code{.prep_odds()}.
+
+\code{.clean_a.var()} is used by \code{.prep_Y2pred()}, which is used by \code{estimate_Y2pred()}.
+
+\code{.clean_weights.psYpred()} is used by \code{.prep_psYpred()}.
 }
 \keyword{internal}

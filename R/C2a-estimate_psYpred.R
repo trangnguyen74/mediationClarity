@@ -148,6 +148,7 @@ estimate_psYpred <- function(
 
 #' @rdname dot-clean_weights
 #' @order 5
+#' @details \code{.clean_weights.psYpred()} is used by \code{.prep_psYpred()}.
 
 .clean_weights.psYpred <- function(env) {
 

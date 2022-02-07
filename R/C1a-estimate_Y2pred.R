@@ -109,6 +109,7 @@ estimate_Y2pred <- function(
 
 #' @rdname dot-clean_weights
 #' @order 4
+#' @details \code{.clean_a.var()} is used by \code{.prep_Y2pred()}, which is used by \code{estimate_Y2pred()}.
 
 .clean_a.var <- function(env) {
 

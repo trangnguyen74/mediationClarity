@@ -91,6 +91,7 @@ weights_ipw <- function(
 
 #' @rdname dot-clean_weights
 #' @order 2
+#' @details \code{.clean_weights.ipw()} is used by \code{.prep_ipw()}.
 
 .clean_weights.ipw <- function(env) {
 
@@ -123,6 +124,7 @@ weights_ipw <- function(
 
 #' @rdname dot-check_plot
 #' @order 2
+#' @details \code{.check_plot.ipw()} is called by \code{.prep_ipw()}.
 
 .check_plot.ipw <- function(env) {
 

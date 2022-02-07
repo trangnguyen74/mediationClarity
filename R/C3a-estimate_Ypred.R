@@ -282,6 +282,7 @@ estimate_Ypred <- function(
 
 #' @rdname dot-check_plot
 #' @order 4
+#' @details \code{.check_plot.Ypred()} is called by \code{.prep_Ypred()}.
 
 .check_plot.Ypred <- function(env) {
 

@@ -92,6 +92,7 @@ weights_cm.odds <- function(
 
 #' @rdname dot-clean_weights
 #' @order 3
+#' @details \code{.clean_weights.odds()} is used by \code{.prep_odds()}.
 
 .clean_weights.cm.odds <- function(env) {
 
@@ -126,6 +127,7 @@ weights_cm.odds <- function(
 
 #' @rdname dot-check_plot
 #' @order 3
+#' @details \code{.check_plot.odds()} is called by \code{.prep_odds()}.
 
 .check_plot.cm.odds <- function(env) {
 
