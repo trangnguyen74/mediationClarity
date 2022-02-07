@@ -53,7 +53,7 @@ Estimates inverse probability weights that form pseudo treated and control sampl
 }
 \seealso{
 Other weighting schemes: 
-\code{\link{weights_cm.odds}()},
-\code{\link{weights_ipw}()}
+\code{\link{weights_ipw}()},
+\code{\link{weights_odds}()}
 }
 \concept{weighting schemes}

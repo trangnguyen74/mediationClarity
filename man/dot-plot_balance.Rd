@@ -5,7 +5,7 @@
 \name{.plot_balance.med}
 \alias{.plot_balance.med}
 \alias{.plot_balance.ipw}
-\alias{.plot_balance.cm.odds}
+\alias{.plot_balance.odds}
 \alias{.plot_balance.psYpred}
 \alias{.plot_balance.psYpredMR}
 \alias{.plot_balance.YpredMR}
@@ -23,7 +23,7 @@
 
 .plot_balance.ipw(w.dat, vars, vars.std)
 
-.plot_balance.cm.odds(w.dat, cm.vars, cm.vars.std)
+.plot_balance.odds(w.dat, vars, vars.std)
 
 .plot_balance.psYpred(w.dat, c.vars, c.vars.std)
 
@@ -58,9 +58,9 @@
 
 \item{estimate.wtd}{Whether plot is part of output of implementing estimator wtd (the pure weighting estimator), defaults to FALSE. See relevance in \bold{Value} section.}
 
-\item{cm.vars}{Names of covariates and mediators, already cleaned.}
+\item{vars}{Names of variables whose balance is to be plotted, already cleaned.}
 
-\item{cm.vars.std}{Names of mediators whose mean differences are to be standardized, already cleaned}
+\item{vars.std}{Names of variables whose mean differences are to be standardized, already cleaned.}
 
 \item{cross.world}{(For \code{plot_balance.psYpredMR}) blah}
 }

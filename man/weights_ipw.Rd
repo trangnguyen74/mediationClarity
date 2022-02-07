@@ -41,7 +41,7 @@ This function estimates weights that form two pseudo treated and pseudo control 
 }
 \seealso{
 Other weighting schemes: 
-\code{\link{weights_cm.odds}()},
-\code{\link{weights_med}()}
+\code{\link{weights_med}()},
+\code{\link{weights_odds}()}
 }
 \concept{weighting schemes}

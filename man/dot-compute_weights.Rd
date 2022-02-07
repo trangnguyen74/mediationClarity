@@ -4,7 +4,7 @@
 \name{.compute_weights.med}
 \alias{.compute_weights.med}
 \alias{.compute_weights.ipw}
-\alias{.compute_weights.cm.odds}
+\alias{.compute_weights.odds}
 \alias{.compute_weights.psYpred}
 \alias{dot-compute_weights}
 \title{(For maintainer) Compute weights}
@@ -13,7 +13,7 @@
 
 .compute_weights.ipw(data, a.form, max.stabilized.wt)
 
-.compute_weights.cm.odds(data, cross.world, a.cm.form, max.stabilized.wt)
+.compute_weights.odds(data, cross.world, a.form, max.stabilized.wt)
 
 .compute_weights.psYpred(data, cross.world, a.c.form, max.stabilized.wt)
 }

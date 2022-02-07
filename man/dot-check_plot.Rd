@@ -4,7 +4,7 @@
 \name{.check_plot.med}
 \alias{.check_plot.med}
 \alias{.check_plot.ipw}
-\alias{.check_plot.cm.odds}
+\alias{.check_plot.odds}
 \alias{.check_plot.Ypred}
 \alias{dot-check_plot}
 \title{Internal functions: check inputs for plotting}
@@ -13,7 +13,7 @@
 
 .check_plot.ipw(env)
 
-.check_plot.cm.odds(env)
+.check_plot.odds(env)
 
 .check_plot.Ypred(env)
 }

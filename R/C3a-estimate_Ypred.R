@@ -8,8 +8,10 @@
 #'
 #' Function that implements estimator Ypred
 #' @inheritParams estimate_wtd
-#' @inheritParams weights_cm.odds
+#' @inheritParams weights_med
 #' @inheritParams estimate_psYpred
+#' @param cm.vars.std blah
+#' @param cm.order blah
 #' @param y10.c.form Model formula for E[Y(1,M0)|C]
 #' @param y01.c.form Model formula for E[Y(0,M1)|C]
 #' @family estimators
@@ -78,10 +80,10 @@ estimate_Ypred <- function(
                                                   output.data = TRUE)))
         estimates <- tmp$estimates
 
-        plots <- .plot_cm.odds(w.dat       = tmp$w.dat,
-                               cm.vars     = cm.vars,
-                               cm.vars.std = cm.vars.std,
-                               estimate.Ypred = TRUE);  rm(tmp)
+        plots <- .plot_odds(w.dat          = tmp$w.dat,
+                            vars           = cm.vars,
+                            vars.std       = cm.vars.std,
+                            estimate.Ypred = TRUE);  rm(tmp)
     }
 
 
@@ -136,13 +138,48 @@ estimate_Ypred <- function(
 
     .clean_boot(top.env)
 
-    .clean_weights.cm.odds(top.env)
+    .clean_weights.Ypred(top.env)
 
     .clean_y.forms.Ypred(top.env)
 
     if (top.env$plot) .check_plot.Ypred(top.env)
 }
 
+
+
+
+#### .clean_weights.Ypred ####################################################
+
+#' @rdname dot-clean_weights
+#' @order 6
+#' @details \code{.clean_weights.Ypred()} is used by \code{.prep_Ypred()}.
+
+.clean_weights.Ypred <- function(env) {
+
+    if (!is.numeric(env$max.stabilized.wt))
+        stop("max.stabilized.wt must be a numeric value.")
+
+
+    a.var   <- all.vars(formula(env$a.cm.form)[[2]])
+    cm.vars <- all.vars(formula(env$a.cm.form)[[3]])
+
+    stray.vars <- setdiff(c(a.var, cm.vars), names(env$data))
+
+    if (length(stray.vars)>0)
+        stop(paste("Variable(s)",
+                   paste(stray.vars, collapse = ", "),
+                   "in a.cm.form not found in dataset."))
+
+    if (!is_binary01(env$data[, a.var]))
+        stop(paste("Treatment variable (",
+                   a.var,
+                   ") must be numeric and in binary 0/1 form."))
+
+    env$data$.a <- env$data[, a.var]
+
+
+    env$cm.vars <- cm.vars
+}
 
 
 
@@ -288,7 +325,105 @@ estimate_Ypred <- function(
 
     if (is.null(env$cm.order)) env$cm.order <- c(env$c.vars, env$m.vars)
 
-    .check_plot.cm.odds(env)
+
+    cm.vars  <- env$cm.vars
+    cm.order <- env$cm.order
+    cm.std   <- env$cm.std
+
+
+    if (!is.null(cm.order)) {
+
+        if (!setequal(cm.vars, cm.order)) {
+            warning("Variables in cm.order do not match covariates from a.c.form. Ignoring c.order.")
+        } else
+            env$cm.vars <- cm.vars <- cm.order
+    }
+
+
+
+
+    if (is.null(cm.std)) {
+
+        maybe.cont <- sapply(cm.std,
+                             function(z) maybe_continuous(env$data[, z]))
+
+        if (any(maybe.cont))
+            message(paste("Consider whether the balance plot should use standardized mean differences for numeric covariate/mediators",
+                          paste(cm.std[which(maybe.cont)],
+                                collapse = ", "),
+                          "(if they are continuous variables).",
+                          "To turn off this message, specify cm.std=\"\"."))
+
+        return()
+    }
+
+
+    if (length(cm.std)==1 && cm.std=="")  return()
+
+
+
+    cm.std <- setdiff(cm.std, "")
+
+    if (length(setdiff(cm.std, cm.vars))>0)
+        stop("Variables specified in cm.std are not all contained in model formula a.cm.form.")
+
+
+
+    ok.std <- sapply(cm.std, function(z) maybe_continuous(env$data[, z]))
+
+    if (!all(ok.std))
+        stop(paste("Check variable(s)",
+                   paste(cm.std[which(!ok.std)], collapse = ", "),
+                   "before proceeding. Only include continuous variables in cm.std."))
+    cm.vars  <- env$cm.vars
+    cm.order <- env$cm.order
+    cm.std   <- env$cm.std
+
+
+    if (!is.null(cm.order)) {
+
+        if (!setequal(cm.vars, cm.order)) {
+            warning("Variables in cm.order do not match covariates from a.c.form. Ignoring c.order.")
+        } else
+            env$cm.vars <- cm.vars <- cm.order
+    }
+
+
+
+
+    if (is.null(cm.std)) {
+
+        maybe.cont <- sapply(cm.std,
+                             function(z) maybe_continuous(env$data[, z]))
+
+        if (any(maybe.cont))
+            message(paste("Consider whether the balance plot should use standardized mean differences for numeric covariate/mediators",
+                          paste(cm.std[which(maybe.cont)],
+                                collapse = ", "),
+                          "(if they are continuous variables).",
+                          "To turn off this message, specify cm.std=\"\"."))
+
+        return()
+    }
+
+
+    if (length(cm.std)==1 && cm.std=="")  return()
+
+
+
+    cm.std <- setdiff(cm.std, "")
+
+    if (length(setdiff(cm.std, cm.vars))>0)
+        stop("Variables specified in cm.std are not all contained in model formula a.cm.form.")
+
+
+
+    ok.std <- sapply(cm.std, function(z) maybe_continuous(env$data[, z]))
+
+    if (!all(ok.std))
+        stop(paste("Check variable(s)",
+                   paste(cm.std[which(!ok.std)], collapse = ", "),
+                   "before proceeding. Only include continuous variables in cm.std."))
 
 }
 
@@ -315,9 +450,9 @@ estimate_Ypred <- function(
     y.family
 ) {
 
-    w.dat <- .compute_weights.cm.odds(data              = data,
+    w.dat <- .compute_weights.odds(data              = data,
                                       cross.world       = cross.world,
-                                      a.cm.form         = a.cm.form,
+                                      a.form         = a.cm.form,
                                       max.stabilized.wt = max.stabilized.wt
     )
 

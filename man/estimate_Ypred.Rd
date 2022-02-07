@@ -49,9 +49,9 @@ estimate_Ypred(
 
 \item{plot}{Whether to output weight distribution and balance plots. Defaults to TRUE.}
 
-\item{cm.vars.std}{Names of covariates and mediators whose mean differences are to be standardized in balance plotting. Ignore if \code{plot==FALSE}.}
+\item{cm.vars.std}{blah}
 
-\item{cm.order}{Order in which covariates and mediators are to be plotted. If not specify, use order that appears in \code{a.cm.form}.}
+\item{cm.order}{blah}
 
 \item{y.c.form}{blah}
 

@@ -5,7 +5,7 @@
 \name{.plot_med}
 \alias{.plot_med}
 \alias{.plot_ipw}
-\alias{.plot_cm.odds}
+\alias{.plot_odds}
 \alias{.plot_psYpred}
 \alias{.plot_psYpredMR}
 \alias{.plot_YpredMR}
@@ -16,7 +16,7 @@
 
 .plot_ipw(w.dat, vars, vars.std)
 
-.plot_cm.odds(w.dat, cm.vars, cm.vars.std, estimate.Ypred = FALSE)
+.plot_odds(w.dat, vars, vars.std, estimate.Ypred = FALSE)
 
 .plot_psYpred(w.dat, c.vars, c.vars.std)
 
@@ -37,9 +37,9 @@
 
 \item{estimate.wtd}{Whether plot is part of output of implementing estimator wtd (the pure weighting estimator), defaults to FALSE. See relevance in \bold{Value} section.}
 
-\item{cm.vars}{Names of covariates and mediators.}
+\item{vars}{Names of covariates and mediators.}
 
-\item{cm.vars.std}{Names of covariates and mediators for which to use standardized mean differences in balance plots.}
+\item{vars.std}{Names of covariates and mediators for which to use standardized mean differences in balance plots.}
 
 \item{cross.world}{blah}
 }

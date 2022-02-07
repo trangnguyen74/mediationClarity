@@ -4,7 +4,7 @@
 \name{.get_smd.med}
 \alias{.get_smd.med}
 \alias{.get_smd.ipw}
-\alias{.get_smd.cm.odds}
+\alias{.get_smd.odds}
 \alias{.get_smd.psYpred}
 \alias{dot-get_smd}
 \title{(For maintainer) Compute  (standardized) mean differences}
@@ -13,7 +13,7 @@
 
 .get_smd.ipw(w.dat, vars, standardize)
 
-.get_smd.cm.odds(w.dat, vars, standardize)
+.get_smd.odds(w.dat, vars, standardize)
 
 .get_smd.psYpred(w.dat, c.vars, c.vars.std)
 }

@@ -2,13 +2,12 @@
 
 
 
-#### weights_cm.odds ###########################################################
+#### weights_odds ###########################################################
 
 
 #' Estimates odds weights for the Ypred estimator
+#' @inheritParams weights_ipw
 #' @inheritParams weights_med
-#' @param cm.vars.std Names of covariates and mediators whose mean differences are to be standardized in balance plotting. Ignore if \code{plot==FALSE}.
-#' @param cm.order Order in which covariates and mediators are to be plotted. If not specify, use order that appears in \code{a.cm.form}.
 #' @return \tabular{ll}{
 #' \code{w.dat} \tab A data frame for the pseudo and actual subsamples (pseudo ones with estimated distribution-morphing odds weights) \cr
 #' \code{wt.dist.plot} \tab If \code{plot==TRUE}, a density plot of the distribution-morphing weights, and (if sampling weights vary) a density plot of the final weights \cr
@@ -18,40 +17,40 @@
 #' @export
 
 
-weights_cm.odds <- function(
+weights_odds <- function(
     data,
     s.wt.var = NULL,
     cross.world = "10", # options: "10", "01", "both"
-    a.cm.form,
+    a.form,
 
     max.stabilized.wt = 30,
 
     plot = TRUE,
-    cm.order = NULL,
-    cm.vars.std = NULL
+    vars.order = NULL,
+    vars.std = NULL
 ) {
 
 
     # CLEAN INPUTS
 
-    cm.vars <- NULL
+    vars <- NULL
 
-    .prep_cm.odds()
+    .prep_odds()
 
 
     # COMPUTE WEIGHTS
 
-    w.dat <- .compute_weights.cm.odds(data              = data,
+    w.dat <- .compute_weights.odds(data              = data,
                                       cross.world       = cross.world,
-                                      a.cm.form         = a.cm.form,
+                                      a.form         = a.form,
                                       max.stabilized.wt = max.stabilized.wt)
 
 
     # MAKE PLOTS
 
-    if (plot) plots <- .plot_cm.odds(w.dat = w.dat,
-                                     cm.vars = cm.vars,
-                                     cm.vars.std = cm.vars.std)
+    if (plot) plots <- .plot_odds(w.dat = w.dat,
+                                     vars = vars,
+                                     vars.std = vars.std)
 
 
 
@@ -72,7 +71,7 @@ weights_cm.odds <- function(
 
 #' @rdname dot-prep
 #' @order 3
-.prep_cm.odds <- function() {
+.prep_odds <- function() {
 
     top.env <- parent.frame()
 
@@ -80,35 +79,35 @@ weights_cm.odds <- function(
 
     .clean_cross.world(top.env)
 
-    .clean_weights.cm.odds(top.env)
+    .clean_weights.odds(top.env)
 
-    if (top.env$plot) .check_plot.cm.odds(top.env)
+    if (top.env$plot) .check_plot.odds(top.env)
 }
 
 
 
 
-#### .clean_weights.cm.odds ####################################################
+#### .clean_weights.odds ####################################################
 
 #' @rdname dot-clean_weights
 #' @order 3
 #' @details \code{.clean_weights.odds()} is used by \code{.prep_odds()}.
 
-.clean_weights.cm.odds <- function(env) {
+.clean_weights.odds <- function(env) {
 
     if (!is.numeric(env$max.stabilized.wt))
         stop("max.stabilized.wt must be a numeric value.")
 
 
-    a.var   <- all.vars(formula(env$a.cm.form)[[2]])
-    cm.vars <- all.vars(formula(env$a.cm.form)[[3]])
+    a.var <- all.vars(formula(env$a.form)[[2]])
+    vars  <- all.vars(formula(env$a.form)[[3]])
 
-    stray.vars <- setdiff(c(a.var, cm.vars), names(env$data))
+    stray.vars <- setdiff(c(a.var, vars), names(env$data))
 
     if (length(stray.vars)>0)
         stop(paste("Variable(s)",
                    paste(stray.vars, collapse = ", "),
-                   "in a.cm.form not found in dataset."))
+                   "in a.form not found in dataset."))
 
     if (!is_binary01(env$data[, a.var]))
         stop(paste("Treatment variable (",
@@ -118,43 +117,43 @@ weights_cm.odds <- function(
     env$data$.a <- env$data[, a.var]
 
 
-    env$cm.vars <- cm.vars
+    env$vars <- vars
 }
 
 
 
-#### .check_plot.cm.odds ###################################################
+#### .check_plot.odds ###################################################
 
 #' @rdname dot-check_plot
 #' @order 3
 #' @details \code{.check_plot.odds()} is called by \code{.prep_odds()}.
 
-.check_plot.cm.odds <- function(env) {
+.check_plot.odds <- function(env) {
 
-    cm.vars     <- env$cm.vars
-    cm.order    <- env$cm.order
-    cm.vars.std <- env$cm.vars.std
+    vars       <- env$vars
+    vars.order <- env$vars.order
+    vars.std   <- env$vars.std
 
 
-    if (!is.null(cm.order)) {
+    if (!is.null(vars.order)) {
 
-        if (!setequal(cm.vars, cm.order)) {
+        if (!setequal(vars, vars.order)) {
             warning("Variables in cm.order do not match covariates from a.c.form. Ignoring c.order.")
         } else
-            env$cm.vars <- cm.vars <- cm.order
+            env$vars <- vars <- vars.order
     }
 
 
 
 
-    if (is.null(cm.vars.std)) {
+    if (is.null(vars.std)) {
 
-        maybe.cont <- sapply(cm.vars.std,
+        maybe.cont <- sapply(vars.std,
                              function(z) maybe_continuous(env$data[, z]))
 
         if (any(maybe.cont))
             message(paste("Consider whether the balance plot should use standardized mean differences for numeric covariate/mediators",
-                          paste(cm.vars.std[which(maybe.cont)],
+                          paste(vars.std[which(maybe.cont)],
                                 collapse = ", "),
                           "(if they are continuous variables).",
                           "To turn off this message, specify cm.vars.std=\"\"."))
@@ -163,42 +162,42 @@ weights_cm.odds <- function(
     }
 
 
-    if (length(cm.vars.std)==1 && cm.vars.std=="")  return()
+    if (length(vars.std)==1 && vars.std=="")  return()
 
 
 
-    cm.vars.std <- setdiff(cm.vars.std, "")
+    vars.std <- setdiff(vars.std, "")
 
-    if (length(setdiff(cm.vars.std, cm.vars))>0)
-        stop("Variables specified in cm.vars.std are not all contained in model formula a.cm.form.")
+    if (length(setdiff(vars.std, vars))>0)
+        stop("Variables specified in vars.std are not all contained in model formula a.form.")
 
 
 
-    ok.std <- sapply(cm.vars.std, function(z) maybe_continuous(env$data[, z]))
+    ok.std <- sapply(vars.std, function(z) maybe_continuous(env$data[, z]))
 
     if (!all(ok.std))
         stop(paste("Check variable(s)",
-                   paste(cm.vars.std[which(!ok.std)], collapse = ", "),
-                   "before proceeding. Only include continuous variables in c.cm.vars.std and m.cm.vars.std."))
+                   paste(vars.std[which(!ok.std)], collapse = ", "),
+                   "before proceeding. Only include continuous variables in vars.std."))
 }
 
 
 
 
-#### .compute_weights.cm.odds ##################################################
+#### .compute_weights.odds ##################################################
 
 #' @rdname dot-compute_weights
 #' @order 3
 
-.compute_weights.cm.odds <- function(
+.compute_weights.odds <- function(
     data,
     cross.world,
-    a.cm.form,
+    a.form,
     max.stabilized.wt
 
 ) {
 
-    a.cm.fu <- glm(formula = a.cm.form,
+    a.fu <- glm(formula = a.form,
                    data    = data,
                    weights = data$.s.wt,
                    family  = quasibinomial)
@@ -230,7 +229,7 @@ weights_cm.odds <- function(
 
         s10 <- data[data$.a==1, ];  s10$.samp <- "s10"
 
-        s10$.w.wt <- exp(-predict(a.cm.fu, newdata = s10, type = "link"))
+        s10$.w.wt <- exp(-predict(a.fu, newdata = s10, type = "link"))
         s10$.w.wt <- .trunc_right(s10$.w.wt, max.wt$treat)
 
         s10$.f.wt <- s10$.s.wt * s10$.w.wt
@@ -243,7 +242,7 @@ weights_cm.odds <- function(
 
         s01 <- data[data$.a==0, ];  s01$.samp <- "s01"
 
-        s01$.w.wt <- exp(predict(a.cm.fu, newdata = s01, type = "link"))
+        s01$.w.wt <- exp(predict(a.fu, newdata = s01, type = "link"))
         s01$.w.wt <- .trunc_right(s01$.w.wt, max.wt$control)
 
         s01$.f.wt <- s01$.s.wt * s01$.w.wt
@@ -257,26 +256,26 @@ weights_cm.odds <- function(
 
 
 
-#### .plot_cm.odds #############################################################
+#### .plot_odds #############################################################
 
 #' @rdname dot-plot_w.dat
 #' @order 3
-#' @param cm.vars Names of covariates and mediators.
-#' @param cm.vars.std Names of covariates and mediators for which to use standardized mean differences in balance plots.
+#' @param vars Names of covariates and mediators.
+#' @param vars.std Names of covariates and mediators for which to use standardized mean differences in balance plots.
 
-.plot_cm.odds <- function(w.dat,
-                          cm.vars,
-                          cm.vars.std,
+.plot_odds <- function(w.dat,
+                          vars,
+                          vars.std,
                           estimate.Ypred = FALSE) {
 
-    out <- .plot_wt_dist.cm.odds(w.dat)
+    out <- .plot_wt_dist.odds(w.dat)
 
     if (estimate.Ypred) { bal.name <- "key.balance"
     } else              { bal.name <- "balance"
     }
-    out[[bal.name]] <- .plot_balance.cm.odds(w.dat = w.dat,
-                                             cm.vars = cm.vars,
-                                             cm.vars.std = cm.vars.std)
+    out[[bal.name]] <- .plot_balance.odds(w.dat = w.dat,
+                                             vars = vars,
+                                             vars.std = vars.std)
 
     out
 }
@@ -284,12 +283,12 @@ weights_cm.odds <- function(
 
 
 
-#### .plot_wt_dist.cm.odds #####################################################
+#### .plot_wt_dist.odds #####################################################
 
 #' @rdname dot-plot_wt_dist
 #' @order 2
 
-.plot_wt_dist.cm.odds <- function(
+.plot_wt_dist.odds <- function(
     w.dat,
     point.alpha = .1,
     jitter.width = .3
@@ -375,26 +374,26 @@ weights_cm.odds <- function(
 
 
 
-#### .plot_balance.cm.odds #####################################################
+#### .plot_balance.odds #####################################################
 
 
 #' @param w.dat Data for (pseudo) subsamples, e.g. \code{output of .compute_weights.Ypred()}
-#' @param cm.vars Names of covariates and mediators, already cleaned.
-#' @param cm.vars.std Names of mediators whose mean differences are to be standardized, already cleaned
+#' @param vars Names of variables whose balance is to be plotted, already cleaned.
+#' @param vars.std Names of variables whose mean differences are to be standardized, already cleaned.
 #' @importFrom ggplot2 ggplot aes geom_vline geom_point scale_color_manual scale_shape_manual labs theme_bw facet_wrap xlim
 #' @importFrom rlang .data
 #' @return Plot of balance on the means of covariates and mediators between pseudo subsample(s) and relevant subsample(s).
 #' @rdname dot-plot_balance
 #' @order 3
 
-.plot_balance.cm.odds <- function(w.dat,
-                                  cm.vars,
-                                  cm.vars.std) {
+.plot_balance.odds <- function(w.dat,
+                                  vars,
+                                  vars.std) {
 
 
-    smd.dat <- .get_smd.cm.odds(w.dat   = w.dat,
-                                vars     = cm.vars,
-                                standardize = cm.vars.std)
+    smd.dat <- .get_smd.odds(w.dat   = w.dat,
+                                vars     = vars,
+                                standardize = vars.std)
 
 
     ggplot(data = smd.dat,
@@ -419,14 +418,14 @@ weights_cm.odds <- function(
 
 
 
-#### .get_smd.cm.odds ##########################################################
+#### .get_smd.odds ##########################################################
 
 #' @rdname dot-get_smd
 #' @order 3
 #' @param cm.vars Names of covariates and mediators, checked and dummied.
 #' @param cm.vars.std Covariates and mediators to be standardized, already checked.
 
-.get_smd.cm.odds <- function(w.dat,
+.get_smd.odds <- function(w.dat,
                              vars,
                              standardize) {
 

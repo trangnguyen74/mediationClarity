@@ -7,7 +7,7 @@
 \name{.prep_med}
 \alias{.prep_med}
 \alias{.prep_ipw}
-\alias{.prep_cm.odds}
+\alias{.prep_odds}
 \alias{.prep_estimate_wtd}
 \alias{.prep_psYpred}
 \alias{.prep_psYpredMR}
@@ -24,7 +24,7 @@
 
 .prep_ipw()
 
-.prep_cm.odds()
+.prep_odds()
 
 .prep_estimate_wtd()
 
