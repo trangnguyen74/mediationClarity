@@ -133,12 +133,46 @@ estimate_psYpred <- function(
 
     .clean_boot(top.env)
 
-    .clean_weights.ipw(top.env)
+    .clean_weights.psYpred(top.env)
 
     .clean_y.forms.psYpred(top.env)
 
     if (top.env$plot) .check_plot.ipw(top.env)
 }
+
+
+
+
+#### OK  .clean_weights.psYpred ####################################################
+
+
+#' @rdname dot-clean_weights
+#' @order 5
+
+.clean_weights.psYpred <- function(env) {
+
+    if (!is.numeric(env$max.stabilized.wt))
+        stop("max.stabilized.wt must be a numeric value.")
+
+    a.form <- env$a.c.form
+
+    a.var  <- all.vars(formula(a.form)[[2]])
+    c.vars <- all.vars(formula(a.form)[[3]])
+
+    stray.vars <- setdiff(c(a.var, c.vars), names(env$data))
+
+    if (length(stray.vars)>0)
+        stop(paste("Variable(s)", paste(stray.vars, collapse = ", "), "not found in dataset."))
+
+    if (!is_binary01(env$data[, a.var]))
+        stop(paste("Treatment variable (", a.var, ") must be numeric and in binary 0/1 form."))
+
+    env$data$.a <- env$data[, a.var]
+
+    env$c.vars <- c.vars
+
+}
+
 
 
 
@@ -387,7 +421,7 @@ estimate_psYpred <- function(
 ) {
 
     tmp <- .compute_weights.ipw(data = data,
-                                a.c.form = a.c.form,
+                                a.form = a.c.form,
                                 max.stabilized.wt = max.stabilized.wt)
 
     out <- NULL

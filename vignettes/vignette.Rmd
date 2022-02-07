@@ -525,13 +525,13 @@ The paper mentions two versions, here we implement the second version.
 
 ```{r, eval=FALSE}
 # get pseudo sample p00, on which we will estimate potential outcome means
-w.ipw <- weights_ipw(
+w.c.ipw <- weights_ipw(
     data       = synth,
-    a.c.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.form     = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     c.vars.std = "sfc0"
 )
 
-w.dat <- w.ipw$w.dat
+w.dat <- w.c.ipw$w.dat
 
 p00 <- w.dat[w.dat$.samp=="p00", ]
 
