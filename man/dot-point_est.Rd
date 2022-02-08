@@ -2,7 +2,7 @@
 % Please edit documentation in R/C0-estimate_wtd.R, R/C2a-estimate_psYpred.R,
 %   R/C2b-estimate_psYpredMR.R, R/C3a-estimate_Ypred.R,
 %   R/C3b-estimate_YpredMR.R, R/C1a-estimate_Y2pred.R, R/C1b-estimate_Y2predR.R,
-%   R/D1a-NDEpred.R, R/D1b-NDEpredR.R
+%   R/D1a-NDEpred.R, R/D1b-NDEpredR.R, R/E1a-wtCadj.R
 \name{.point_est.wtd}
 \alias{.point_est.wtd}
 \alias{.point_est.psYpred}
@@ -13,6 +13,7 @@
 \alias{.point_est.Y2predR}
 \alias{.point_est.NDEpred}
 \alias{.point_est.NDEpredR}
+\alias{.point_est.wtCadj}
 \alias{dot-point_est}
 \title{(For maintainer) Point estimation}
 \usage{
@@ -143,6 +144,18 @@
   nde1.c.form,
   y.family
 )
+
+.point_est.wtCadj(
+  data,
+  cross.world,
+  effect.scale,
+  a.c.form,
+  a.cm.form,
+  max.stabilized.wt = 30,
+  output.data = FALSE,
+  wkng.form,
+  y.family
+)
 }
 \arguments{
 \item{data}{A dataset that has been prepared to have the sampling with variable named s.wt (e.g., using function \code{.clean_inputs_generic()}.}
@@ -166,6 +179,8 @@
 \item{y.family}{GLM (quasi-) family for outcome models.}
 
 \item{y10.c.form, y01.c.form}{Model formulas for E[Y(1,M0)|C] and E[Y(0,M1)|C].}
+
+\item{wkng.form}{Formula for working regression model}
 }
 \value{
 If \code{plot==FALSE}, effect estimates (numeric vector). If \code{plot==TRUE}, a list including this vector of effect estimates and the weight distribution and mean balance plots.

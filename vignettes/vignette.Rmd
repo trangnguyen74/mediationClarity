@@ -1,6 +1,5 @@
 ---
 title: "tnMediation: simple and more robust estimation of marginal natural (in)direct effects"
-subtitle: "Computing appendix to Nguyen et al. (2022). arXiv:2102.06048."
 output: 
     rmarkdown::html_vignette:
         number_sections: yes
@@ -29,13 +28,23 @@ library(ggplot2)
 
 # Read me first
 
-This vignette is long-form documentation of the package `tnMediation`, and is also the computing appendix to Nguyen et al. (2022). arxiv:2102.06048.
+This vignette is long-form documentation of the package `tnMediation`, and is also the computing appendix to the manuscript 
+
+Nguyen et al. (2022). Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects. arxiv:2102.06048.
+
+\
 
 We will briefly describe the data (which help make everything concrete) in Section 2.
 
+\
+
 Before getting to the estimators (what you are most likely here for), we will cover all the weighting matter in Section 3. The *mediation weighting* applies to multiple estimators, so it makes sense to get it clear first.
 
+\
+
 Sections 4-6 then track the three groups of estimators presented in the paper.
+
+\
 
 For each weighting method or each estimator, this vignette includes three elements, in the following order:
 
@@ -43,8 +52,11 @@ For each weighting method or each estimator, this vignette includes three elemen
 - presents the specific function from the package that should be used to implement the weighting or estimator and explain its arguments.
 - shows the outputs of the function.
 
-To speed up the building of this document, we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
+\
 
+To speed up the compling of this document, we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
+
+\
 
 # A bit about data
 
@@ -526,8 +538,8 @@ The paper mentions two versions, here we implement the second version.
 ```{r, eval=FALSE}
 # get pseudo sample p00, on which we will estimate potential outcome means
 w.c.ipw <- weights_ipw(
-    data       = synth,
-    a.form     = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    data     = synth,
+    a.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     vars.std = "sfc0"
 )
 
@@ -660,8 +672,49 @@ gridExtra::grid.arrange(
 
 ### Manual code (point estimation only, not run)
 
-```{r, eval=FALSE}
+The code chunk below obtains the point estimate of the nonrobust estimator Ypred.
 
+For the more robust YpredMR estimator, we would first estimate weights to form the pseudo samples p00, p11, p10, and replace s11, s00 and s10 in fitting outcome models below with p11, p00 and p10.
+
+
+```{r, eval=FALSE}
+w.cm.odds <- weights_odds(
+    data        = synth,
+    cross.world = "10",
+    a.form      = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    vars.std    = c("sfc0", "sfc"),
+    vars.order  = c("sex", "age", "edu", "religion", "drink0", "att0", "rul0", "sfc0", "att", "rul", "sfc")
+)
+
+w.dat <- w.cm.odds$w.dat
+
+s00 <- w.dat[w.dat$.samp=="s00", ]
+s11 <- w.dat[w.dat$.samp=="s11", ]
+s10 <- w.dat[w.dat$.samp=="s10", ]
+
+y.c0.form  <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
+y.c1.form  <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
+y10.c.form <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
+
+y.c0.s00  <- glm(formula = y.c0.form,  data = s00, family = binomial)
+y.c1.s11  <- glm(formula = y.c1.form,  data = s11, family = binomial)
+y10.c.s10 <- glm(formula = y10.c.form, data = s10, family = quasibinomial,
+                 weights = data$.f.wt)
+
+y00.pred <- predict(y.c0.s00,  newdata = synth, type = "response")
+y11.pred <- predict(y.c1.s11,  newdata = synth, type = "response")
+y10.pred <- predict(y10.c.s10, newdata = synth, type = "response")
+
+y00.mean <- mean(y00.pred)
+y11.mean <- mean(y11.pred)
+y10.mean <- mean(y10.pred)
+
+point.Ypred <- c(y11.mean = y11.mean,
+                 y00.mean = y00.mean,
+                 y10.mean = y10.mean,
+                 TE   = y11.mean - y00.mean,
+                 NDE0 = y10.mean - y00.mean,
+                 NIE1 = y11.mean - y10.mean)
 ```
 
 
@@ -767,6 +820,7 @@ gridExtra::grid.arrange(
 
 The paper mentioned two versions. Here we implement the first version.
 
+\
 
 # Estimators -- if additive effects
 
@@ -793,7 +847,7 @@ y.c1.s11 <- glm(formula = y.c1.form, data = s11, family = binomial)
 y00.pred <- predict(y.c0.s00, newdata = synth, type = "response")
 y11.pred <- predict(y.c1.s11, newdata = synth, type = "response")
 
-TE <- mean(y11.pred) - mean(y00.pred)
+te <- mean(y11.pred) - mean(y00.pred)
 
 # estimation of NDE0
 y.cm1.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0 + att + rul + splines::ns(sfc, 3)"
@@ -814,12 +868,12 @@ eff.c.s00 <- glm(formula = nde0.c.form, data = s00.tmp, family = quasibinomial)
 
 nde0.pred <- predict(eff.c.s00, newdata = synth, type = "response")
 
-NDE0 <- mean(nde0.pred)
+nde0 <- mean(nde0.pred)
 
 # assemble estimates
-point.Y2pred <- c(TE   = TE,
-                  NDE0 = NDE0,
-                  NIE1 = TE - NDE0)
+point.NDEpred <- c(TE   = te,
+                   NDE0 = nde0,
+                   NIE1 = te - nde0)
 ```
 
 
@@ -899,15 +953,173 @@ names(est.NDEpredR$plots)
 round(est.NDEpredR$estimates, 4)
 ```
 
+\
 
 # Estimators -- using covariates to improve precision (not robustness)
 
 ## wt-Cadj
 
-## wp-Cadj
+For this estimation strategy, the paper mentions two versions. We implement the version where the two effects are estimated using the same model.
 
-## wp.MR-Cadj
 
+### Manual code (point estimation only, not run)
+
+```{r, eval=FALSE}
+w.med <- weights_med(
+    data        = synth,
+    cross.world = "10",  # default
+    
+    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    
+    plot        = TRUE,  # default
+    c.vars.std  = "sfc0",
+    m.vars.std  = "sfc"
+)
+
+w.dat <- w.med$w.dat
+
+w.dat10 <- w.dat[w.dat$.samp %in% c("p00", "p11", "p10"), ]
+
+w.dat10$.a0 <- ifelse(w.dat10$.samp=="p00", -1, 0)
+w.dat10$.a1 <- ifelse(w.dat10$.samp=="p11",  1, 0)
+
+# simple (coef) method for risk difference using linear working model
+wkng.mod <- glm(formula = "drink ~ .a0 + .a1 + sex + age + edu + religion + drink0 + att0 + rul0 + sfc0",
+                 data    = w.dat10,
+                 weights = data$.f.wt,
+                 family  = "gaussian")
+
+estimates <- c(NDE0 = unname(coef(wkng.mod)[2]),
+               NIE1 = unname(coef(wkng.mod)[3]))
+
+# general (prediction) method using logit working model
+wkng.mod <- glm(formula = "drink ~ .a0 + .a1 + sex + age + edu + religion + drink0 + att0 + rul0 + sfc0",
+                 data    = w.dat10,
+                 weights = data$.f.wt,
+                 family  = "quasibinomial")
+
+y00.full <- y10.full <- y11.full <- w.dat[w.dat$.samp %in% c("p00", "p11"), ]
+y00.full$.a0 <- -1;  y00.full$.a1 <- 0
+y10.full$.a0 <-  0;  y10.full$.a1 <- 0
+y11.full$.a0 <-  0;  y11.full$.a1 <- 1
+
+y00.full$.y <- predict(wkng.mod, newdata = y00.full, type = "response")
+y10.full$.y <- predict(wkng.mod, newdata = y10.full, type = "response")
+y11.full$.y <- predict(wkng.mod, newdata = y11.full, type = "response")
+
+point.wtCadj <- c(NDE0 = weighted.mean(y10.full$.y, y10.full$.s.wt) -
+                         weighted.mean(y00.full$.y, y00.full$.s.wt),
+                  NIE1 = weighted.mean(y11.full$.y, y11.full$.s.wt) - 
+                         weighted.mean(y10.full$.y, y10.full$.s.wt))
+```
+
+
+### Package code
+
+```{r, cache=TRUE}
+est.wtCadj <- estimate_wtCadj(
+    data        = synth,
+    cross.world = "10",
+
+    boot.num    = 99,
+    boot.method = "cont-wt",
+    boot.seed   = 77777,
+    
+    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    
+    plot        = TRUE,  # default
+    c.vars.std  = "sfc0",
+    m.vars.std  = "sfc",
+
+    y.var       = "drink",
+    y.link      = "logit"
+) 
+```
+
+
+
+### Outputs
+
+```{r}
+names(est.wtCadj)
+names(est.wtCadj$plots)
+```
+
+```{r}
+est.wtCadj$estimates
+```
+
+
+
+## wp-Cadj pair
+
+The paper mentions two versions. We implement the version where the two effects are estimated separately.
+
+### Manual code (point estimation only, not run)
+
+The code chunk below obtains the point estimate of the nonrobust estimator wp-Cadj.
+
+For the more robust wpMR-Cadj, we would first estimate weights to form the pseudo samples p00, p11, p10 (using the `weights_med()` function), then replace s11 with p10 in the fitting of the E[Y|C,M,A=1] model.
+
+```{r, eval=FALSE}
+w.c.ipw <- weights_ipw(
+    data     = synth,
+    a.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    vars.std = "sfc0"
+)
+
+w.dat <- w.c.ipw$w.dat
+
+s11 <- synth[synth$treat==1, ]
+
+y.cm1.form <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)"
+y.cm1.s11 <- glm(formula = y.cm1.form,
+                 data    = s11,
+                 family  = binomial)
+
+p10 <- w.dat[w.dat$.samp=="p00", ]
+p10$.samp <- "p10"
+p10$drink <- predict(y.cm1.s11, newdata = p10, type = "response")
+
+# estimate NDE on additive scale by differencing
+nde0 <- weighted.mean(p10$drink - p00$drink, p00$.f.wt)
+
+# estimate NIE option 1: simple (coef) method
+p11.p10.dat <- rbind(w.dat[w.dat$.samp=="p11", ], p10)
+
+wkng.mod <- glm(formula = "drink ~ treat + sex + age + edu + religion + drink0 + att0 + rul0 + sfc0",
+                 data    = p11.p10.dat,
+                 weights = data$.f.wt,
+                 family  = "gaussian")
+
+nie1 <- unname(coef(wkng.mod)[2])
+
+# estimate NIE option 2: general (prediction) method
+wkng.mod <- glm(formula = "drink ~ treat + sex + age + edu + religion + drink0 + att0 + rul0 + sfc0",
+                 data    = p11.p10.dat,
+                 weights = data$.f.wt,
+                 family  = "quasibinomial")
+
+y10.full <- y11.full <- w.dat
+y10.full$treat <- 0
+y11.full$treat <- 1
+
+y10.full$drink <- predict(wkng.mod, newdata = y10.full, type = "response")
+y11.full$drink <- predict(wkng.mod, newdata = y11.full, type = "response")
+
+nie1 <- mean(y11.full$drink) - mean(y10.full$drink)
+
+point.wpCadj <- c(NDE0 = nde0,
+                  NIE1 = nie1)
+```
+
+
+### Package code
+
+
+### Outputs
 
 
 

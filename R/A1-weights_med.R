@@ -79,7 +79,7 @@ weights_med <- function(
 
 #### OK  .prep_med #############################################################
 
-#' (For maintainer) Prep work within main functions
+#' Internal functions: preparing inputs before main computing
 #'
 #' A set of internal functions to do the prep work for the main functions before the key computing takes place.
 #' @name dot-prep
@@ -88,6 +88,7 @@ NULL
 
 #' @rdname dot-prep
 #' @order 1
+
 .prep_med <- function() {
 
     top.env <- parent.frame()
@@ -369,21 +370,21 @@ NULL
 #' @param m.vars Names of mediators, already cleaned.
 #' @param c.vars.std Names of covariates whose mean differences are to be standardized, already cleaned.
 #' @param m.vars.std Names of mediators whose mean differences are to be standardized, already cleaned.
-#' @param estimate.wtd Whether plot is part of output of implementing estimator wtd (the pure weighting estimator), defaults to FALSE. See relevance in \bold{Value} section.
+#' @param key.balance Whether all balance components are crucial to the estimator using the weighting method, defaults to FALSE. See relevance in \bold{Value} section.
 
 .plot_med <- function(w.dat,
                       c.vars,
                       m.vars,
                       c.vars.std,
                       m.vars.std,
-                      estimate.wtd = FALSE) {
+                      key.balance = FALSE) {
 
 
     out <- .plot_wt_dist(w.dat)
 
 
-    if (estimate.wtd) { bal.name <- "key.balance"
-    } else            { bal.name <- "balance"
+    if (key.balance) { bal.name <- "key.balance"
+    } else           { bal.name <- "balance"
     }
 
     out[[bal.name]] <- .plot_balance.med(w.dat = w.dat,
@@ -391,7 +392,7 @@ NULL
                                          m.vars = m.vars,
                                          c.vars.std = c.vars.std,
                                          m.vars.std = m.vars.std,
-                                         estimate.wtd = estimate.wtd)
+                                         key.balance = key.balance)
 
     out
 }
@@ -421,7 +422,7 @@ NULL
                               m.vars,
                               c.vars.std,
                               m.vars.std,
-                              estimate.wtd = FALSE) {
+                              key.balance = FALSE) {
 
     smd.dat <- .get_smd.med(w.dat = w.dat,
                             c.vars = c.vars,
@@ -429,7 +430,7 @@ NULL
                             c.vars.std = c.vars.std,
                             m.vars.std = m.vars.std)
 
-    if (estimate.wtd)
+    if (key.balance)
         smd.dat$contrast <-
         factor(smd.dat$contrast,
                levels = c("p11 - full", "p00 - full", "p11 - p00",
@@ -439,11 +440,11 @@ NULL
                           "p00 - full  (anchor)",
                           "p11 - p00  (for TE)",
                           "p10 - full  (anchor)",
-                          "p11 - p10  (for NIE1)",
-                          "p10 - p00  (for NDE0)",
+                          "p11 - p10  (for NIE1/NDE0)",
+                          "p10 - p00  (for NIE1/NDE0)",
                           "p01 - full  (anchor)",
-                          "p11 - p01  (for NDE1)",
-                          "p01 - p00  (for NIE0)"))
+                          "p11 - p01  (for NIE0/NDE1)",
+                          "p01 - p00  (for NIE0/NDE1)"))
 
     ggplot(data = smd.dat,
            aes(x = .data$mean.diff,

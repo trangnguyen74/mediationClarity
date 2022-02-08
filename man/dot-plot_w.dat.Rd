@@ -12,7 +12,7 @@
 \alias{dot-plot_w.dat}
 \title{(For maintainer) Plot weight distributions and mean balance}
 \usage{
-.plot_med(w.dat, c.vars, m.vars, c.vars.std, m.vars.std, estimate.wtd = FALSE)
+.plot_med(w.dat, c.vars, m.vars, c.vars.std, m.vars.std, key.balance = FALSE)
 
 .plot_ipw(w.dat, vars, vars.std)
 
@@ -35,7 +35,7 @@
 
 \item{m.vars.std}{Names of mediators whose mean differences are to be standardized, already cleaned.}
 
-\item{estimate.wtd}{Whether plot is part of output of implementing estimator wtd (the pure weighting estimator), defaults to FALSE. See relevance in \bold{Value} section.}
+\item{key.balance}{Whether all balance components are crucial to the estimator using the weighting method, defaults to FALSE. See relevance in \bold{Value} section.}
 
 \item{vars}{Names of covariates and mediators.}
 

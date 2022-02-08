@@ -81,7 +81,7 @@ estimate_wtd <- function(
                            m.vars = m.vars,
                            c.vars.std = c.vars.std,
                            m.vars.std = m.vars.std,
-                           estimate.wtd = TRUE);     rm(tmp)
+                           key.balance = TRUE);     rm(tmp)
     }
 
 
@@ -139,14 +139,14 @@ estimate_wtd <- function(
 
     .clean_weights.med(top.env)
 
-    .clean_y.var(top.env)
+    .clean_y.wtd(top.env)
 
     if (top.env$plot) .check_plot.med(top.env)
 }
 
 
 
-#### OK  .clean_y.var ##########################################################
+#### OK  .clean_y.wtd ##########################################################
 
 #' (For maintainer) Clean outcome-related inputs
 #'
@@ -159,7 +159,7 @@ NULL
 #' @order 1
 #' @inheritParams env-block
 
-.clean_y.var <- function(env) {
+.clean_y.wtd <- function(env) {
 
     y.var <- env$y.var
 
