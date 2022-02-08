@@ -236,12 +236,22 @@ weights_ipw <- function(
 
 .plot_ipw <- function(w.dat,
                       vars,
-                      vars.std) {
+                      vars.std,
+                      key.balance = FALSE) {
 
-    c(.plot_wt_dist(w.dat),
-      .plot_balance.ipw(w.dat = w.dat,
-                        vars = vars,
-                        vars.std = vars.std))
+
+    out <- .plot_wt_dist(w.dat)
+
+
+    if (key.balance) { bal.name <- "key.balance"
+    } else           { bal.name <- "balance"
+    }
+
+    out[[bal.name]] <- .plot_balance.ipw(w.dat = w.dat,
+                                         vars = vars,
+                                         vars.std = vars.std)
+
+    out
 }
 
 
@@ -262,8 +272,7 @@ weights_ipw <- function(
                             standardize = vars.std)
 
 
-    p <-
-        ggplot(data = smd.dat,
+    ggplot(data = smd.dat,
                aes(x = .data$mean.diff,
                    y = factor(.data$variable,
                               levels = rev(levels(.data$variable))))) +
@@ -280,9 +289,6 @@ weights_ipw <- function(
         xlim(min(c(-.3, smd.dat$mean.diff)),
              max(c( .3, smd.dat$mean.diff))) +
         facet_wrap(~.data$contrast, ncol = 3)
-
-
-    list(balance = p)
 
 }
 
