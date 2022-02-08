@@ -879,7 +879,7 @@ point.NDEpred <- c(TE   = te,
 
 ### Package code
 
-```{r, cache=TRUE}
+```{r NDEpred, cache=TRUE}
 # the nonrobust NDEpred estimator
 est.NDEpred <- estimate_NDEpred(
     data        = synth,
@@ -902,7 +902,7 @@ est.NDEpred <- estimate_NDEpred(
 ```
 
 
-```{r, cache=TRUE}
+```{r NDEpredR, cache=TRUE}
 # the robust NDEpred.R estimator
 est.NDEpredR <- estimate_NDEpredR(
     data        = synth,
@@ -1017,7 +1017,7 @@ point.wtCadj <- c(NDE0 = weighted.mean(y10.full$.y, y10.full$.s.wt) -
 
 ### Package code
 
-```{r, cache=TRUE}
+```{r wtCadj, cache=TRUE}
 est.wtCadj <- estimate_wtCadj(
     data        = synth,
     cross.world = "10",
