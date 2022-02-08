@@ -5,6 +5,7 @@ output:
         number_sections: yes
         toc: true
         toc_depth: 2
+bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -28,39 +29,27 @@ library(ggplot2)
 
 # Read me first
 
-This vignette is long-form documentation of the package `tnMediation`, and is also the computing appendix to the manuscript 
+This vignette is long-form documentation of the package `tnMediation`, and is also the computing appendix to the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048).
 
-Nguyen et al. (2022). Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects. arxiv:2102.06048.
 
-\
 
-We will briefly describe the data (which help make everything concrete) in Section 2.
+## Vignette structure
 
-\
 
-Before getting to the estimators (what you are most likely here for), we will cover all the weighting matter in Section 3. The *mediation weighting* applies to multiple estimators, so it makes sense to get it clear first.
+We will briefly describe the data (which will help make everything concrete) below.
 
-\
+Before getting to the estimators (what you are most likely here for), we will cover all the weighting matter in Section 2, as weighting is involved in multiple estimators. Sections 3-5 then track the three groups of estimators presented in the paper. For each weighting method or estimator, we present the function that implements the method and explain its outputs.
 
-Sections 4-6 then track the three groups of estimators presented in the paper.
+In sections 3-5, to speed up the compling of this document we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
 
-\
+The additional Section 6 includes some manual code that shows the gist of each method, for the interested user. We recommend reading the paper to fully understand the methods and their properties.
 
-For each weighting method or each estimator, this vignette includes three elements, in the following order:
+Section 7 contains code that, if run, produces the results in the manuscript.
 
-- shows code that manually computes the weights or obtains the point estimate for the estimator. This code is not meant to be used, its purpose is simply to explain the method.
-- presents the specific function from the package that should be used to implement the weighting or estimator and explain its arguments.
-- shows the outputs of the function.
 
-\
+## A bit about data
 
-To speed up the compling of this document, we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
-
-\
-
-# A bit about data
-
-We use a synthetic dataset `synth` that was created based on the PAS trial. It is available when you load the package. See description in the paper. 
+We use a synthetic dataset `synth` that was created based on the PAS trial [@koning2011WhyTargetEarly]. It is available when you load the package. See description in the paper. 
 
 Let's have a quick look at the data. The variables include:
 
@@ -87,172 +76,99 @@ table1::table1(~ age + sex + edu + religion + drink0 + att0 + rul0 + sfc0 | fact
 
 ## Mediation weighting
 
-Mediation weighting is weighting subsamples to create pseudo treated sample (herein `p11`) and pseudo control sample (`p00`) that mimic the C distribution of the full sample, and to create pseudo cross-world sample(s) (`p10` and/or `p01`) that mimic the full sample C distribution and the M given C distribution of the controls (if `p10`) or the treated (if `p01`).
-
-Mediation weighting is used for the pure weighting estimator (wtd), the more robust estimators (Y2pred.R, psYpred.MR, Ypred.MR, MsimYpred.MR), and the estimators that use the three pseudo samples and working regression to improve precision (wt-Cadj2 and wt-Cadj1).
+Mediation weighting is weighting subsamples to create pseudo treated (herein `p11`) and pseudo control (`p00`) samples that mimic the C distribution of the full sample, and to create pseudo cross-world sample(s) (`p10` and/or `p01`) that mimics the full sample C distribution and the M given C distribution of the controls (if `p10`) or of the treated (if `p01`).
 
 Following the paper, we show all computation just for the (NDE0, NIE1) decomposition, which requires `p10` but not `p01`.
 
-The paper mentions three formulas for the cross-world weights. We use the second formula, based on fitting two models for P(A|C) and P(A,C,M).
+Mediation weighting is used for the pure weighting estimator (wtd) and other estimators including Y2predR, psYpredMR, YpredMR, MsimYpredMR, wt-Cadj and wpMR-Cadj.
 
-### Manual code (not run)
+The paper mentions three formulas for the cross-world weights. We use the second formula, based on fitting models for $\mathrm{P}(A|C)$ and $\mathrm{P}(A|C,M)$.
 
-```{r, eval=FALSE}
-# prep pseudo samples p11, p00, p10
-p11 <- synth[synth$treat==1, ]; p11$samp <- "p11"
-p00 <- synth[synth$treat==0, ]; p00$samp <- "p00"
-p10 <- synth[synth$treat==1, ]; p10$samp <- "p10"
-
-# fit models for P(A|C) and P(A|C,M)
-a.c.form  <- "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)"
-a.cm.form <- "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)"
-
-a.c.fu  <- glm(formula = a.c.form,  data = synth, family = binomial)
-a.cm.fu <- glm(formula = a.cm.form, data = synth, family = binomial)
-
-# compute inverse probability weights for p11 and p00
-p11$wt <-  1 /      predict(a.c.fu, newdata = p11, type = "response")
-p00$wt <-  1 / (1 - predict(a.c.fu, newdata = p00, type = "response"))
-
-# compute cross-world weights for p10
-p10.a.c.prob  <-     predict(a.c.fu,  newdata = p10, type = "response")
-p10.a.cm.odds <- exp(predict(a.cm.fu, newdata = p10, type = "link"))
-
-p10$wt <- (1 / p10.a.cm.odds) / (1 - p10.a.c.prob)
-
-# assemble weighted dataset with pseudo samples stacked
-w.dat <- rbind(p00, p11, p10)
-```
-
-### Package code
-
-But we could simply use the package, specifically function `weights_med()`. The advantage is that it automatically makes weight-distribution and balance plots. Also, it accommodates sampling weights.
+### Function
 
 ```{r}
 w.med <- weights_med(
     data        = synth,
-    cross.world = "10",  # default
+    s.wt.var    = NULL,   # name sampling weight variable here (if needed)
     
+    cross.world = "10",   # default
+    
+    # P(A|C) and P(A|C,M) model formulas
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
-    plot        = TRUE,  # default
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc"
+    plot        = TRUE,   # default
+    c.vars.std  = "sfc0", # C and M vars for which want 
+    m.vars.std  = "sfc",  # standardized mean diffs in balance plot
 )
 ```
 
+The input arguments are available for use as needed and ignored if not, and are reused in the different functions in the package as appropriate. 
 
-`cross.world` = "10" is used for the (NDE0, NIE1) decomposition; the other options are "01" and "both". 
+`s.wt.var` is available for all functions, but we mention it only once here, as `synth` does not have sampling weights. 
 
-`c.vars.std` and `m.vars.std` specify covariates and mediators for which to use standardized (instead of unstandardized) mean differences in the balance plot.
+`cross.world` defaults to "10" if not specified. The other options are "01" (for the other decomposition), or "both".
 
-If there are sampling weights, provide name of the sampling weights variable in argument `s.wt.var`.
+We ask for standardized mean differences for `sfc0` and `sfc`, which are continuous variables.
 
+There are two other plot parameters `c.order` and `m.order` specifying the order by which C and M variables are to be plotted (if different from the order they appear in `a.c.form` and `a.cm.form`), which we don't need yet.
 
 ### Outputs
 
+The outputs include weighted data and plots.
+
 ```{r}
 names(w.med)
-names(w.med$plots)
 ```
 
+The weighted dataset `w.dat` has several new variables, whose names all start with a dot to differentiate them from the original data. Three of these variables are for weights: `.s.wt` (sampling weights), `.w.wt` (distribution-morphing weights) and `.f.wt` (final weights, the product of sampling and distribution-morphing weights). In this example, we do not have sampling weights, so `.s.wt` = 1 and `.f.wt` = `.w.wt`.
 
-**Weighted data**
 
 ```{r}
 names(w.med$w.dat)
 table(w.med$w.dat$.samp)
-```
-
-`w.dat` is the weighted dataset. It has several new variables, whose names all start with a dot to differentiate them from the original data. Three of these variables are for weights: `.s.wt` (sampling weights), `.w.wt` (distribution-morphing weights) and `.f.wt` (final weights, the product of sampling and distribution-morphing weights). In this example, we do not have sampling weights, so variable `.s.wt` = 1 and `.f.wt` = `.w.wt`.
-
-```{r}
 summary(w.med$w.dat[, c(".s.wt", ".w.wt", ".f.wt")])
 ```
 
 
-
-**Plots**
-
 There are two types of plots, weight-distribution plots and balance plots.
 
-```{r, fig.height=3.5, fig.width=4}
+```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="Mediation weighting: distributions of weights"}
+names(w.med$plots)
 w.med$plots$w.wt.distribution
 ```
 
 Note that the figure above is of weights not in raw but in stabilized form, ie the weights have been normed to have mean 1 within each pseudo sample. Stabilizing puts the weights on the same scale (a meaningful one!) so they are comparable across pseudo samples.
 
-If the original data has sampling weights, there will be two of these plots, one for `.w.wt`, one for `.f.wt`.
+If the original data had sampling weights, there would be two of these plots, one for `.w.wt`, one for `.f.wt`.
 
-```{r, fig.height=6, fig.width=7}
+```{r, fig.height=6, fig.width=7, fig.align='center', fig.cap="Mediation weighting: balance plot"}
 w.med$plots$balance
 ```
 
-This is a plot of balance on means of variables. It shows C-balance between `p11`, `p00`, `p10` and the full sample, and CM-balance between `p10` and `p00`.
+This is a plot of balance on means of variables. It shows C-balance between `p11`, `p00`, `p10` and the full sample, and CM-balance between `p10` and `p00`. 
 
-For the continuous covariate `sfc0` and continuous mediator `sfc`, we would want to also look at distributional balance. We do not implement distributional balance in the current package. Distributional balance could be implemented using packages that focus on balance visualization, eg the `cobalt` package [CITE].
+For `sfc0` and `sfc`, standardized mean differences are shown; this is marked by the star on these variables in the y-axis.
+
+For these continuous variables, we would want to also look at distributional balance. We do not implement distributional balance in the current package. Distributional balance could be implemented using packages that focus on balance visualization, eg the `cobalt` package [@cobalt].
+
+
 
 ## Other relevant weighting
 
 The two other relevant weighting schemes that are used for some of the estimators are: C-based inverse probability weighting (for the psYpred estimator and the wp-Cadj estimators) and CM-based odds weighting (for the Ypred estimator).
 
 
-### Manual code (not run)
-
-Here is the code for manual implementation of C-based inverse probability weighting.
-
-```{r, eval=FALSE}
-# prep pseudo samples p11, p00
-p11 <- synth[synth$treat==1, ]; p11$samp <- "p11"
-p00 <- synth[synth$treat==0, ]; p00$samp <- "p00"
-
-# fit model for P(A|C)
-a.c.form  <- "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)"
-
-a.c.fu  <- glm(formula = a.c.form,  data = synth, family = binomial)
-
-# compute inverse probability weights for p11 and p00
-p11$wt <-  1 /      predict(a.c.fu, newdata = p11, type = "response")
-p00$wt <-  1 / (1 - predict(a.c.fu, newdata = p00, type = "response"))
-
-# assemble weighted dataset with pseudo samples stacked
-w.dat <- rbind(p00, p11)
-```
-
-
-And here is the code for manual implementation of CM-based odds weighting.
-
-```{r, eval=FALSE}
-# subsamples s00, s11
-s11 <- synth[synth$treat==1, ]; s11$samp <- "s11"; s11$wt <- 1
-s00 <- synth[synth$treat==0, ]; s00$samp <- "s00"; s00$wt <- 1
-
-# prep pseudo subsample s10
-s10 <- synth[synth$treat==1, ]; s10$samp <- "s10"
-
-# fit models for P(A|C,M)
-a.cm.form <- "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)"
-
-a.cm.fu <- glm(formula = a.cm.form, data = synth, family = binomial)
-
-# compute odds weights for s10
-s10.a.cm.odds <- exp(predict(a.cm.fu, newdata = s10, type = "link"))
-
-s10$wt <- 1 / s10.a.cm.odds
-
-# assemble weighted dataset
-w.dat <- rbind(s00, s11, s10)
-```
-
-### Package code
+### Functions
 
 ```{r}
 # C-based inverse probability weighting
 w.c.ipw <- weights_ipw(
     data     = synth,
+    
     a.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
-    plot     = TRUE,  # default
+    
+    plot     = TRUE,
     vars.std = "sfc0"
 )
 ```
@@ -262,17 +178,21 @@ w.c.ipw <- weights_ipw(
 # CM-based odds weighting
 w.cm.odds <- weights_odds(
     data        = synth,
-    cross.world = "01",  # default
+    
+    cross.world = "10",
+    
     a.form      = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    
     plot        = TRUE,  # default
     vars.std    = c("sfc0", "sfc"),
     vars.order  = c("sex", "age", "edu", "religion", "drink0", "rul0", "att0", "sfc0", "rul", "att", "sfc")
 )
 ```
 
-For `weights_cm.odds()`, the optional `cm.order` argument specifies the order by which variables appear in the balance plot. We use this argument because the plotting order we want (first covariates then mediators) does not match the order by which variables appear in `a.cm.form`.
+We keep the syntax of `weights_ipw()` and `weights_odds()` general (without reference to C or M) so that they can be used as general purpose functions. In mediation analysis, `weights_ipw()` is typically used based on C variables, and `weights_odds()` based on (C,M) variables, so `a.form` is implicitly `a.c.form` in `weights_ipw()` and `a.cm.form` in `weights_odds()`, and `vars.` is implicitly `c.` in `weights_ipw()` and `cm.` in `weights_odds()`.
 
-Similarly, `weights_med()` has arguments `c.order` and `m.order` and `weights_ipw()` has `c.order`; we just didn't need to use them.
+In the second code chunk here we use the plotting order argument, because our model formula mixes up the order of the covariates and mediators.
+
 
 
 ### Outputs
@@ -289,6 +209,9 @@ names(w.cm.odds)
 names(w.cm.odds$plots)
 ```
 
+
+
+
 \
 
 # Estimators -- based on potential outcome means
@@ -297,71 +220,34 @@ Here we present the estimators in a different order from that in the paper. Afte
 
 ## Pure weighting
 
-### Manual code (point estimation only, not run)
-
-The code chunk below obtains the point estimate of the pure weighting estimator wtd.
-
-```{r, eval=FALSE}
-# mediation weighting
-w.med <- weights_med(
-    data        = synth,
-    cross.world = "10",
-    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
-    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc"
-)
-
-# compute estimates of PO means
-w.dat <- w.med$w.dat
-
-p00 <- w.dat[w.dat$.samp=="p00", ]
-p11 <- w.dat[w.dat$.samp=="p11", ]
-p10 <- w.dat[w.dat$.samp=="p10", ]
-
-y00.mean <- weighted.mean(p00$drink, p00$.f.wt)
-y11.mean <- weighted.mean(p11$drink, p11$.f.wt)
-y10.mean <- weighted.mean(p10$drink, p10$.f.wt)
-
-# assemble estimates
-point.wtd <- c(y11.mean = y11.mean,
-               y00.mean = y00.mean,
-               y10.mean = y10.mean,
-               TE   = y11.mean - y00.mean,
-               NDE0 = y10.mean - y00.mean,
-               NIE1 = y11.mean - y10.mean)
-```
-
-
-### Package code
-
-It is better to use the package, specifically the function `estimate_wtd()`. It provides both point estimate and confidence interval via bootstrapping.
+### Function
 
 ```{r wtd, cache=TRUE}
 est.wtd <- estimate_wtd(
     data        = synth,
-    cross.world = "10",  # default
+    cross.world = "10",
     
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
-    y.var       = "drink",
+    y.var       = "drink", # outcome variable
     
-    plot        = TRUE,  # default
+    plot        = TRUE,
     c.vars.std  = "sfc0",
     m.vars.std  = "sfc",
     
-    boot.num    = 99,         # default value is 999
-    boot.method = "cont-wt",  # default
+    boot.num    = 99,        # default value is 999
+    boot.method = "cont-wt", # default
     boot.seed   = 77777
 )
 ```
 
-The arguments are similar to the arguments of `weights_med()`, except we need to specify the outcome variable name (via `y.var`) and also have bootstrap inputs. 
-
-Two options are available for `boot.method`: "resample" (resampling bootstrap) and "cont-wt" (continuous weights bootstrap). If `boot.seed` is not specified, the function randomly draws a seed.
+The arguments are similar to the arguments of `weights_med()`, with two additions:
+- the outcome variable name (via `y.var`)
+- bootstrap inputs: Options for `boot.method` are "resample" (resampling bootstrap) and "cont-wt" (continuous weights bootstrap) [@xu2020ContinuousWeightsBootstrap]. If `boot.seed` is not specified, the function randomly draws a seed.
 
 ### Outputs
+
 ```{r}
 names(est.wtd)
 names(est.wtd$plots)
@@ -379,7 +265,7 @@ est.wtd$boot.seed
 ```
 
 
-```{r, fig.height=6, fig.width=7}
+```{r, fig.height=6, fig.width=7.5, fig.align='center', fig.cap="Pure weighting estimator: key balance plot"}
 est.wtd$plots$key.balance
 ```
 
@@ -388,71 +274,24 @@ This balance plot is the same plot as that from `weights_med()`, with two subtle
 - It is now named `key.balance`, signaling that all balance components in this plot are important to the estimator.
 - The tab labels have been added to with comments "(anchor)" meaning the specific balance is to anchor the pseudo sample on the covariate distribution of the full sample, and "(for \<effect\>)" meaning the specific balance is important to the estimation of said \<effect\>.
 
+
+\
+
 ## Y2pred pair
 
-### Manual code (point estimation only, not run)
-
-The code chunk below obtains the point estimate of the nonrobust estimator Y2pred. 
-
-For the robust Y2predR, we would first estimate weights to form the pseudo samples `p00`, `p11`, `p10`, then replace `s11` and `s00` with `p11` and `p00` in the estimation of regular PO means, and replace `s11` and `s00` with `p10` and `p00` in the estimation of $E[Y_{1M_0}]$.
-
-```{r, eval=FALSE}
-# subsamples
-s00 <- synth[synth$treat==0, ]
-s11 <- synth[synth$treat==1, ]
-
-# formulas for models E[Y|C,A=0], E[Y|C,A=1], E[Y|C,M,A=1], E[Y(1,M0)|C]
-y.c0.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
-y.c1.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
-y.cm1.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0 + att + rul + splines::ns(sfc, 3)"
-y10.c.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
-
-# estimate regular PO means by reg|Ypred
-y.c0.s00 <- glm(formula = y.c0.form, data = s00, family = binomial)
-y.c1.s11 <- glm(formula = y.c1.form, data = s11, family = binomial)
-
-y00.pred <- predict(y.c0.s00, newdata = synth, type = "response")
-y11.pred <- predict(y.c1.s11, newdata = synth, type = "response")
-
-y11.mean <- mean(y11.pred)
-y00.mean <- mean(y00.pred)
-
-# estimate cross-world PO mean by crw|Y2pred
-y.cm1.s11 <- glm(formula = y.cm1.form, data = s11, family = binomial)
-
-s00.tmp <- s00
-s00.tmp$drink <- predict(y.cm1.s11, newdata = s00, type = "response")
-
-y10.c.s00 <- glm(formula = y10.c.form, data = s00.tmp, family = quasibinomial)
-
-y10.pred <- predict(y10.c.s00, newdata = synth, type = "response")
-
-y10.mean <- mean(y10.pred)
-
-# assemble estimates
-point.Y2pred <- c(y11.mean = y11.mean,
-                  y00.mean = y00.mean,
-                  y10.mean = y10.mean,
-                  TE   = y11.mean - y00.mean,
-                  NDE0 = y10.mean - y00.mean,
-                  NIE1 = y11.mean - y10.mean)
-```
-
-
-### Package code
-
+### Functions
 
 ```{r Y2pred, cache=TRUE}
 # the nonrobust Y2pred estimator
 est.Y2pred <- estimate_Y2pred(
     data        = synth,
-    cross.world = "10",  # default
+    cross.world = "10",
     
     a.var       = "treat",
     
+    # formulas for E[Y|C,A=0], E[Y|C,A=1], E[Y|C,M,A=1], E[Y(1,M0)|C]
     y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
-    
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
     y10.c.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.link      = "logit",
@@ -465,40 +304,41 @@ est.Y2pred <- estimate_Y2pred(
 
 
 ```{r Y2predR, cache=TRUE}
-# the robust Y2pred.R estimator
+# the robust Y2predR estimator
 est.Y2predR <- estimate_Y2predR(
     data        = synth,
-    cross.world = "10",  # default
+    cross.world = "10",
     
+    # formulas for P(A|C), P(A|C,M)
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
-    plot        = TRUE,    # default
+    plot        = TRUE,
     c.vars.std  = "sfc0",
     m.vars.std  = "sfc",
     
+    # formulas for E[Y|C,A=0], E[Y|C,A=1], E[Y|C,M,A=1], E[Y(1,M0)|C]
     y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
-    
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
     y10.c.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.link      = "logit",
     
     boot.num    = 99,         # default value is 999
-    boot.method = "cont-wt",  # default
+    boot.method = "cont-wt",
     boot.seed   = 77777
 )
 ```
 
-`y.c0.form` and `y.c1.form` are model formulas for E[Y|C,A=0] and E[Y|C,A=1].
+`y.c0.form` and `y.c1.form` are model formulas for $\mathrm{E}[Y|C,A=0]$ and $\mathrm{E}[Y|C,A=1]$.
 
-`y.cm1.form` and `y10.c.form` are model formulas for E[Y|C,M,A=1] and $E[Y_{1M_0}|C]$, which are required for `cross.world` = "10".
-For `cross.world` = "01", use `y.cm0.form` and `y01.c.form`, for E[Y|C,M,A=0] and $E[Y_{0M_1}|C]$.
+`y.cm1.form` and `y10.c.form` are model formulas for $\mathrm{E}[Y|C,M,A=1]$ and $\mathrm{E}[Y_{1M_0}|C]$, which are required for `cross.world` = "10".
+For `cross.world` = "01", use `y.cm0.form` and `y01.c.form`, for $\mathrm{E}[Y|C,M,A=0]$ and $\mathrm{E}[Y_{0M_1}|C]$.
 
-There are times when we might want to use the same model form for several models, (like what we do above in the code above). We can use shortcut arguments `y.c.form` and `y.cm.form`:
+There are times when we might want to use the same model form for several models (like what we do in the code above). We can use shortcut arguments `y.c.form` and `y.cm.form`:
 
-- the formula in `y.c.form` gets populated to `y.c0.form`, `y.c1.form`, `y10.c.form`, `y01.c.form` if any of these arguments are required but not specified
-- the formula in `y.cm.form` gets populated to `y.cm0.form`, `y.cm1.form` if either of these arguments is required but not specified
+- the formula in `y.c.form` gets populated to `y.c0.form`, `y.c1.form`, `y10.c.form`, `y01.c.form` if any of these inputs are required but not specified
+- the formula in `y.cm.form` gets populated to `y.cm0.form`, `y.cm1.form` if either of these inputs is required but not specified
 
 ### Outputs
 
@@ -514,7 +354,7 @@ names(est.Y2pred)
 round(est.Y2pred$estimates, 4)
 ```
 
-**The robust Y2pred.R**
+**The robust Y2predR**
 
 ```{r}
 names(est.Y2predR)
@@ -529,53 +369,14 @@ round(est.Y2predR$estimates, 4)
 
 
 
+
+
+
 ## psYpred pair
 
 The paper mentions two versions, here we implement the second version.
 
-### Manual code (point estimation only, not run)
-
-```{r, eval=FALSE}
-# get pseudo sample p00, on which we will estimate potential outcome means
-w.c.ipw <- weights_ipw(
-    data     = synth,
-    a.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
-    vars.std = "sfc0"
-)
-
-w.dat <- w.c.ipw$w.dat
-
-p00 <- w.dat[w.dat$.samp=="p00", ]
-
-# subsample for model fitting
-s11 <- synth[synth$treat==1, ]
-
-# formulas for models E[Y|C,A=1], E[Y|C,M,A=1]
-y.c1.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
-y.cm1.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0 + att + rul + splines::ns(sfc, 3)"
-
-# estimate PO means
-y.c1.s11  <- glm(formula = y.c1.form,  data = s11, family = binomial)
-y.cm1.s11 <- glm(formula = y.cm1.form, data = s11, family = binomial)
-
-y11.pred <- predict(y.c1.s11,  newdata = p00, type = "response")
-y10.pred <- predict(y.cm1.s11, newdata = p00, type = "response")
-
-y00.mean <- weighted.mean(p00$drink, p00$.f.wt)
-y11.mean <- weighted.mean(y11.pred,  p00$.f.wt)
-y10.mean <- weighted.mean(y10.pred,  p00$.f.wt)
-
-# assemble estimates
-point.Y2pred <- c(y11.mean = y11.mean,
-                  y00.mean = y00.mean,
-                  y10.mean = y10.mean,
-                  TE   = y11.mean - y00.mean,
-                  NDE0 = y10.mean - y00.mean,
-                  NIE1 = y11.mean - y10.mean)
-```
-
-
-### Package code
+### Functions
 
 ```{r psYpred, cache=TRUE}
 # the nonrobust psYpred estimator
@@ -598,7 +399,7 @@ est.psYpred <- estimate_psYpred(
 ```
 
 ```{r psYpredMR, cache=TRUE}
-# the more robust psYpred.MR estimator
+# the more robust psYpredMR estimator
 est.psYpredMR <- estimate_psYpredMR(
     data        = synth,
     cross.world = "10",  # default
@@ -632,7 +433,7 @@ names(est.psYpred$plots)
 round(est.psYpred$estimates, 4)
 ```
 
-```{r fig.height=3.3, fig.width=6}
+```{r fig.height=3.3, fig.width=6, fig.align='center', fig.cap="psYpred estimator: weight distribution and key balance plot"}
 gridExtra::grid.arrange(
     est.psYpred$plots$w.wt.distribution + ggtitle("w.wt distribution"),
     est.psYpred$plots$key.balance       + ggtitle("key balance"),
@@ -642,7 +443,7 @@ gridExtra::grid.arrange(
 
 \
 
-**The more robust psYpred.MR**
+**The more robust psYpredMR**
 
 ```{r}
 names(est.psYpredMR)
@@ -653,7 +454,7 @@ names(est.psYpredMR$plots)
 round(est.psYpredMR$estimates, 4)
 ```
 
-```{r fig.height=8.5, fig.width=7}
+```{r fig.height=8.5, fig.width=7, fig.align='center', fig.cap="psYpredMR estimator: weight distributions, key balance plot, and full balance plot"}
 gridExtra::grid.arrange(
     est.psYpredMR$plots$w.wt.distribution + ggtitle("w.wt distribution"),
     est.psYpredMR$plots$key.balance       + ggtitle("key balance"),
@@ -667,59 +468,12 @@ gridExtra::grid.arrange(
 ```
 
 
+
+\
+
 ## Ypred pair
 
-
-### Manual code (point estimation only, not run)
-
-The code chunk below obtains the point estimate of the nonrobust estimator Ypred.
-
-For the more robust YpredMR estimator, we would first estimate weights to form the pseudo samples p00, p11, p10, and replace s11, s00 and s10 in fitting outcome models below with p11, p00 and p10.
-
-
-```{r, eval=FALSE}
-w.cm.odds <- weights_odds(
-    data        = synth,
-    cross.world = "10",
-    a.form      = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
-    vars.std    = c("sfc0", "sfc"),
-    vars.order  = c("sex", "age", "edu", "religion", "drink0", "att0", "rul0", "sfc0", "att", "rul", "sfc")
-)
-
-w.dat <- w.cm.odds$w.dat
-
-s00 <- w.dat[w.dat$.samp=="s00", ]
-s11 <- w.dat[w.dat$.samp=="s11", ]
-s10 <- w.dat[w.dat$.samp=="s10", ]
-
-y.c0.form  <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
-y.c1.form  <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
-y10.c.form <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
-
-y.c0.s00  <- glm(formula = y.c0.form,  data = s00, family = binomial)
-y.c1.s11  <- glm(formula = y.c1.form,  data = s11, family = binomial)
-y10.c.s10 <- glm(formula = y10.c.form, data = s10, family = quasibinomial,
-                 weights = data$.f.wt)
-
-y00.pred <- predict(y.c0.s00,  newdata = synth, type = "response")
-y11.pred <- predict(y.c1.s11,  newdata = synth, type = "response")
-y10.pred <- predict(y10.c.s10, newdata = synth, type = "response")
-
-y00.mean <- mean(y00.pred)
-y11.mean <- mean(y11.pred)
-y10.mean <- mean(y10.pred)
-
-point.Ypred <- c(y11.mean = y11.mean,
-                 y00.mean = y00.mean,
-                 y10.mean = y10.mean,
-                 TE   = y11.mean - y00.mean,
-                 NDE0 = y10.mean - y00.mean,
-                 NIE1 = y11.mean - y10.mean)
-```
-
-
-
-### Package code
+### Functions
 
 ```{r Ypred, cache=TRUE}
 # the nonrobust Ypred estimator
@@ -744,7 +498,7 @@ est.Ypred <- estimate_Ypred(
 ```
 
 ```{r YpredMR, cache=TRUE}
-# the more robust Ypred.MR estimator
+# the more robust YpredMR estimator
 est.YpredMR <- estimate_YpredMR(
     data        = synth,
     cross.world = "10",  # default
@@ -782,7 +536,7 @@ names(est.Ypred$plots)
 round(est.Ypred$estimates, 4)
 ```
 
-```{r fig.height=3.3, fig.width=6}
+```{r fig.height=3.3, fig.width=6, fig.align='center', fig.cap="Ypred estimator:  weight distribution and key balance plot"}
 gridExtra::grid.arrange(
     est.Ypred$plots$w.wt.distribution + ggtitle("w.wt distribution"),
     est.Ypred$plots$key.balance       + ggtitle("key balance"),
@@ -791,7 +545,7 @@ gridExtra::grid.arrange(
 
 \
 
-**The more robust Ypred.MR**
+**The more robust YpredMR**
 
 ```{r}
 names(est.YpredMR)
@@ -802,7 +556,7 @@ names(est.YpredMR$plots)
 round(est.YpredMR$estimates, 4)
 ```
 
-```{r fig.height=8.5, fig.width=7}
+```{r fig.height=8.5, fig.width=7, fig.align='center', fig.cap="psYpredMR estimator: weight distributions, key balance plot, and full balance plot"}
 gridExtra::grid.arrange(
     est.YpredMR$plots$w.wt.distribution + ggtitle("w.wt distribution"),
     est.YpredMR$plots$key.balance       + ggtitle("key balance"),
@@ -815,6 +569,7 @@ gridExtra::grid.arrange(
 
 ```
 
+\
 
 ## MsimYpred pair
 
@@ -822,62 +577,11 @@ The paper mentioned two versions. Here we implement the first version.
 
 \
 
-# Estimators -- if additive effects
+# Estimators -- if want additive effects
 
 ## NDEpred pair
 
-### Manual code (point estimation only, not run)
-
-The code chunk below obtains the point estimate of the nonrobust estimator NDEpred.
-
-For the robust NDEpredR, we would first estimate weights to form the pseudo samples p00, p11, p10, then replace s11 and s00 with p11 and p00 in the estimation of TE, and replace s11 and s00 with p10 and p00 in the estimation of NDE0.
-
-```{r, eval=FALSE}
-# subsamples
-s00 <- synth[synth$treat==0, ]
-s11 <- synth[synth$treat==1, ]
-
-# estimation of TE
-y.c0.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
-y.c1.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
-
-y.c0.s00 <- glm(formula = y.c0.form, data = s00, family = binomial)
-y.c1.s11 <- glm(formula = y.c1.form, data = s11, family = binomial)
-
-y00.pred <- predict(y.c0.s00, newdata = synth, type = "response")
-y11.pred <- predict(y.c1.s11, newdata = synth, type = "response")
-
-te <- mean(y11.pred) - mean(y00.pred)
-
-# estimation of NDE0
-y.cm1.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0 + att + rul + splines::ns(sfc, 3)"
-nde0.c.form <- "effect ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
-
-y.cm1.s11 <- glm(formula = y.cm1.form, data = s11, family = binomial)
-
-y10.pred <- predict(y.cm1.s11, newdata = s00, type = "response")
-
-nde0.proxy <- y10.pred - s00$drink
-
-nde0.proxy.scaled <- (effect.proxy + 1) / 2 # scale to the (0,1) interval to use quasilogit model
-
-s00.tmp <- s00
-s00.tmp$effect <- nde0.proxy.scaled
-
-eff.c.s00 <- glm(formula = nde0.c.form, data = s00.tmp, family = quasibinomial)
-
-nde0.pred <- predict(eff.c.s00, newdata = synth, type = "response")
-
-nde0 <- mean(nde0.pred)
-
-# assemble estimates
-point.NDEpred <- c(TE   = te,
-                   NDE0 = nde0,
-                   NIE1 = te - nde0)
-```
-
-
-### Package code
+### Functions
 
 ```{r NDEpred, cache=TRUE}
 # the nonrobust NDEpred estimator
@@ -903,7 +607,7 @@ est.NDEpred <- estimate_NDEpred(
 
 
 ```{r NDEpredR, cache=TRUE}
-# the robust NDEpred.R estimator
+# the robust NDEpredR estimator
 est.NDEpredR <- estimate_NDEpredR(
     data        = synth,
     cross.world = "10",  # default
@@ -953,6 +657,10 @@ names(est.NDEpredR$plots)
 round(est.NDEpredR$estimates, 4)
 ```
 
+
+
+
+
 \
 
 # Estimators -- using covariates to improve precision (not robustness)
@@ -962,7 +670,374 @@ round(est.NDEpredR$estimates, 4)
 For this estimation strategy, the paper mentions two versions. We implement the version where the two effects are estimated using the same model.
 
 
-### Manual code (point estimation only, not run)
+### Function
+
+```{r wtCadj, cache=TRUE}
+est.wtCadj <- estimate_wtCadj(
+    data        = synth,
+    cross.world = "10",
+
+    boot.num    = 99,
+    boot.method = "cont-wt",
+    boot.seed   = 77777,
+    
+    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    
+    plot        = TRUE,  # default
+    c.vars.std  = "sfc0",
+    m.vars.std  = "sfc",
+
+    y.var       = "drink",
+    y.link      = "logit"
+) 
+```
+
+
+
+### Outputs
+
+```{r}
+names(est.wtCadj)
+names(est.wtCadj$plots)
+```
+
+```{r}
+est.wtCadj$estimates
+```
+
+
+## wp-Cadj pair
+
+The paper mentions two versions. We implement the version where the two effects are estimated separately.
+
+### Functions
+
+
+### Outputs
+
+
+
+
+\
+
+# Some manual code as footnotes
+
+We include here some manual code that partially does the jobs of the functions presented above. The weighting code here computes the weights but does not plot weight distributions or balance. The estimation code here obtains the point estimate but not confidence intervals. The purpose of these code snippets is only to provide a quick reminder of what the weighting schemes and estimators are. 
+
+We highly recommend reading the paper to fully understand the methods and their properties.
+
+## Weighting
+
+### Mediation weighting
+
+
+```{r, eval=FALSE}
+# prep pseudo samples p11, p00, p10
+p11 <- synth[synth$treat==1, ]; p11$samp <- "p11"
+p00 <- synth[synth$treat==0, ]; p00$samp <- "p00"
+p10 <- synth[synth$treat==1, ]; p10$samp <- "p10"
+
+# fit models for P(A|C) and P(A|C,M)
+a.c.form  <- "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)"
+a.cm.form <- "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)"
+
+a.c.fu  <- glm(formula = a.c.form,  data = synth, family = binomial)
+a.cm.fu <- glm(formula = a.cm.form, data = synth, family = binomial)
+
+# compute inverse probability weights for p11 and p00
+p11$wt <-  1 /      predict(a.c.fu, newdata = p11, type = "response")
+p00$wt <-  1 / (1 - predict(a.c.fu, newdata = p00, type = "response"))
+
+# compute cross-world weights for p10
+p10.a.c.prob  <-     predict(a.c.fu,  newdata = p10, type = "response")
+p10.a.cm.odds <- exp(predict(a.cm.fu, newdata = p10, type = "link"))
+
+p10$wt <- (1 / p10.a.cm.odds) / (1 - p10.a.c.prob)
+
+# assemble weighted dataset with pseudo samples stacked
+w.dat <- rbind(p00, p11, p10)
+```
+
+
+### Other weighting
+
+#### Inverse probability weighting
+
+
+```{r, eval=FALSE}
+# prep pseudo samples p11, p00
+p11 <- synth[synth$treat==1, ]; p11$samp <- "p11"
+p00 <- synth[synth$treat==0, ]; p00$samp <- "p00"
+
+# fit model for P(A|C)
+a.c.form  <- "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)"
+
+a.c.fu  <- glm(formula = a.c.form,  data = synth, family = binomial)
+
+# compute inverse probability weights for p11 and p00
+p11$wt <-  1 /      predict(a.c.fu, newdata = p11, type = "response")
+p00$wt <-  1 / (1 - predict(a.c.fu, newdata = p00, type = "response"))
+
+# assemble weighted dataset with pseudo samples stacked
+w.dat <- rbind(p00, p11)
+```
+
+
+#### Odds weighting
+
+
+```{r, eval=FALSE}
+# subsamples s00, s11
+s11 <- synth[synth$treat==1, ]; s11$samp <- "s11"; s11$wt <- 1
+s00 <- synth[synth$treat==0, ]; s00$samp <- "s00"; s00$wt <- 1
+
+# prep pseudo subsample s10
+s10 <- synth[synth$treat==1, ]; s10$samp <- "s10"
+
+# fit models for P(A|C,M)
+a.cm.form <- "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)"
+
+a.cm.fu <- glm(formula = a.cm.form, data = synth, family = binomial)
+
+# compute odds weights for s10
+s10.a.cm.odds <- exp(predict(a.cm.fu, newdata = s10, type = "link"))
+
+s10$wt <- 1 / s10.a.cm.odds
+
+# assemble weighted dataset
+w.dat <- rbind(s00, s11, s10)
+```
+
+
+## Estimators
+
+
+### Pure weighting
+
+
+```{r, eval=FALSE}
+# mediation weighting
+w.med <- weights_med(
+    data        = synth,
+    cross.world = "10",
+    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    c.vars.std  = "sfc0",
+    m.vars.std  = "sfc"
+)
+
+# compute estimates of PO means
+w.dat <- w.med$w.dat
+
+p00 <- w.dat[w.dat$.samp=="p00", ]
+p11 <- w.dat[w.dat$.samp=="p11", ]
+p10 <- w.dat[w.dat$.samp=="p10", ]
+
+y00.mean <- weighted.mean(p00$drink, p00$.f.wt)
+y11.mean <- weighted.mean(p11$drink, p11$.f.wt)
+y10.mean <- weighted.mean(p10$drink, p10$.f.wt)
+
+# assemble estimates
+point.wtd <- c(y11.mean = y11.mean,
+               y00.mean = y00.mean,
+               y10.mean = y10.mean,
+               TE   = y11.mean - y00.mean,
+               NDE0 = y10.mean - y00.mean,
+               NIE1 = y11.mean - y10.mean)
+```
+
+
+
+### Y2pred pair
+
+This code is about the nonrobust estimator Y2pred. For the robust Y2predR, we would first estimate weights to form the pseudo samples `p00`, `p11`, `p10`, then replace `s11` and `s00` with `p11` and `p00` in the estimation of regular PO means, and replace `s11` and `s00` with `p10` and `p00` in the estimation of $E[Y_{1M_0}]$.
+
+```{r, eval=FALSE}
+# subsamples
+s00 <- synth[synth$treat==0, ]
+s11 <- synth[synth$treat==1, ]
+
+# formulas for models E[Y|C,A=0], E[Y|C,A=1], E[Y|C,M,A=1], E[Y(1,M0)|C]
+y.c0.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
+y.c1.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
+y.cm1.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0 + att + rul + splines::ns(sfc, 3)"
+y10.c.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
+
+# estimate regular PO means by reg|Ypred
+y.c0.s00 <- glm(formula = y.c0.form, data = s00, family = binomial)
+y.c1.s11 <- glm(formula = y.c1.form, data = s11, family = binomial)
+
+y00.pred <- predict(y.c0.s00, newdata = synth, type = "response")
+y11.pred <- predict(y.c1.s11, newdata = synth, type = "response")
+
+y11.mean <- mean(y11.pred)
+y00.mean <- mean(y00.pred)
+
+# estimate cross-world PO mean by crw|Y2pred
+y.cm1.s11 <- glm(formula = y.cm1.form, data = s11, family = binomial)
+
+s00.tmp <- s00
+s00.tmp$drink <- predict(y.cm1.s11, newdata = s00, type = "response")
+
+y10.c.s00 <- glm(formula = y10.c.form, data = s00.tmp, family = quasibinomial)
+
+y10.pred <- predict(y10.c.s00, newdata = synth, type = "response")
+
+y10.mean <- mean(y10.pred)
+
+# assemble estimates
+point.Y2pred <- c(y11.mean = y11.mean,
+                  y00.mean = y00.mean,
+                  y10.mean = y10.mean,
+                  TE   = y11.mean - y00.mean,
+                  NDE0 = y10.mean - y00.mean,
+                  NIE1 = y11.mean - y10.mean)
+```
+
+
+### psYpred pair
+
+This code is about the nonrobust estimator psYpred. For the more robust psYpredMR, we would replace `s11` (used to fit the two outcome models) with `p10` obtained from mediation weighting.
+
+```{r, eval=FALSE}
+# get pseudo sample p00, on which we will estimate potential outcome means
+w.c.ipw <- weights_ipw(
+    data     = synth,
+    a.form   = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    vars.std = "sfc0"
+)
+
+w.dat <- w.c.ipw$w.dat
+
+p00 <- w.dat[w.dat$.samp=="p00", ]
+
+# subsample for model fitting
+s11 <- synth[synth$treat==1, ]
+
+# formulas for models E[Y|C,A=1], E[Y|C,M,A=1]
+y.c1.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
+y.cm1.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0 + att + rul + splines::ns(sfc, 3)"
+
+# estimate PO means
+y.c1.s11  <- glm(formula = y.c1.form,  data = s11, family = binomial)
+y.cm1.s11 <- glm(formula = y.cm1.form, data = s11, family = binomial)
+
+y11.pred <- predict(y.c1.s11,  newdata = p00, type = "response")
+y10.pred <- predict(y.cm1.s11, newdata = p00, type = "response")
+
+y00.mean <- weighted.mean(p00$drink, p00$.f.wt)
+y11.mean <- weighted.mean(y11.pred,  p00$.f.wt)
+y10.mean <- weighted.mean(y10.pred,  p00$.f.wt)
+
+# assemble estimates
+point.Y2pred <- c(y11.mean = y11.mean,
+                  y00.mean = y00.mean,
+                  y10.mean = y10.mean,
+                  TE   = y11.mean - y00.mean,
+                  NDE0 = y10.mean - y00.mean,
+                  NIE1 = y11.mean - y10.mean)
+```
+
+
+### Ypred pair
+
+This code is about the nonrobust estimator Ypred. For the more robust YpredMR estimator, we would first estimate weights to form the pseudo samples p00, p11, p10, and replace s11, s00 and s10 in fitting outcome models below with p11, p00 and p10.
+
+
+```{r, eval=FALSE}
+w.cm.odds <- weights_odds(
+    data        = synth,
+    cross.world = "10",
+    a.form      = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    vars.std    = c("sfc0", "sfc"),
+    vars.order  = c("sex", "age", "edu", "religion", "drink0", "att0", "rul0", "sfc0", "att", "rul", "sfc")
+)
+
+w.dat <- w.cm.odds$w.dat
+
+s00 <- w.dat[w.dat$.samp=="s00", ]
+s11 <- w.dat[w.dat$.samp=="s11", ]
+s10 <- w.dat[w.dat$.samp=="s10", ]
+
+y.c0.form  <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
+y.c1.form  <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
+y10.c.form <- "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)"
+
+y.c0.s00  <- glm(formula = y.c0.form,  data = s00, family = binomial)
+y.c1.s11  <- glm(formula = y.c1.form,  data = s11, family = binomial)
+y10.c.s10 <- glm(formula = y10.c.form, data = s10, family = quasibinomial,
+                 weights = data$.f.wt)
+
+y00.pred <- predict(y.c0.s00,  newdata = synth, type = "response")
+y11.pred <- predict(y.c1.s11,  newdata = synth, type = "response")
+y10.pred <- predict(y10.c.s10, newdata = synth, type = "response")
+
+y00.mean <- mean(y00.pred)
+y11.mean <- mean(y11.pred)
+y10.mean <- mean(y10.pred)
+
+point.Ypred <- c(y11.mean = y11.mean,
+                 y00.mean = y00.mean,
+                 y10.mean = y10.mean,
+                 TE   = y11.mean - y00.mean,
+                 NDE0 = y10.mean - y00.mean,
+                 NIE1 = y11.mean - y10.mean)
+```
+
+
+### MsimYpred pair
+
+### NDEpred pair
+
+The code chunk below obtains the point estimate of the nonrobust estimator NDEpred. For the robust NDEpredR, we would first estimate weights to form the pseudo samples p00, p11, p10, then replace s11 and s00 with p11 and p00 in the estimation of TE, and replace s11 and s00 with p10 and p00 in the estimation of NDE0.
+
+```{r, eval=FALSE}
+# subsamples
+s00 <- synth[synth$treat==0, ]
+s11 <- synth[synth$treat==1, ]
+
+# estimation of TE
+y.c0.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
+y.c1.form  <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
+
+y.c0.s00 <- glm(formula = y.c0.form, data = s00, family = binomial)
+y.c1.s11 <- glm(formula = y.c1.form, data = s11, family = binomial)
+
+y00.pred <- predict(y.c0.s00, newdata = synth, type = "response")
+y11.pred <- predict(y.c1.s11, newdata = synth, type = "response")
+
+te <- mean(y11.pred) - mean(y00.pred)
+
+# estimation of NDE0
+y.cm1.form <- "drink ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0 + att + rul + splines::ns(sfc, 3)"
+nde0.c.form <- "effect ~ age + sex + edu + religion + att0 + rul0 + splines::ns(sfc0, 3) + drink0"
+
+y.cm1.s11 <- glm(formula = y.cm1.form, data = s11, family = binomial)
+
+y10.pred <- predict(y.cm1.s11, newdata = s00, type = "response")
+
+nde0.proxy <- y10.pred - s00$drink
+
+nde0.proxy.scaled <- (effect.proxy + 1) / 2 # scale to the (0,1) interval to use quasilogit model
+
+s00.tmp <- s00
+s00.tmp$effect <- nde0.proxy.scaled
+
+eff.c.s00 <- glm(formula = nde0.c.form, data = s00.tmp, family = quasibinomial)
+
+nde0.pred <- predict(eff.c.s00, newdata = synth, type = "response")
+
+nde0 <- mean(nde0.pred)
+
+# assemble estimates
+point.NDEpred <- c(TE   = te,
+                   NDE0 = nde0,
+                   NIE1 = te - nde0)
+```
+
+
+### wt-Cadj
 
 ```{r, eval=FALSE}
 w.med <- weights_med(
@@ -1015,53 +1090,9 @@ point.wtCadj <- c(NDE0 = weighted.mean(y10.full$.y, y10.full$.s.wt) -
 ```
 
 
-### Package code
+### wp-Cadj pair
 
-```{r wtCadj, cache=TRUE}
-est.wtCadj <- estimate_wtCadj(
-    data        = synth,
-    cross.world = "10",
-
-    boot.num    = 99,
-    boot.method = "cont-wt",
-    boot.seed   = 77777,
-    
-    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
-    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
-    
-    plot        = TRUE,  # default
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc",
-
-    y.var       = "drink",
-    y.link      = "logit"
-) 
-```
-
-
-
-### Outputs
-
-```{r}
-names(est.wtCadj)
-names(est.wtCadj$plots)
-```
-
-```{r}
-est.wtCadj$estimates
-```
-
-
-
-## wp-Cadj pair
-
-The paper mentions two versions. We implement the version where the two effects are estimated separately.
-
-### Manual code (point estimation only, not run)
-
-The code chunk below obtains the point estimate of the nonrobust estimator wp-Cadj.
-
-For the more robust wpMR-Cadj, we would first estimate weights to form the pseudo samples p00, p11, p10 (using the `weights_med()` function), then replace s11 with p10 in the fitting of the E[Y|C,M,A=1] model.
+The code chunk below obtains the point estimate of the nonrobust estimator wp-Cadj. For the more robust wpMR-Cadj, we would first estimate weights to form the pseudo samples p00, p11, p10 (using the `weights_med()` function), then replace s11 with p10 in the fitting of the E[Y|C,M,A=1] model.
 
 ```{r, eval=FALSE}
 w.c.ipw <- weights_ipw(
@@ -1116,10 +1147,6 @@ point.wpCadj <- c(NDE0 = nde0,
 ```
 
 
-### Package code
-
-
-### Outputs
 
 
 
@@ -1160,9 +1187,10 @@ point.wpCadj <- c(NDE0 = nde0,
 
 
 
+\
 
+# Code for results in manuscript
 
+\
 
-
-
-
+# References {-}
