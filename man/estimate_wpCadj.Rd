@@ -19,7 +19,7 @@ estimate_wpCadj(
   y.link,
   plot = TRUE,
   c.order = NULL,
-  c.vars.std = NULL
+  c.std = NULL
 )
 }
 \arguments{
@@ -50,6 +50,8 @@ estimate_wpCadj(
 \item{plot}{Whether to output weight distribution and balance plots. Defaults to TRUE.}
 
 \item{c.order}{Order in which covariates are to be plotted. If not specify, use the order that appears in \code{a.c.form}.}
+
+\item{c.std}{Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
 }
 \description{
 Function that implements estimator wp-Cadj

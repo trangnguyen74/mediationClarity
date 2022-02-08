@@ -29,9 +29,9 @@ estimate_wpCadj <- function(
     y.cm.form,
     y.link,
 
-    plot       = TRUE,
-    c.order    = NULL,
-    c.vars.std = NULL
+    plot    = TRUE,
+    c.order = NULL,
+    c.std   = NULL
 ) {
 
 }

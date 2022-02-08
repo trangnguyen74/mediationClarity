@@ -1,4 +1,4 @@
-Package: tnMediation
+Package: mediationClarity
 Type: Package
 Title: Simple and more robust estimation of marginal natural (in)direct effects 
 Version: 0.1.0

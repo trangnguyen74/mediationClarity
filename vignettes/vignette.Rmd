@@ -1,5 +1,5 @@
 ---
-title: "tnMediation: simple and more robust estimation of marginal natural (in)direct effects"
+title: "mediationClarity: simple and more robust estimation of marginal natural (in)direct effects"
 output: 
     rmarkdown::html_vignette:
         number_sections: yes
@@ -22,14 +22,14 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(tnMediation)
+library(mediationClarity)
 library(ggplot2)
 ```
 
 
 # Read me first
 
-This vignette is long-form documentation of the package `tnMediation`, and is also the computing appendix to the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048).
+This vignette is long-form documentation of the package `mediationClarity`, and is also the computing appendix to the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048).
 
 
 
