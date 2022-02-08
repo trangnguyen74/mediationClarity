@@ -29,8 +29,8 @@ estimate_YpredMR <- function(
     max.stabilized.wt = 30,
 
     plot = TRUE,
-    c.vars.std = NULL,
-    m.vars.std = NULL,
+    c.std = NULL,
+    m.std = NULL,
     c.order    = NULL,
     m.order    = NULL,
 
@@ -83,8 +83,8 @@ estimate_YpredMR <- function(
                                cross.world = cross.world,
                                c.vars = c.vars,
                                m.vars = m.vars,
-                               c.vars.std = c.vars.std,
-                               m.vars.std = m.vars.std);  rm(tmp)
+                               c.std = c.std,
+                               m.std = m.std);  rm(tmp)
     }
 
 
@@ -383,16 +383,16 @@ estimate_YpredMR <- function(
                           cross.world,
                           c.vars,
                           m.vars,
-                          c.vars.std,
-                          m.vars.std) {
+                          c.std,
+                          m.std) {
 
     c(.plot_wt_dist(w.dat),
       .plot_balance.YpredMR(w.dat = w.dat,
                             cross.world = cross.world,
                             c.vars = c.vars,
                             m.vars = m.vars,
-                            c.vars.std = c.vars.std,
-                            m.vars.std = m.vars.std))
+                            c.std = c.std,
+                            m.std = m.std))
 }
 
 
@@ -407,14 +407,14 @@ estimate_YpredMR <- function(
                                   cross.world,
                                   c.vars,
                                   m.vars,
-                                  c.vars.std,
-                                  m.vars.std) {
+                                  c.std,
+                                  m.std) {
 
     smd.dat <- .get_smd.med(w.dat = w.dat,
                             c.vars = c.vars,
                             m.vars = m.vars,
-                            c.vars.std = c.vars.std,
-                            m.vars.std = m.vars.std)
+                            c.std = c.std,
+                            m.std = m.std)
 
 
 

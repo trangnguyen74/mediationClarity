@@ -214,8 +214,8 @@ NULL
 #' @param w.dat abc
 #' @param c.vars Names of covariates.
 #' @param m.vars Names of mediators.
-#' @param c.vars.std Names of covariates whose mean differences are to be standardized.
-#' @param m.vars.std Names of mediators whose mean differences are to be standardized.
+#' @param c.std Names of covariates whose mean differences are to be standardized.
+#' @param m.std Names of mediators whose mean differences are to be standardized.
 #' @param full.label Whether to add "(anchor)" and "(for <effect>)" notes to plot labels to help interpretation. Defaults to TRUE
 #' @importFrom ggplot2 ggplot aes geom_vline geom_point scale_color_manual scale_shape_manual labs theme_bw facet_wrap xlim
 #' @importFrom rlang .data
@@ -224,8 +224,8 @@ NULL
 .plot_balance <- function(w.dat,
                           c.vars,
                           m.vars = NULL,
-                          c.vars.std,
-                          m.vars.std,
+                          c.std,
+                          m.std,
                           full.label = TRUE) {
 
 
@@ -252,14 +252,14 @@ NULL
     # compute SMDs
     smd.dat <- .get_c.smd(w.dat      = w.dat,
                           vars        = plot.c,
-                          standardize = intersect(plot.c, c.vars.std))
+                          standardize = intersect(plot.c, c.std))
 
     if (!is.null(plot.m))
         smd.dat <- rbind(smd.dat,
                          .get_m.smd(w.dat      = w.dat,
                                     vars        = plot.m,
                                     standardize = intersect(plot.m,
-                                                            m.vars.std)))
+                                                            m.std)))
 
 
     plot.vars <- c(plot.c, plot.m)

@@ -9,13 +9,13 @@
 \alias{dot-get_smd}
 \title{(For maintainer) Compute  (standardized) mean differences}
 \usage{
-.get_smd.med(w.dat, c.vars, m.vars, c.vars.std, m.vars.std)
+.get_smd.med(w.dat, c.vars, m.vars, c.std, m.std)
 
 .get_smd.ipw(w.dat, vars, standardize)
 
 .get_smd.odds(w.dat, vars, standardize)
 
-.get_smd.psYpred(w.dat, c.vars, c.vars.std)
+.get_smd.psYpred(w.dat, c.vars, c.std)
 }
 \arguments{
 \item{w.dat}{Dataset for pseudo samples, already cleaned and dummy coded.}
@@ -24,9 +24,9 @@
 
 \item{m.vars}{Names of mediators, checked and dummied.}
 
-\item{c.vars.std}{Covariates to be standardized, already checked.}
+\item{c.std}{Covariates to be standardized, already checked.}
 
-\item{m.vars.std}{Mediators to be standardized, already checked.}
+\item{m.std}{Mediators to be standardized, already checked.}
 
 \item{cm.vars}{Names of covariates and mediators, checked and dummied.}
 

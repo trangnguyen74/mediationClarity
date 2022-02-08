@@ -79,6 +79,7 @@ Other estimators:
 \code{\link{estimate_YpredMR}()},
 \code{\link{estimate_psYpredMR}()},
 \code{\link{estimate_psYpred}()},
+\code{\link{estimate_wpCadj}()},
 \code{\link{estimate_wtCadj}()},
 \code{\link{estimate_wtd}()}
 }

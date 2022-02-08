@@ -29,7 +29,7 @@ estimate_psYpred <- function(
     max.stabilized.wt = 30,
 
     plot = TRUE,
-    c.vars.std = NULL,
+    c.std = NULL,
     c.order = NULL,
 
     y.c.form = NULL,
@@ -75,7 +75,7 @@ estimate_psYpred <- function(
 
         plots <- .plot_psYpred(w.dat = tmp$w.dat,
                                c.vars = c.vars,
-                               c.vars.std = c.vars.std);  rm(tmp)
+                               c.std = c.std);  rm(tmp)
     }
 
 
@@ -462,12 +462,12 @@ estimate_psYpred <- function(
 
 .plot_psYpred <- function(w.dat,
                           c.vars,
-                          c.vars.std) {
+                          c.std) {
 
     c(.plot_wt_dist.psYpred(w.dat),
       .plot_balance.psYpred(w.dat      = w.dat,
                             c.vars     = c.vars,
-                            c.vars.std = c.vars.std))
+                            c.std = c.std))
 }
 
 
@@ -572,11 +572,11 @@ estimate_psYpred <- function(
 
 .plot_balance.psYpred <- function(w.dat,
                                   c.vars,
-                                  c.vars.std) {
+                                  c.std) {
 
     smd.dat <- .get_smd.psYpred(w.dat = w.dat,
                                 c.vars = c.vars,
-                                c.vars.std = c.vars.std)
+                                c.std = c.std)
 
 
     p <-
@@ -612,7 +612,7 @@ estimate_psYpred <- function(
 
 .get_smd.psYpred <- function(w.dat,
                              c.vars,
-                             c.vars.std) {
+                             c.std) {
 
 
     tmp <- .make_dummies(data = w.dat,
@@ -640,7 +640,7 @@ estimate_psYpred <- function(
 
     std.denom <- sapply(c.vars, function(z) {
 
-        if (!z %in% c.vars.std) return(1)
+        if (!z %in% c.std) return(1)
 
         .get_sd.pooled(variable = z,
                        dat1 = full[full$.a==1, ],
@@ -707,11 +707,11 @@ estimate_psYpred <- function(
                            labels = c("p00 - full", "p11 - full"))
 
 
-    smd$variable <- ifelse(smd$variable %in% c.vars.std,
+    smd$variable <- ifelse(smd$variable %in% c.std,
                            paste0("*", smd$variable),
                            smd$variable)
 
-    c.vars <- ifelse(c.vars %in% c.vars.std,
+    c.vars <- ifelse(c.vars %in% c.std,
                      paste0("*", c.vars),
                      c.vars)
 

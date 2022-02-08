@@ -40,8 +40,8 @@ estimate_wtd <- function(
     max.stabilized.wt = 30,
 
     plot = TRUE,
-    c.vars.std = NULL,
-    m.vars.std = NULL,
+    c.std = NULL,
+    m.std = NULL,
     c.order = NULL,
     m.order = NULL) {
 
@@ -79,8 +79,8 @@ estimate_wtd <- function(
         plots <- .plot_med(w.dat = tmp$w.dat,
                            c.vars = c.vars,
                            m.vars = m.vars,
-                           c.vars.std = c.vars.std,
-                           m.vars.std = m.vars.std,
+                           c.std = c.std,
+                           m.std = m.std,
                            key.balance = TRUE);     rm(tmp)
     }
 

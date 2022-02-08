@@ -36,9 +36,9 @@ This vignette is long-form documentation of the package `tnMediation`, and is al
 ## Vignette structure
 
 
-We will briefly describe the data (which will help make everything concrete) below.
+We will briefly describe the data, which will help make things concrete, in Section 1.2.
 
-Before getting to the estimators (what you are most likely here for), we will cover all the weighting matter in Section 2, as weighting is involved in multiple estimators. Sections 3-5 then track the three groups of estimators presented in the paper. For each weighting method or estimator, we present the function that implements the method and explain its outputs.
+Before getting to the estimators (what you are most likely here for), we will cover all the relevant weighting business in Section 2, as weighting is involved in multiple estimators. Sections 3-5 then track the three groups of estimators presented in the paper. For each weighting method or estimator, we present the function that implements the method and explain its outputs.
 
 In sections 3-5, to speed up the compling of this document we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
 
@@ -98,8 +98,8 @@ w.med <- weights_med(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,   # default
-    c.vars.std  = "sfc0", # C and M vars for which want 
-    m.vars.std  = "sfc",  # standardized mean diffs in balance plot
+    c.std  = "sfc0", # C and M vars for which want 
+    m.std  = "sfc",  # standardized mean diffs in balance plot
 )
 ```
 
@@ -133,7 +133,7 @@ summary(w.med$w.dat[, c(".s.wt", ".w.wt", ".f.wt")])
 
 There are two types of plots, weight-distribution plots and balance plots.
 
-```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="Mediation weighting: distributions of weights"}
+```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="Mediation weighting: weight distributions"}
 names(w.med$plots)
 w.med$plots$w.wt.distribution
 ```
@@ -233,8 +233,8 @@ est.wtd <- estimate_wtd(
     y.var       = "drink", # outcome variable
     
     plot        = TRUE,
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc",
+    c.std  = "sfc0",
+    m.std  = "sfc",
     
     boot.num    = 99,        # default value is 999
     boot.method = "cont-wt", # default
@@ -314,8 +314,8 @@ est.Y2predR <- estimate_Y2predR(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc",
+    c.std  = "sfc0",
+    m.std  = "sfc",
     
     # formulas for E[Y|C,A=0], E[Y|C,A=1], E[Y|C,M,A=1], E[Y(1,M0)|C]
     y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
@@ -370,7 +370,7 @@ round(est.Y2predR$estimates, 4)
 
 
 
-
+\
 
 ## psYpred pair
 
@@ -387,7 +387,7 @@ est.psYpred <- estimate_psYpred(
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     
     plot        = TRUE,  # default
-    c.vars.std  = "sfc0",
+    c.std  = "sfc0",
     
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
@@ -408,8 +408,8 @@ est.psYpredMR <- estimate_psYpredMR(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,  # default
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc",
+    c.std  = "sfc0",
+    m.std  = "sfc",
     
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
@@ -484,7 +484,7 @@ est.Ypred <- estimate_Ypred(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,  # default
-    cm.vars.std = c("sfc0", "sfc"),
+    cm.std = c("sfc0", "sfc"),
     
     y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
@@ -507,8 +507,8 @@ est.YpredMR <- estimate_YpredMR(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,  # default
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc",
+    c.std  = "sfc0",
+    m.std  = "sfc",
     
     y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
@@ -571,13 +571,15 @@ gridExtra::grid.arrange(
 
 \
 
+\
+
 ## MsimYpred pair
 
 The paper mentioned two versions. Here we implement the first version.
 
 \
 
-# Estimators -- if want additive effects
+# Estimators -- for additive effects only
 
 ## NDEpred pair
 
@@ -616,8 +618,8 @@ est.NDEpredR <- estimate_NDEpredR(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,    # default
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc",
+    c.std  = "sfc0",
+    m.std  = "sfc",
     
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
@@ -676,20 +678,20 @@ For this estimation strategy, the paper mentions two versions. We implement the 
 est.wtCadj <- estimate_wtCadj(
     data        = synth,
     cross.world = "10",
-
-    boot.num    = 99,
-    boot.method = "cont-wt",
-    boot.seed   = 77777,
     
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,  # default
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc",
+    c.std  = "sfc0",
+    m.std  = "sfc",
 
     y.var       = "drink",
-    y.link      = "logit"
+    y.link      = "logit",
+
+    boot.num    = 99,
+    boot.method = "cont-wt",
+    boot.seed   = 77777
 ) 
 ```
 
@@ -706,6 +708,15 @@ names(est.wtCadj$plots)
 est.wtCadj$estimates
 ```
 
+```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="wt-Cadj estimator: weight distributions"}
+est.wtCadj$plots$w.wt.distribution
+```
+```{r, fig.height=6, fig.width=7.5, fig.align='center', fig.cap="wt-Cadj estimator: key balance plot"}
+est.wtCadj$plots$key.balance
+```
+These weight distribution and key balance plots are exactly the same as what we have for the pure weighting estimator.
+
+\
 
 ## wp-Cadj pair
 
@@ -823,8 +834,8 @@ w.med <- weights_med(
     cross.world = "10",
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc"
+    c.std  = "sfc0",
+    m.std  = "sfc"
 )
 
 # compute estimates of PO means
@@ -1048,8 +1059,8 @@ w.med <- weights_med(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,  # default
-    c.vars.std  = "sfc0",
-    m.vars.std  = "sfc"
+    c.std  = "sfc0",
+    m.std  = "sfc"
 )
 
 w.dat <- w.med$w.dat
@@ -1189,7 +1200,7 @@ point.wpCadj <- c(NDE0 = nde0,
 
 \
 
-# Code for results in manuscript
+# Results in manuscript
 
 \
 

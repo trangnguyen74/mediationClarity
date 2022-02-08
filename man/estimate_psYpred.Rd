@@ -16,7 +16,7 @@ estimate_psYpred(
   a.c.form,
   max.stabilized.wt = 30,
   plot = TRUE,
-  c.vars.std = NULL,
+  c.std = NULL,
   c.order = NULL,
   y.c.form = NULL,
   y.c1.form = NULL,
@@ -50,7 +50,7 @@ estimate_psYpred(
 
 \item{plot}{Whether to output weight distribution and balance plots. Defaults to TRUE.}
 
-\item{c.vars.std}{Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
+\item{c.std}{Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
 
 \item{c.order}{Order in which covariates are to be plotted. If not specify, use the order that appears in \code{a.c.form}.}
 
@@ -72,6 +72,7 @@ Other estimators:
 \code{\link{estimate_YpredMR}()},
 \code{\link{estimate_Ypred}()},
 \code{\link{estimate_psYpredMR}()},
+\code{\link{estimate_wpCadj}()},
 \code{\link{estimate_wtCadj}()},
 \code{\link{estimate_wtd}()}
 }

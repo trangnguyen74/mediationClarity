@@ -12,38 +12,17 @@
 \alias{dot-plot_balance}
 \title{(For maintainer) Plot balance}
 \usage{
-.plot_balance.med(
-  w.dat,
-  c.vars,
-  m.vars,
-  c.vars.std,
-  m.vars.std,
-  key.balance = FALSE
-)
+.plot_balance.med(w.dat, c.vars, m.vars, c.std, m.std, key.balance = FALSE)
 
 .plot_balance.ipw(w.dat, vars, vars.std)
 
 .plot_balance.odds(w.dat, vars, vars.std)
 
-.plot_balance.psYpred(w.dat, c.vars, c.vars.std)
+.plot_balance.psYpred(w.dat, c.vars, c.std)
 
-.plot_balance.psYpredMR(
-  w.dat,
-  cross.world,
-  c.vars,
-  m.vars,
-  c.vars.std,
-  m.vars.std
-)
+.plot_balance.psYpredMR(w.dat, cross.world, c.vars, m.vars, c.std, m.std)
 
-.plot_balance.YpredMR(
-  w.dat,
-  cross.world,
-  c.vars,
-  m.vars,
-  c.vars.std,
-  m.vars.std
-)
+.plot_balance.YpredMR(w.dat, cross.world, c.vars, m.vars, c.std, m.std)
 }
 \arguments{
 \item{w.dat}{Data for (pseudo) subsamples, e.g. \code{output of .compute_weights.Ypred()}}
@@ -52,9 +31,9 @@
 
 \item{m.vars}{Names of mediators, already cleaned.}
 
-\item{c.vars.std}{Names of covariates whose mean differences are to be standardized, already cleaned.}
+\item{c.std}{Names of covariates whose mean differences are to be standardized, already cleaned.}
 
-\item{m.vars.std}{Names of mediators whose mean differences are to be standardized, already cleaned.}
+\item{m.std}{Names of mediators whose mean differences are to be standardized, already cleaned.}
 
 \item{key.balance}{Whether all balance components are crucial to the estimator using the weighting method, defaults to FALSE. See relevance in \bold{Value} section.}
 

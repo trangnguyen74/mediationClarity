@@ -14,8 +14,8 @@ weights_med(
   plot = TRUE,
   c.order = NULL,
   m.order = NULL,
-  c.vars.std = NULL,
-  m.vars.std = NULL
+  c.std = NULL,
+  m.std = NULL
 )
 }
 \arguments{
@@ -37,9 +37,9 @@ weights_med(
 
 \item{m.order}{Order in which mediators are to be plotted. If not specify, use the order that appears in \code{a.cm.form}.}
 
-\item{c.vars.std}{Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
+\item{c.std}{Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
 
-\item{m.vars.std}{Mediators whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
+\item{m.std}{Mediators whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.}
 }
 \value{
 A list including\itemize{

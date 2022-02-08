@@ -15,8 +15,8 @@
 #' @param plot Whether to output weight distribution and balance plots. Defaults to TRUE.
 #' @param c.order Order in which covariates are to be plotted. If not specify, use the order that appears in \code{a.c.form}.
 #' @param m.order Order in which mediators are to be plotted. If not specify, use the order that appears in \code{a.cm.form}.
-#' @param c.vars.std Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.
-#' @param m.vars.std Mediators whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.
+#' @param c.std Covariates whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.
+#' @param m.std Mediators whose mean differences are to be standardized in balance plot. Ignore if \code{plot==FALSE}.
 #' @return A list including\itemize{
 #' \item{w.dat}{A data frame for the pseudo samples with estimated weights.}
 #' \item{plot.wts}{A plot of the distributions of the weights.}
@@ -37,8 +37,8 @@ weights_med <- function(
     plot = TRUE,
     c.order = NULL,
     m.order = NULL,
-    c.vars.std = NULL,
-    m.vars.std = NULL
+    c.std = NULL,
+    m.std = NULL
 ) {
 
     # CLEAN INPUTS
@@ -62,8 +62,8 @@ weights_med <- function(
     if (plot)  plots <- .plot_med(w.dat = w.dat,
                                   c.vars = c.vars,
                                   m.vars = m.vars,
-                                  c.vars.std = c.vars.std,
-                                  m.vars.std = m.vars.std)
+                                  c.std = c.std,
+                                  m.std = m.std)
 
 
 
@@ -184,8 +184,8 @@ NULL
     m.vars <- env$m.vars
     c.order <- env$c.order
     m.order <- env$m.order
-    c.vars.std <- env$c.vars.std
-    m.vars.std <- env$m.vars.std
+    c.std <- env$c.std
+    m.std <- env$m.std
 
 
     if (!is.null(c.order)) {
@@ -207,7 +207,7 @@ NULL
 
 
 
-    if (is.null(c.vars.std) && is.null(m.vars.std)) {
+    if (is.null(c.std) && is.null(m.std)) {
 
         maybe.cont <- sapply(c(c.vars, m.vars),
                              function(z) maybe_continuous(env$data[, z]))
@@ -217,38 +217,38 @@ NULL
                           paste(c(c.vars, m.vars)[which(maybe.cont)],
                                 collapse = ", "),
                           "(if they are continuous variables).",
-                          "To turn off this message, specify c.vars.std=\"\", m.vars.std=\"\"."))
+                          "To turn off this message, specify c.std=\"\", m.std=\"\"."))
 
         return()
     }
 
 
-    if (length(c.vars.std==1) && c.vars.std=="" &&
-        length(m.vars.std==1) && m.vars.std=="")
+    if (length(c.std==1) && c.std=="" &&
+        length(m.std==1) && m.std=="")
         return()
 
 
 
 
-    c.vars.std <- setdiff(c.vars.std, "")
-    m.vars.std <- setdiff(m.vars.std, "")
+    c.std <- setdiff(c.std, "")
+    m.std <- setdiff(m.std, "")
 
-    if (length(setdiff(c.vars.std, c.vars))>0)
-        stop("Variables specified in c.vars.std are not all contained in model formula a.c.form.")
+    if (length(setdiff(c.std, c.vars))>0)
+        stop("Variables specified in c.std are not all contained in model formula a.c.form.")
 
-    if (length(setdiff(m.vars.std, m.vars))>0)
-        stop("Variables specified in m.vars.std are not all part of M variables based on formulas a.c.form and a.cm.form.")
+    if (length(setdiff(m.std, m.vars))>0)
+        stop("Variables specified in m.std are not all part of M variables based on formulas a.c.form and a.cm.form.")
 
 
 
-    vars.std <- c(c.vars.std, m.vars.std)
+    vars.std <- c(c.std, m.std)
 
     ok.std <- sapply(vars.std, function(z) maybe_continuous(env$data[, z]))
 
     if (!all(ok.std))
         stop(paste("Check variable(s)",
                    paste(vars.std[which(!ok.std)], collapse = ", "),
-                   "before proceeding. Only include continuous variables in c.vars.std and m.vars.std."))
+                   "before proceeding. Only include continuous variables in c.std and m.std."))
 
 }
 
@@ -368,15 +368,15 @@ NULL
 #' @param w.dat Weighted data
 #' @param c.vars Names of covariates, already cleaned.
 #' @param m.vars Names of mediators, already cleaned.
-#' @param c.vars.std Names of covariates whose mean differences are to be standardized, already cleaned.
-#' @param m.vars.std Names of mediators whose mean differences are to be standardized, already cleaned.
+#' @param c.std Names of covariates whose mean differences are to be standardized, already cleaned.
+#' @param m.std Names of mediators whose mean differences are to be standardized, already cleaned.
 #' @param key.balance Whether all balance components are crucial to the estimator using the weighting method, defaults to FALSE. See relevance in \bold{Value} section.
 
 .plot_med <- function(w.dat,
                       c.vars,
                       m.vars,
-                      c.vars.std,
-                      m.vars.std,
+                      c.std,
+                      m.std,
                       key.balance = FALSE) {
 
 
@@ -390,8 +390,8 @@ NULL
     out[[bal.name]] <- .plot_balance.med(w.dat = w.dat,
                                          c.vars = c.vars,
                                          m.vars = m.vars,
-                                         c.vars.std = c.vars.std,
-                                         m.vars.std = m.vars.std,
+                                         c.std = c.std,
+                                         m.std = m.std,
                                          key.balance = key.balance)
 
     out
@@ -420,15 +420,15 @@ NULL
 .plot_balance.med <- function(w.dat,
                               c.vars,
                               m.vars,
-                              c.vars.std,
-                              m.vars.std,
+                              c.std,
+                              m.std,
                               key.balance = FALSE) {
 
     smd.dat <- .get_smd.med(w.dat = w.dat,
                             c.vars = c.vars,
                             m.vars = m.vars,
-                            c.vars.std = c.vars.std,
-                            m.vars.std = m.vars.std)
+                            c.std = c.std,
+                            m.std = m.std)
 
     if (key.balance)
         smd.dat$contrast <-
@@ -486,14 +486,14 @@ NULL
 #' @param w.dat Dataset for pseudo samples, already cleaned and dummy coded.
 #' @param c.vars Names of covariates, checked and dummied.
 #' @param m.vars Names of mediators, checked and dummied.
-#' @param c.vars.std Covariates to be standardized, already checked.
-#' @param m.vars.std Mediators to be standardized, already checked.
+#' @param c.std Covariates to be standardized, already checked.
+#' @param m.std Mediators to be standardized, already checked.
 
 .get_smd.med <- function(w.dat,
                          c.vars,
                          m.vars,
-                         c.vars.std,
-                         m.vars.std) {
+                         c.std,
+                         m.std) {
 
     tmp <- .dummies_2sets(data = w.dat,
                           columns1 = c.vars,
@@ -505,16 +505,16 @@ NULL
 
     c.smd <- .get_c.smd(w.dat      = w.dat,
                         vars        = c.vars,
-                        standardize = c.vars.std)
+                        standardize = c.std)
 
     m.smd <- .get_m.smd(w.dat      = w.dat,
                         vars        = m.vars,
-                        standardize = m.vars.std)
+                        standardize = m.std)
 
     smd <- rbind(c.smd, m.smd)
 
-    c.vars <- ifelse(c.vars %in% c.vars.std, paste0("*", c.vars), c.vars)
-    m.vars <- ifelse(m.vars %in% m.vars.std, paste0("*", m.vars), m.vars)
+    c.vars <- ifelse(c.vars %in% c.std, paste0("*", c.vars), c.vars)
+    m.vars <- ifelse(m.vars %in% m.std, paste0("*", m.vars), m.vars)
 
     smd$variable <- factor(smd$variable, levels = c(c.vars, m.vars))
 
