@@ -34,4 +34,5 @@ estimate_wpCadj <- function(
     c.std   = NULL
 ) {
 
+    c.vars <- y.family <- NULL
 }
