@@ -1,6 +1,5 @@
 ---
-title: "mediationClarity: marginal natural (in)direct effects estimation"
-subtitle: "simple estimators and more robust estimators"
+title: "mediationClarity: Estimation of marginal natural (in)direct effects"
 output: 
     rmarkdown::html_vignette:
         number_sections: yes
@@ -804,13 +803,13 @@ names(est.wpMRCadj$plots)
 est.wpMRCadj$estimates
 ```
 
-```{r, fig.height=12, fig.width=7}
+```{r, fig.height=12, fig.width=7, fig.cap="wpMRCadj estimator: weight distributions, key balance and full balance"}
 gridExtra::grid.arrange(
     est.wpMRCadj$plots$w.wt.distribution + ggtitle("w.wt distribution"),
     est.wpMRCadj$plots$key.balance       + ggtitle("key balance"),
     est.wpMRCadj$plots$full.balance      + ggtitle("full balance"),
-    layout_matrix = rbind(c(1, 1, NA, NA, NA),
-                          c(1, 1, NA, NA, NA),
+    layout_matrix = rbind(c(1, 1, 1, NA, NA),
+                          c(1, 1, 1, NA, NA),
                           c(2, 2, 2, 2, 2),
                           c(2, 2, 2, 2, 2),
                           c(3, 3, 3, 3, 3),

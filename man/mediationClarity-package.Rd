@@ -11,8 +11,8 @@ This package implements estimators covered in Nguyen et al. (2022), arXiv:2102.0
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/trangnguyen74/tnMediation}
-  \item Report bugs at \url{https://github.com/trangnguyen74/tnMediation/issues}
+  \item \url{https://github.com/trangnguyen74/mediationClarity}
+  \item Report bugs at \url{https://github.com/trangnguyen74/mediationClarity/issues}
 }
 
 }

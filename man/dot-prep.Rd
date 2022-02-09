@@ -3,8 +3,8 @@
 %   R/A3-weights_cmodds.R, R/C0-estimate_wtd.R, R/C2a-estimate_psYpred.R,
 %   R/C2b-estimate_psYpredMR.R, R/C3a-estimate_Ypred.R,
 %   R/C3b-estimate_YpredMR.R, R/C1a-estimate_Y2pred.R, R/C1b-estimate_Y2predR.R,
-%   R/D1a-NDEpred.R, R/D1b-NDEpredR.R, R/E1-wtCadj.R, R/E2a-wpCadj.R,
-%   R/E2b-estimate_wpMRCadj.R
+%   R/D1a-estimate_NDEpred.R, R/D1b-estimate_NDEpredR.R, R/E1-estimate_wtCadj.R,
+%   R/E2a-estimate_wpCadj.R, R/E2b-estimate_wpMRCadj.R
 \name{.prep_med}
 \alias{.prep_med}
 \alias{.prep_ipw}

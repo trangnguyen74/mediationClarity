@@ -19,8 +19,8 @@ Imports:
     rlang,
     table1,
     gridExtra
-URL: https://github.com/trangnguyen74/tnMediation
-BugReports: https://github.com/trangnguyen74/tnMediation/issues
+URL: https://github.com/trangnguyen74/mediationClarity
+BugReports: https://github.com/trangnguyen74/mediationClarity/issues
 Suggests: 
     rmarkdown,
     knitr
