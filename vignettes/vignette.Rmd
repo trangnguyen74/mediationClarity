@@ -1,5 +1,6 @@
 ---
-title: "mediationClarity: simple and more robust estimation of marginal natural (in)direct effects"
+title: "mediationClarity: marginal natural (in)direct effects estimation"
+subtitle: "simple estimators and more robust estimators"
 output: 
     rmarkdown::html_vignette:
         number_sections: yes
@@ -29,7 +30,7 @@ library(ggplot2)
 
 # Read me first
 
-This vignette is long-form documentation of the package `mediationClarity`, and is also the computing appendix to the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048).
+This vignette introduces the package `mediationClarity`, which implements estimators covered in the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048).
 
 
 
@@ -281,7 +282,7 @@ This balance plot is the same plot as that from `weights_med()`, with two subtle
 
 ### Functions
 
-```{r Y2pred, cache=TRUE}
+```{r Y2pred=TRUE}
 # the nonrobust Y2pred estimator
 est.Y2pred <- estimate_Y2pred(
     data        = synth,
@@ -725,8 +726,45 @@ The paper mentions two versions. We implement the version where the two effects 
 ### Functions
 
 
+```{r wpCadj, cache=TRUE}
+est.wpCadj <- estimate_wpCadj(
+    data        = synth,
+    cross.world = "both",
+
+    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+
+    plot        = TRUE,
+    c.std       = "sfc",
+
+    y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
+    y.cm0.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
+    y.link      = "logit",
+
+    boot.num    = 99,
+    boot.method = "cont-wt",
+    boot.seed   = 77777
+)
+```
+
+
+
 ### Outputs
 
+```{r}
+names(est.wpCadj)
+names(est.wpCadj$plots)
+```
+
+```{r}
+est.wpCadj$estimates
+```
+
+```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="wp-Cadj estimator: weight distributions"}
+est.wpCadj$plots$w.wt.distribution
+```
+```{r, fig.height=6, fig.width=7.5, fig.align='center', fig.cap="wp-Cadj estimator: key balance plot"}
+est.wpCadj$plots$key.balance
+```
 
 
 

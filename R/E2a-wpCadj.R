@@ -117,7 +117,7 @@ estimate_wpCadj <- function(
 
     .clean_cross.world(top.env)
 
-    .clean_weights.ipw(top.env)
+    .clean_weights.psYpred(top.env)
 
     .clean_y.wpCadj(top.env)
 
@@ -212,8 +212,7 @@ estimate_wpCadj <- function(
 
 
 
-    env$wkng.form <- paste(y.var,
-                           "~ .a +",
+    env$wkng.form <- paste(".y ~ .a +",
                            paste(env$c.vars, collapse = " + "))
 
 }
@@ -228,7 +227,7 @@ estimate_wpCadj <- function(
 #' @param wkng.form Formula for working regression model
 #' @importFrom stats coef
 
-.point_est.wtCadj <- function(
+.point_est.wpCadj <- function(
     data,
     cross.world,
     effect.scale,
@@ -261,7 +260,7 @@ estimate_wpCadj <- function(
 
         # p10
         y.cm1.s11 <- glm(formula = y.cm1.form,
-                         data    = data[data$.a==1, ],
+                         data    = p11,
                          weights = data$.s.wt,
                          family  = y.family)
         p10 <- p00
@@ -355,7 +354,7 @@ estimate_wpCadj <- function(
 
         # p01
         y.cm0.s00 <- glm(formula = y.cm0.form,
-                         data    = data[data$.a==0, ],
+                         data    = p00,
                          weights = data$.s.wt,
                          family  = y.family)
         p01 <- p11

@@ -10,7 +10,7 @@
 #' @inheritParams estimate_wtd
 #' @inheritParams weights_med
 #' @inheritParams estimate_psYpred
-#' @param cm.vars.std blah
+#' @param cm.std blah
 #' @param cm.order blah
 #' @param y10.c.form Model formula for E[Y(1,M0)|C]
 #' @param y01.c.form Model formula for E[Y(0,M1)|C]
@@ -33,7 +33,7 @@ estimate_Ypred <- function(
     max.stabilized.wt = 30,
 
     plot        = TRUE,
-    cm.vars.std = NULL,
+    cm.std = NULL,
     cm.order    = NULL,
 
     y.c.form   = NULL,
@@ -82,7 +82,7 @@ estimate_Ypred <- function(
 
         plots <- .plot_odds(w.dat          = tmp$w.dat,
                             vars           = cm.vars,
-                            vars.std       = cm.vars.std,
+                            vars.std       = cm.std,
                             estimate.Ypred = TRUE);  rm(tmp)
     }
 

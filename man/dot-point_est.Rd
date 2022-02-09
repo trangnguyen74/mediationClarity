@@ -14,6 +14,7 @@
 \alias{.point_est.NDEpred}
 \alias{.point_est.NDEpredR}
 \alias{.point_est.wtCadj}
+\alias{.point_est.wpCadj}
 \alias{dot-point_est}
 \title{(For maintainer) Point estimation}
 \usage{
@@ -150,15 +151,14 @@
   cross.world,
   effect.scale,
   a.c.form,
+  a.cm.form,
   max.stabilized.wt = 30,
   output.data = FALSE,
-  y.cm1.form,
-  y.cm0.form,
   wkng.form,
   y.family
 )
 
-.point_est.wtCadj(
+.point_est.wpCadj(
   data,
   cross.world,
   effect.scale,

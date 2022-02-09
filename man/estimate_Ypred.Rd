@@ -16,7 +16,7 @@ estimate_Ypred(
   a.cm.form,
   max.stabilized.wt = 30,
   plot = TRUE,
-  cm.vars.std = NULL,
+  cm.std = NULL,
   cm.order = NULL,
   y.c.form = NULL,
   y.c1.form = NULL,
@@ -49,7 +49,7 @@ estimate_Ypred(
 
 \item{plot}{Whether to output weight distribution and balance plots. Defaults to TRUE.}
 
-\item{cm.vars.std}{blah}
+\item{cm.std}{blah}
 
 \item{cm.order}{blah}
 
