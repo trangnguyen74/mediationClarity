@@ -2,7 +2,7 @@
 % Please edit documentation in R/C0-estimate_wtd.R, R/C2a-estimate_psYpred.R,
 %   R/C2b-estimate_psYpredMR.R, R/C3a-estimate_Ypred.R,
 %   R/C3b-estimate_YpredMR.R, R/C1a-estimate_Y2pred.R, R/C1b-estimate_Y2predR.R,
-%   R/D1a-NDEpred.R, R/D1b-NDEpredR.R, R/E1-wtCadj.R
+%   R/D1a-NDEpred.R, R/D1b-NDEpredR.R, R/E1-wtCadj.R, R/E2a-wpCadj.R
 \name{.point_est.wtd}
 \alias{.point_est.wtd}
 \alias{.point_est.psYpred}
@@ -150,9 +150,23 @@
   cross.world,
   effect.scale,
   a.c.form,
-  a.cm.form,
   max.stabilized.wt = 30,
   output.data = FALSE,
+  y.cm1.form,
+  y.cm0.form,
+  wkng.form,
+  y.family
+)
+
+.point_est.wtCadj(
+  data,
+  cross.world,
+  effect.scale,
+  a.c.form,
+  max.stabilized.wt = 30,
+  output.data = FALSE,
+  y.cm1.form,
+  y.cm0.form,
   wkng.form,
   y.family
 )

@@ -30,11 +30,11 @@ estimate_wtCadj <- function(
     y.var,
     y.link,
 
-    plot       = TRUE,
-    c.order    = NULL,
-    m.order    = NULL,
-    c.std = NULL,
-    m.std = NULL
+    plot    = TRUE,
+    c.order = NULL,
+    m.order = NULL,
+    c.std   = NULL,
+    m.std   = NULL
 ) {
 
     c.vars <- m.vars <- y.family <- wkng.form <- NULL
@@ -111,7 +111,7 @@ estimate_wtCadj <- function(
 
 
 
-#### .pred_wtCadj #######################################################
+#### .prep_wtCadj #######################################################
 
 #' @rdname dot-prep
 #' @order 13

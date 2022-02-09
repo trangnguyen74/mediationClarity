@@ -15,7 +15,9 @@ estimate_wpCadj(
   boot.stratify = TRUE,
   a.c.form,
   max.stabilized.wt = 30,
-  y.cm.form,
+  y.cm1.form = NULL,
+  y.cm0.form = NULL,
+  y.cm.form = NULL,
   y.link,
   plot = TRUE,
   c.order = NULL,
@@ -42,6 +44,10 @@ estimate_wpCadj(
 \item{a.c.form}{Formula for the P(A|C) model (the propensity score model).}
 
 \item{max.stabilized.wt}{Max stabilized weight allowed. Larger weights are truncated to this level. Default is 30.}
+
+\item{y.cm1.form}{blah}
+
+\item{y.cm0.form}{blah}
 
 \item{y.cm.form}{blah}
 

@@ -14,7 +14,7 @@
 \usage{
 .plot_med(w.dat, c.vars, m.vars, c.std, m.std, key.balance = FALSE)
 
-.plot_ipw(w.dat, vars, vars.std)
+.plot_ipw(w.dat, vars, vars.std, key.balance = FALSE)
 
 .plot_odds(w.dat, vars, vars.std, estimate.Ypred = FALSE)
 

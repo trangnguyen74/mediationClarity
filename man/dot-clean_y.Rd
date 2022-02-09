@@ -2,7 +2,7 @@
 % Please edit documentation in R/C0-estimate_wtd.R, R/C2a-estimate_psYpred.R,
 %   R/C2b-estimate_psYpredMR.R, R/C3a-estimate_Ypred.R,
 %   R/C3b-estimate_YpredMR.R, R/C1a-estimate_Y2pred.R, R/C1b-estimate_Y2predR.R,
-%   R/D1a-NDEpred.R, R/E1-wtCadj.R
+%   R/D1a-NDEpred.R, R/E1-wtCadj.R, R/E2a-wpCadj.R
 \name{.clean_y.wtd}
 \alias{.clean_y.wtd}
 \alias{.clean_y.forms.psYpred}
@@ -13,6 +13,7 @@
 \alias{.clean_y.forms.Y2predR}
 \alias{.clean_ye.forms.NDEpred}
 \alias{.clean_y.wtCadj}
+\alias{.clean_y.wpCadj}
 \alias{dot-clean_y}
 \title{(For maintainer) Clean outcome-related inputs}
 \usage{
@@ -33,6 +34,8 @@
 .clean_ye.forms.NDEpred(env)
 
 .clean_y.wtCadj(env)
+
+.clean_y.wpCadj(env)
 }
 \arguments{
 \item{env}{An environment}
