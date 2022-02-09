@@ -43,7 +43,7 @@ Before getting to the estimators (what you are most likely here for), we will co
 
 In sections 3-5, to speed up the compling of this document we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
 
-The additional Section 6 includes some manual code that shows the gist of each method, for the interested user. We recommend reading the paper to fully understand the methods and their properties.
+The additional Section 6 includes some manual code that shows the gist of each method. We recommend reading the paper to fully understand the methods and their properties.
 
 Section 7 contains code that, if run, produces the results in the manuscript.
 
@@ -334,9 +334,10 @@ est.Y2predR <- estimate_Y2predR(
 `y.c0.form` and `y.c1.form` are model formulas for $\mathrm{E}[Y|C,A=0]$ and $\mathrm{E}[Y|C,A=1]$.
 
 `y.cm1.form` and `y10.c.form` are model formulas for $\mathrm{E}[Y|C,M,A=1]$ and $\mathrm{E}[Y_{1M_0}|C]$, which are required for `cross.world` = "10".
+
 For `cross.world` = "01", use `y.cm0.form` and `y01.c.form`, for $\mathrm{E}[Y|C,M,A=0]$ and $\mathrm{E}[Y_{0M_1}|C]$.
 
-There are times when we might want to use the same model form for several models (like what we do in the code above). We can use shortcut arguments `y.c.form` and `y.cm.form`:
+There are times when we might want to use the same model form for several models (like what we do in the code above). Then can use shortcut arguments `y.c.form` and `y.cm.form` instead:
 
 - the formula in `y.c.form` gets populated to `y.c0.form`, `y.c1.form`, `y10.c.form`, `y01.c.form` if any of these inputs are required but not specified
 - the formula in `y.cm.form` gets populated to `y.cm0.form`, `y.cm1.form` if either of these inputs is required but not specified
@@ -727,14 +728,38 @@ The paper mentions two versions. We implement the version where the two effects 
 
 
 ```{r wpCadj, cache=TRUE}
+# the nonrobust wpCadj estimator
 est.wpCadj <- estimate_wpCadj(
     data        = synth,
-    cross.world = "both",
+    cross.world = "10",
 
     a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
 
     plot        = TRUE,
-    c.std       = "sfc",
+    c.std       = "sfc0",
+
+    y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
+    y.cm0.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
+    y.link      = "logit",
+
+    boot.num    = 99,
+    boot.method = "cont-wt",
+    boot.seed   = 77777
+)
+```
+
+```{r wpMRCadj, cache=TRUE}
+# the more robust wpMRCadj estimator
+est.wpMRCadj <- estimate_wpMRCadj(
+    data        = synth,
+    cross.world = "10",
+
+    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+
+    plot        = TRUE,
+    c.std       = "sfc0",
+    m.std       = "sfc",
 
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
     y.cm0.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
@@ -747,8 +772,9 @@ est.wpCadj <- estimate_wpCadj(
 ```
 
 
-
 ### Outputs
+
+#### The nonrobust wpCadj
 
 ```{r}
 names(est.wpCadj)
@@ -762,10 +788,35 @@ est.wpCadj$estimates
 ```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="wp-Cadj estimator: weight distributions"}
 est.wpCadj$plots$w.wt.distribution
 ```
-```{r, fig.height=6, fig.width=7.5, fig.align='center', fig.cap="wp-Cadj estimator: key balance plot"}
+```{r, fig.height=3.5, fig.width=7.5, fig.align='center', fig.cap="wp-Cadj estimator: key balance plot"}
 est.wpCadj$plots$key.balance
 ```
 
+#### The more robust wpMRCadj
+
+
+```{r}
+names(est.wpMRCadj)
+names(est.wpMRCadj$plots)
+```
+
+```{r}
+est.wpMRCadj$estimates
+```
+
+```{r, fig.height=12, fig.width=7}
+gridExtra::grid.arrange(
+    est.wpMRCadj$plots$w.wt.distribution + ggtitle("w.wt distribution"),
+    est.wpMRCadj$plots$key.balance       + ggtitle("key balance"),
+    est.wpMRCadj$plots$full.balance      + ggtitle("full balance"),
+    layout_matrix = rbind(c(1, 1, NA, NA, NA),
+                          c(1, 1, NA, NA, NA),
+                          c(2, 2, 2, 2, 2),
+                          c(2, 2, 2, 2, 2),
+                          c(3, 3, 3, 3, 3),
+                          c(3, 3, 3, 3, 3),
+                          c(3, 3, 3, 3, 3)))
+```
 
 
 \
@@ -1243,3 +1294,38 @@ point.wpCadj <- c(NDE0 = nde0,
 \
 
 # References {-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
