@@ -1,16 +1,6 @@
 
 # TODO: reorder arguments of functions: boot inputs last, y.cm after y.cm1 and y.cm0, same default for effect.scale.
 
-# TODO: rename .prep_estimate_wtd() to .prep_wtd()
-
-# TODO: make reshape_gather() an internal function
-
-# TODO: simplify function names .clean_y.forms to .clean_y
-
-# TODO: correct order of .prep_ (letting MsimYpred in its place)
-
-# TODO: correct order of .clean_y. (letting MsimYpred in its place)
-
 # TODO: revisit output.data argument in .point_est for estimators that don't require weighting
 
 # TODO: bundle .point and .boot in one convenient sample
@@ -294,8 +284,11 @@ estimate_MsimYpred <- function(
 
 #### .simulate ############################################################
 
-#' @noRd
+#' Internal: simulate based on a model fit
+#'
+#' Similar to \code{base::simulate()}, but allows a \code{newdata} argument, similar to that of \code{predict()}.
 #' @importFrom stats family rbinom rnorm sigma
+#' @keywords internal
 
 .simulate <- function(object, ...) {
 

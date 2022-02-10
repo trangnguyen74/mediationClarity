@@ -21,7 +21,7 @@
 #' @return A list of objects, including\itemize{
 #' \item{}{}
 #' }
-#' @export
+#' @keywords internal
 
 estimate_effects <- function(
     data,
@@ -127,6 +127,7 @@ estimate_effects <- function(
 #'
 #' @param estimator The estimator name as typed by user.
 #' @return The right estimator name (correcting anticipated typos).
+#' @keywords internal
 
 .clean_estimator <- function(estimator) {
 

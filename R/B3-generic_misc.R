@@ -15,7 +15,7 @@ NULL
 
 
 
-#### reshape_gather ############################################################
+#### .reshape_gather ############################################################
 
 #' A cross between \code{gather} of package \code{dplyr} and \code{reshape}
 #'
@@ -26,9 +26,9 @@ NULL
 #' @param value New variable to contain values of columns being gathered
 #' @param wide.row Whether to include a variable named \code{wide.row} containing the row numbers from the original wide data. Defaults to TRUE.
 #' @return A data frame with the two new variables named in arguments \code{key} and \code{value}, plus a third new variable named \code{wide.row}. The remaining variables of the input dataset are carried over.
-#' @export
-#'
-reshape_gather <- function(data,
+#' @keywords internal
+
+.reshape_gather <- function(data,
                            columns,
                            key,
                            value,

@@ -617,7 +617,7 @@ NULL
         diff <- data.frame(diff, row.names = NULL)
         diff$variable <- vars
 
-        diff <- reshape_gather(data     = diff,
+        diff <- .reshape_gather(data     = diff,
                                columns  = diff.names,
                                key      = "contrast",
                                value    = "mean.diff",
@@ -721,7 +721,7 @@ NULL
         diff <- data.frame(diff, row.names = NULL)
         diff$variable <- vars
 
-        diff <- reshape_gather(data     = diff,
+        diff <- .reshape_gather(data     = diff,
                                columns  = diff.names,
                                key      = "contrast",
                                value    = "mean.diff",

@@ -356,7 +356,7 @@ estimate_psYpredMR <- function(
         pred10$p10 <- predict(y.cm1.p10, newdata = p00, type = "response")
         pred10$p11 <- predict(y.c1.p11,  newdata = p00, type = "response")
 
-        pred10 <- reshape_gather(pred10, columns = c("p00", "p10", "p11"),
+        pred10 <- .reshape_gather(pred10, columns = c("p00", "p10", "p11"),
                                  key = ".samp",
                                  value = ".y",
                                  wide.row = FALSE)
@@ -384,7 +384,7 @@ estimate_psYpredMR <- function(
         pred01$p01 <- predict(y.cm0.p01, newdata = p11, type = "response")
         pred01$p00 <- predict(y.c0.p00,  newdata = p11, type = "response")
 
-        pred01 <- reshape_gather(pred01, columns = c("p00", "p01", "p11"),
+        pred01 <- .reshape_gather(pred01, columns = c("p00", "p01", "p11"),
                                  key = ".samp",
                                  value = ".y",
                                  wide.row = FALSE)

@@ -46,3 +46,4 @@ A list of objects, including\itemize{
 \description{
 A wrapper function that calls on estimator-specific functions.
 }
+\keyword{internal}

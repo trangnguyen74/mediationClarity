@@ -362,7 +362,7 @@ estimate_psYpred <- function(
         pred10$p10 <- predict(y.cm1.s11, newdata = p00, type = "response")
         pred10$p11 <- predict(y.c1.s11,  newdata = p00, type = "response")
 
-        pred10 <- reshape_gather(pred10,
+        pred10 <- .reshape_gather(pred10,
                                  columns = c("p00", "p10", "p11"),
                                  key = ".samp",
                                  value = ".y",
@@ -391,7 +391,7 @@ estimate_psYpred <- function(
         pred01$p01 <- predict(y.cm0.s00, newdata = p11, type = "response")
         pred01$p00 <- predict(y.c0.s00,  newdata = p11, type = "response")
 
-        pred01 <- reshape_gather(pred01,
+        pred01 <- .reshape_gather(pred01,
                                  columns = c("p00", "p01", "p11"),
                                  key = ".samp",
                                  value = ".y",
@@ -686,7 +686,7 @@ estimate_psYpred <- function(
         diff <- data.frame(diff, row.names = NULL)
         diff$variable <- c.vars
 
-        diff <- reshape_gather(data     = diff,
+        diff <- .reshape_gather(data     = diff,
                                columns  = diff.names,
                                key      = "contrast",
                                value    = "mean.diff",

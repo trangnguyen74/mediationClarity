@@ -15,3 +15,4 @@ The right estimator name (correcting anticipated typos).
 \description{
 Clean typos in estimator name
 }
+\keyword{internal}
