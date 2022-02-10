@@ -107,7 +107,7 @@ estimate_wpCadj <- function(
 #### .prep_wpCadj #######################################################
 
 #' @rdname dot-prep
-#' @order 14
+#' @order 16
 
 .prep_wpCadj <- function() {
 

@@ -122,7 +122,7 @@ estimate_psYpred <- function(
 #### OK  .prep_psYpred #########################################################
 
 #' @rdname dot-prep
-#' @order 5
+#' @order 7
 
 .prep_psYpred <- function() {
 

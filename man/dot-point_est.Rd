@@ -2,9 +2,9 @@
 % Please edit documentation in R/C1-estimate_wtd.R, R/C3a-estimate_psYpred.R,
 %   R/C3b-estimate_psYpredMR.R, R/C4a-estimate_Ypred.R,
 %   R/C4b-estimate_YpredMR.R, R/C2a-estimate_Y2pred.R, R/C2b-estimate_Y2predR.R,
-%   R/D1a-estimate_NDEpred.R, R/D1b-estimate_NDEpredR.R,
-%   R/C5a-estimate_MsimYpred.R, R/E1-estimate_wtCadj.R, R/E2a-estimate_wpCadj.R,
-%   R/E2b-estimate_wpMRCadj.R
+%   R/D1a-estimate_NDEpred.R, R/C5a-estimate_MsimYpred.R,
+%   R/E1-estimate_wtCadj.R, R/E2a-estimate_wpCadj.R, R/E2b-estimate_wpMRCadj.R,
+%   R/D1b-estimate_NDEpredR.R
 \name{.point_est.wtd}
 \alias{.point_est.wtd}
 \alias{.point_est.psYpred}
@@ -14,11 +14,11 @@
 \alias{.point_est.Y2pred}
 \alias{.point_est.Y2predR}
 \alias{.point_est.NDEpred}
-\alias{.point_est.NDEpredR}
 \alias{.point_est.MsimYpred}
 \alias{.point_est.wtCadj}
 \alias{.point_est.wpCadj}
 \alias{.point_est.wpMRCadj}
+\alias{.point_est.NDEpredR}
 \alias{dot-point_est}
 \title{(For maintainer) Point estimation}
 \usage{
@@ -134,22 +134,6 @@
   output.data = FALSE
 )
 
-.point_est.NDEpredR(
-  data,
-  cross.world,
-  a.c.form,
-  a.cm.form,
-  max.stabilized.wt = 30,
-  output.data = FALSE,
-  y.c1.form,
-  y.c0.form,
-  y.cm1.form,
-  y.cm0.form,
-  nde0.c.form,
-  nde1.c.form,
-  y.family
-)
-
 .point_est.MsimYpred(
   data,
   cross.world,
@@ -202,6 +186,22 @@
   y.cm1.form,
   y.cm0.form,
   wkng.form,
+  y.family
+)
+
+.point_est.NDEpredR(
+  data,
+  cross.world,
+  a.c.form,
+  a.cm.form,
+  max.stabilized.wt = 30,
+  output.data = FALSE,
+  y.c1.form,
+  y.c0.form,
+  y.cm1.form,
+  y.cm0.form,
+  nde0.c.form,
+  nde1.c.form,
   y.family
 )
 }

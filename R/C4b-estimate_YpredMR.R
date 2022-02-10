@@ -126,7 +126,7 @@ estimate_YpredMR <- function(
 #### OK  .prep_YpredMR #########################################################
 
 #' @rdname dot-prep
-#' @order 8
+#' @order 10
 
 .prep_YpredMR <- function() {
 

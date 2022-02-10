@@ -114,7 +114,7 @@ estimate_wtCadj <- function(
 #### .prep_wtCadj #######################################################
 
 #' @rdname dot-prep
-#' @order 13
+#' @order 15
 
 .prep_wtCadj <- function() {
 

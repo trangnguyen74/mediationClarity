@@ -124,7 +124,7 @@ estimate_Ypred <- function(
 #### OK  .prep_Ypred ###########################################################
 
 #' @rdname dot-prep
-#' @order 7
+#' @order 9
 
 .prep_Ypred <- function() {
 

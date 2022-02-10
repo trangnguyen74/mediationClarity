@@ -93,7 +93,7 @@ estimate_NDEpred <- function(
 #### .prep_NDEpred ##########################################################
 
 #' @rdname dot-prep
-#' @order 10
+#' @order 13
 
 .prep_NDEpred <- function() {
 

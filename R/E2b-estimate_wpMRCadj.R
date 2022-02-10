@@ -113,7 +113,7 @@ estimate_wpMRCadj <- function(
 #### .prep_wpMRCadj #######################################################
 
 #' @rdname dot-prep
-#' @order 15
+#' @order 17
 
 .prep_wpMRCadj <- function() {
 

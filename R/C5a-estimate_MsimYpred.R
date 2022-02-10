@@ -111,7 +111,7 @@ estimate_MsimYpred <- function(
 #### .prep_MsimYpred ######################################################
 
 #' @rdname dot-prep
-#' @order 13
+#' @order 11
 
 .prep_MsimYpred <- function() {
 

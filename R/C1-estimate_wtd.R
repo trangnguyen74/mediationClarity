@@ -50,7 +50,7 @@ estimate_wtd <- function(
 
     c.vars <- m.vars <- NULL
 
-    .prep_estimate_wtd()
+    .prep_wtd()
 
 
     key.inputs <- mget(c("cross.world",
@@ -121,11 +121,11 @@ estimate_wtd <- function(
 
 
 
-#### OK  .prep_estimate_wtd ####################################################
+#### OK  .prep_wtd ####################################################
 
 #' @rdname dot-prep
 #' @order 4
-.prep_estimate_wtd <- function() {
+.prep_wtd <- function() {
 
     top.env <- parent.frame()
 

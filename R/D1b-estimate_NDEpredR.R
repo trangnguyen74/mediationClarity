@@ -126,7 +126,7 @@ estimate_NDEpredR <- function(
 #### .prep_NDEpredR ##########################################################
 
 #' @rdname dot-prep
-#' @order 11
+#' @order 14
 
 .prep_NDEpredR <- function() {
 
@@ -151,7 +151,7 @@ estimate_NDEpredR <- function(
 #### .point_est.NDEpredR #####################################################
 
 #' @rdname dot-point_est
-#' @order 8
+#' @order 14
 
 .point_est.NDEpredR <- function(
     data,
