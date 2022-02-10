@@ -7,7 +7,7 @@ output:
         toc_depth:       2
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{vignette}
+  %\VignetteIndexEntry{mediationClarity}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -42,10 +42,14 @@ Before getting to the estimators (what you are most likely here for), we will co
 
 In sections 3-5, to speed up the compling of this document we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The default in the package is 999.
 
-The additional Section 6 includes some manual code that reminds of the gist of each method. We recommend reading the paper to properly understand the methods and their properties.
+<!-- The additional Section 6 includes some manual code that reminds of the gist of each method. We recommend reading the paper to properly understand the methods and their properties. -->
 
-Section 7 contains code that, if run, produces the results in the manuscript.
+Section 6 contains code that, if run, produces the results in the manuscript.
 
+
+## Acknowledgements
+
+In @nguyen2022MediationEstimation we acknowledge the sources on which we built the technical content of this work. Here we acknowledge the most important resources that helped the construction of this R package: the R packages `devtools` [@devtools], `usethis` [@usethis], `roxygen2` [@roxygen2], the super helpful R Packages book [@wickhamPackages], R-bloggers posts such as @pang2013NewTrickMe, many helpful posts on Stack Overflow, and our Stuart lab colleagues who kindly share their programming tips Nick Seewald, Leon Di Stefano, Yongqi Zhong and Elena Badillo Goicoechea. 
 
 ## A bit about data
 
@@ -581,8 +585,9 @@ The paper mentioned two versions. Here we implement the first version.
 ### Functions
 
 ```{r MsimYpred, cache=TRUE}
+# the nonrobust MsimYpred estimator
 est.MsimYpred <- estimate_MsimYpred(
-    data = synth,
+    data        = synth,
     cross.world = "10",
     
     a.var = 'treat',
@@ -591,10 +596,10 @@ est.MsimYpred <- estimate_MsimYpred(
     y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
     y.link      = "logit",
     
-    m.c0.form = list("att ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3)",
-                     "rul ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3) + att",
-                     "sfc ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3) + att + rul"),
-    m.dist = list("binary", "binary", "gaussian"),
+    m.c0.form   = list("att ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3)",
+                       "rul ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3) + att",
+                       "sfc ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3) + att + rul"),
+    m.dist      = list("binary", "binary", "normal"),
     
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
     
@@ -602,17 +607,59 @@ est.MsimYpred <- estimate_MsimYpred(
     boot.method = "cont-wt",  # default
     boot.seed   = 77777,
     
-    point.reps  = 10
+    point.reps  = 500
 )
 ```
 
 
+```{r MsimYpredMR, cache=TRUE}
+# the more robust MsimYpredMR estimator
+est.MsimYpredMR <- estimate_MsimYpredMR(
+    data        = synth,
+    cross.world = "10",
+    
+    a.c.form    = "treat ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 4)",
+    a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
+    
+    y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
+    y.c1.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
+    y.link      = "logit",
+    
+    m.c0.form   = list("att ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3)",
+                       "rul ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3) + att",
+                       "sfc ~ age + sex + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0,3) + att + rul"),
+    m.dist      = list("binary", "binary", "normal"),
+    
+    y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
+    
+    boot.num    = 99,         # default value is 999
+    boot.method = "cont-wt",  # default
+    boot.seed   = 77777,
+    
+    point.reps  = 500
+)
+```
+
 
 ### Outputs
+
+#### The nonrobust MsimYpred
 
 ```{r}
 est.MsimYpred
 ```
+
+#### The more robust MsimYpredMR
+
+```{r}
+names(est.MsimYpredMR)
+names(est.MsimYpredMR$plots)
+```
+
+```{r}
+est.MsimYpredMR$estimates
+```
+
 
 
 \
@@ -859,13 +906,12 @@ gridExtra::grid.arrange(
 
 \
 
-# Results in manuscript
+# Results in the manuscript
+
+
 
 \
 
-# Acknowledgements
-
-\
 
 # References {-}
 

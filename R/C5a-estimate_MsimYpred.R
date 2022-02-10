@@ -132,6 +132,16 @@ estimate_MsimYpred <- function(
 
 #### .clean_m.MsimYpred ###################################################
 
+#' Internal: clean inputs related to mediator model(s)
+#'
+#' @inheritParams env-block
+#' @name dot-clean_m
+#' @keywords internal
+NULL
+
+#' @rdname dot-clean_m
+#' @order 1
+
 .clean_m.MsimYpred <- function(env) {
 
     yes10 <- ("10" %in% env$cross.world)
@@ -250,7 +260,7 @@ estimate_MsimYpred <- function(
                            robust    = FALSE)
 
     if ("10" %in% cross.world)
-        po.means[["y10.mean"]] <- .crw_MsimYpred(dat = data,
+        po.means[["y10.mean"]] <- .crw_MsimYpred(dat       = data,
                                                  m.vars    = m.vars,
                                                  m.c.form  = m.c0.form,
                                                  m.family  = m.family,
@@ -263,7 +273,7 @@ estimate_MsimYpred <- function(
 
 
     if ("01" %in% cross.world)
-        po.means[["y01.mean"]] <- .crw_MsimYpred(dat = data,
+        po.means[["y01.mean"]] <- .crw_MsimYpred(dat       = data,
                                                  m.vars    = m.vars,
                                                  m.c.form  = m.c1.form,
                                                  m.family  = m.family,
@@ -393,6 +403,10 @@ estimate_MsimYpred <- function(
 
 }
 
+
+
+
+#### .crw_msimYpred #####################################################
 
 #' @noRd
 #' @importFrom stats glm
