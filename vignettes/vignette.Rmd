@@ -580,7 +580,7 @@ The paper mentioned two versions. Here we implement the first version.
 
 ### Functions
 
-```{r}
+```{r MsimYpred, cache=TRUE}
 est.MsimYpred <- estimate_MsimYpred(
     data = synth,
     cross.world = "10",
@@ -598,11 +598,19 @@ est.MsimYpred <- estimate_MsimYpred(
     
     y.cm1.form  = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3) + att + rul + splines::ns(sfc, 3)",
     
-    boot.num    = 9,         # default value is 999
+    boot.num    = 99,         # default value is 999
     boot.method = "cont-wt",  # default
     boot.seed   = 77777
     
 )
+```
+
+
+
+### Outputs
+
+```{r}
+est.MsimYpred
 ```
 
 

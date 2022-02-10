@@ -100,6 +100,9 @@ estimate_MsimYpred <- function(
     estimates <- cbind(estimate = estimates,
                        ci.se)
 
+
+    mget(c("estimates", "boot.seed"))
+
 }
 
 
