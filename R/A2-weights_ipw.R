@@ -93,7 +93,7 @@ weights_ipw <- function(
 
 
 #' @rdname dot-clean_weights
-#' @order 2
+#' @order 3
 #' @details \code{.clean_weights.ipw()} is used by \code{.prep_ipw()}.
 
 .clean_weights.ipw <- function(env) {

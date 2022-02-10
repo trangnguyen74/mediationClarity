@@ -110,9 +110,9 @@ NULL
 
 #### OK  .clean_weights.med ####################################################
 
-#' Internal functions: clean inputs for weighting
+#' Internal functions: get treatment variable and clean inputs for weighting
 #'
-#' Functions called by \code{.prep_} functions within \code{weights_} and \code{estimate_} functions. If no weighting is required, grab treatment variable.
+#' Called by \code{.prep_} functions
 #' @inheritParams env-block
 #' @name dot-clean_weights
 #' @keywords internal
@@ -121,7 +121,7 @@ NULL
 
 
 #' @rdname dot-clean_weights
-#' @order 1
+#' @order 2
 #' @details \code{.clean_weights.med()} is used by \code{.prep_med()}.
 
 .clean_weights.med <- function(env) {

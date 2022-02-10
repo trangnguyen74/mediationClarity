@@ -71,7 +71,7 @@ weights_odds <- function(
 
 
 
-#### .prep_cm.odds #########################################################
+#### .prep_odds #########################################################
 
 #' @rdname dot-prep
 #' @order 3
@@ -94,7 +94,7 @@ weights_odds <- function(
 #### .clean_weights.odds ####################################################
 
 #' @rdname dot-clean_weights
-#' @order 3
+#' @order 4
 #' @details \code{.clean_weights.odds()} is used by \code{.prep_odds()}.
 
 .clean_weights.odds <- function(env) {
