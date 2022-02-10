@@ -107,18 +107,18 @@ estimate_NDEpred <- function(
 
     .clean_a.var(top.env)
 
-    .clean_ye.forms.NDEpred(top.env)
+    .clean_y.NDEpred(top.env)
 }
 
 
 
 
-#### .clean_ye.forms.NDEpred ##############################################
+#### .clean_y.NDEpred ##############################################
 
 #' @rdname dot-clean_y
 #' @order 7
 
-.clean_ye.forms.NDEpred <- function(env) {
+.clean_y.NDEpred <- function(env) {
 
     yes10 <- ("10" %in% env$cross.world)
     yes01 <- ("01" %in% env$cross.world)

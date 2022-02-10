@@ -29,6 +29,7 @@
 #' @param m.c1.form,m.c0.form blah
 #' @param m.c.form blah
 #' @param m.dist blah
+#' @param point.reps blah
 #' @export
 
 estimate_MsimYpred <- function(
@@ -58,7 +59,9 @@ estimate_MsimYpred <- function(
     boot.num      = 999,
     boot.seed     = NULL,
     boot.method   = "cont-wt",
-    boot.stratify = TRUE
+    boot.stratify = TRUE,
+
+    point.reps = 100
 
 ) {
 
@@ -75,7 +78,8 @@ estimate_MsimYpred <- function(
                          "m.family",
                          "y.c1.form", "y.c0.form",
                          "y.cm1.form", "y.cm0.form",
-                         "y.family"))
+                         "y.family",
+                         "point.reps"))
 
 
     # POINT ESTIMATION
@@ -95,7 +99,8 @@ estimate_MsimYpred <- function(
                          seed       = boot.seed,
                          method     = boot.method,
                          FUN        = ".point_est.MsimYpred",
-                         FUN.inputs = key.inputs)
+                         FUN.inputs = c(key.inputs,
+                                        list(boot = TRUE)))
 
     estimates <- cbind(estimate = estimates,
                        ci.se)
@@ -241,8 +246,10 @@ estimate_MsimYpred <- function(
     y.cm1.form,
     y.cm0.form,
     y.family,
-    output.data = FALSE # this is to work nice with boot function
-    # (to revisit later)
+    output.data = FALSE, # this is to work nice with boot function
+    #                      (to revisit later)
+    boot = FALSE,
+    point.reps = 100
 ) {
 
 
@@ -260,7 +267,9 @@ estimate_MsimYpred <- function(
                                                  y.cm.form = y.cm1.form,
                                                  y.family  = y.family,
                                                  crw       = "10",
-                                                 robust    = FALSE)
+                                                 robust    = FALSE,
+                                                 boot      = boot,
+                                                 reps      = point.reps)
 
 
     if ("01" %in% cross.world)
@@ -271,7 +280,9 @@ estimate_MsimYpred <- function(
                                                  y.cm.form = y.cm0.form,
                                                  y.family  = y.family,
                                                  crw       = "01",
-                                                 robust    = FALSE)
+                                                 robust    = FALSE,
+                                                 boot      = boot,
+                                                 reps      = point.reps)
 
 
     .po.means_to_effects(po.means)
@@ -295,7 +306,7 @@ estimate_MsimYpred <- function(
     newdata <- NULL
 
 
-    .extract_dots()
+    .extract_dots(...)
 
 
     if (is.null(newdata)) { means <- predict(object, type = "response")
@@ -322,17 +333,29 @@ estimate_MsimYpred <- function(
 }
 
 
-.extract_dots <- function() {
-    pa <- parent.frame()
+.extract_dots <- function(...) {
 
-    with(pa, {
-        dots <- list(...)
+    # version using with() that does not pass R CMD check
+    # (remove ... in function call)
+    #
+    # with(parent.frame(), {
+    #     dots <- list(...)
+    #
+    #     for (i in 1:length(dots))
+    #         assign(x = names(dots)[i], value = dots[[i]])
+    #
+    #     rm(dots)
+    # })
 
-        for (i in 1:length(dots))
-            assign(x = names(dots)[i], value = dots[[i]])
 
-        rm(dots)
-    })
+    dots <- list(...)
+
+    for (i in 1:length(dots))
+        assign(x     = names(dots)[i],
+               value = dots[[i]],
+               envir = parent.frame())
+
+
 }
 
 
@@ -346,6 +369,8 @@ estimate_MsimYpred <- function(
                        y.c0.form,
                        y.family,
                        robust = FALSE) {
+
+    data <- NULL
 
     if (robust)  dat$wt <- dat$.f.wt  else  dat$wt <- dat$.s.wt
 
@@ -386,7 +411,11 @@ estimate_MsimYpred <- function(
                            y.cm.form,
                            y.family,
                            crw,
-                           robust = FALSE) {
+                           robust = FALSE,
+                           boot   = FALSE,
+                           reps) {
+
+    data <- NULL
 
 
     if (robust)  dat$wt <- dat$.f.wt  else  dat$wt <- dat$.s.wt
@@ -407,19 +436,28 @@ estimate_MsimYpred <- function(
             family  = m.family[[z]])
     })
 
-    for (i in 1:length(m.vars))
-        dat[, m.vars[i]] <- .simulate(m.mod[[i]], newdata = dat)
+
+    if (boot) reps <- 1
+
+    y10.mean.reps <- sapply(1:reps, function(z) {
+
+        for (i in 1:length(m.vars))
+            dat[, m.vars[i]] <- .simulate(m.mod[[i]], newdata = dat)
 
 
 
-    y.mod <- glm(formula = y.cm.form,
-                 data    = ydat,
-                 weights = data$wt,
-                 family  = y.family)
+        y.mod <- glm(formula = y.cm.form,
+                     data    = ydat,
+                     weights = data$wt,
+                     family  = y.family)
 
-    y10.pred <- predict(y.mod, newdata = dat, type = "response")
+        y10.pred <- predict(y.mod, newdata = dat, type = "response")
 
-    .wtd_mean(y10.pred, dat$.s.wt)
+        .wtd_mean(y10.pred, dat$.s.wt)
+
+    })
+
+    mean(y10.mean.reps)
 
 }
 

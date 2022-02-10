@@ -140,7 +140,7 @@ estimate_NDEpredR <- function(
 
     .clean_weights.med(top.env)
 
-    .clean_ye.forms.NDEpred(top.env)
+    .clean_y.NDEpred(top.env)
 
     if (top.env$plot) .check_plot.med(top.env)
 }

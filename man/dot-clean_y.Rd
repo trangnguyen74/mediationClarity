@@ -4,22 +4,22 @@
 %   R/C3b-estimate_psYpredMR.R, R/C4a-estimate_Ypred.R,
 %   R/C4b-estimate_YpredMR.R, R/D1a-estimate_NDEpred.R, R/E1-estimate_wtCadj.R,
 %   R/E2a-estimate_wpCadj.R, R/E2b-estimate_wpMRCadj.R
-\name{.clean_y.wtd}
-\alias{.clean_y.wtd}
+\name{.clean_y.var}
+\alias{.clean_y.var}
 \alias{.clean_y.Y2pred}
 \alias{.clean_y.Y2predR}
 \alias{.clean_y.psYpred}
 \alias{.clean_y.psYpredMR}
 \alias{.clean_y.Ypred}
 \alias{.clean_y.YpredMR}
-\alias{.clean_ye.forms.NDEpred}
+\alias{.clean_y.NDEpred}
 \alias{.clean_y.wtCadj}
 \alias{.clean_y.wpCadj}
 \alias{.clean_y.wpMRCadj}
 \alias{dot-clean_y}
-\title{(For maintainer) Clean outcome-related inputs}
+\title{Internal functions: clean outcome-related inputs}
 \usage{
-.clean_y.wtd(env)
+.clean_y.var(env)
 
 .clean_y.Y2pred(env)
 
@@ -33,7 +33,7 @@
 
 .clean_y.YpredMR(env)
 
-.clean_ye.forms.NDEpred(env)
+.clean_y.NDEpred(env)
 
 .clean_y.wtCadj(env)
 
@@ -45,6 +45,6 @@
 \item{env}{An environment}
 }
 \description{
-Internal functions called by \code{estimate_} functions to clean inputs related to the outcome including \code{y.var}, \code{y.c.form}, \code{y.cm.form}, etc.
+Called by \code{.prep_} functions.
 }
 \keyword{internal}

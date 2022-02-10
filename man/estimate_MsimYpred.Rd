@@ -24,7 +24,8 @@ estimate_MsimYpred(
   boot.num = 999,
   boot.seed = NULL,
   boot.method = "cont-wt",
-  boot.stratify = TRUE
+  boot.stratify = TRUE,
+  point.reps = 100
 )
 }
 \arguments{
@@ -65,6 +66,8 @@ estimate_MsimYpred(
 \item{boot.method}{Method for drawing bootstrap samples. Options: "cont-wt" for continuous weights bootstrap, and "resample" for bootstrap by simple resampling (i.e., integer weights bootstrap).}
 
 \item{boot.stratify}{Whether bootstrap samples are drawn stratified by treatment variable. Defaults to TRUE.}
+
+\item{point.reps}{blah}
 }
 \description{
 Function that implements estimator MsimYpred

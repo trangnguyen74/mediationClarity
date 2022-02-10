@@ -147,7 +147,9 @@
   y.cm1.form,
   y.cm0.form,
   y.family,
-  output.data = FALSE
+  output.data = FALSE,
+  boot = FALSE,
+  point.reps = 100
 )
 
 .point_est.wtCadj(

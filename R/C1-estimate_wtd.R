@@ -139,18 +139,18 @@ estimate_wtd <- function(
 
     .clean_weights.med(top.env)
 
-    .clean_y.wtd(top.env)
+    .clean_y.var(top.env)
 
     if (top.env$plot) .check_plot.med(top.env)
 }
 
 
 
-#### OK  .clean_y.wtd ##########################################################
+#### OK  .clean_y.var ##########################################################
 
-#' (For maintainer) Clean outcome-related inputs
+#' Internal functions: clean outcome-related inputs
 #'
-#' Internal functions called by \code{estimate_} functions to clean inputs related to the outcome including \code{y.var}, \code{y.c.form}, \code{y.cm.form}, etc.
+#' Called by \code{.prep_} functions.
 #' @name dot-clean_y
 #' @keywords internal
 NULL
@@ -159,7 +159,7 @@ NULL
 #' @order 1
 #' @inheritParams env-block
 
-.clean_y.wtd <- function(env) {
+.clean_y.var <- function(env) {
 
     y.var <- env$y.var
 

@@ -600,8 +600,9 @@ est.MsimYpred <- estimate_MsimYpred(
     
     boot.num    = 99,         # default value is 999
     boot.method = "cont-wt",  # default
-    boot.seed   = 77777
+    boot.seed   = 77777,
     
+    point.reps  = 10
 )
 ```
 
