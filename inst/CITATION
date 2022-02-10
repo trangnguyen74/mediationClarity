@@ -1,0 +1,15 @@
+citHeader("To cite mediationClarity in publications use:")
+
+citEntry(
+  entry    = "Misc",
+  title    = "Causal mediation analysis: From simple to more robust strategies for estimation of marginal natural (in)direct effects",
+  author   = personList(as.person("Trang Quynh Nguyen"), as.person("Elizabeth L. Ogburn"), as.person("Ian Schmid"), as.person("Elizabeth B. Sarker"), as.person("Noah Greifer"), as.person("Ina M. Koning"), as.person("Elizabeth Stuart")),
+  year     = "2022",
+  eprint   = "2102.06048",
+  archivePrefix= "arXiv",
+
+  textVersion =
+  paste("Nguyen TQ, Ogburn EL, Schmid I, Sarker EB, Greifer N, Koning IM, Stuart EA (2022).",
+        "Causal Mediation Analysis: From Simple to More Robust Strategies for Estimation of Marginal Natural (in)direct Effects.",
+        "https://arxiv.org/abs/2102.06048.")
+)

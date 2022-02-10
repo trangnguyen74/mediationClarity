@@ -3,8 +3,8 @@ title: "mediationClarity: Estimation of marginal natural (in)direct effects"
 output: 
     rmarkdown::html_vignette:
         number_sections: yes
-        toc: true
-        toc_depth: 2
+        toc:             true
+        toc_depth:       2
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{vignette}
@@ -27,9 +27,9 @@ library(ggplot2)
 ```
 
 
-# Read me first
+# First things first
 
-This vignette introduces the package `mediationClarity`, which implements estimators covered in the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048).
+The package `mediationClarity` implements the methods covered in the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048). The key documentation of the package is the paper itself, which contains all the technical details of the methods. This vignette, which presents the functions that implement the methods, is the computing appendix to the paper.
 
 
 
@@ -40,9 +40,9 @@ We will briefly describe the data, which will help make things concrete, in Sect
 
 Before getting to the estimators (what you are most likely here for), we will cover all the relevant weighting business in Section 2, as weighting is involved in multiple estimators. Sections 3-5 then track the three groups of estimators presented in the paper. For each weighting method or estimator, we present the function that implements the method and explain its outputs.
 
-In sections 3-5, to speed up the compling of this document we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The defaul in the package is 999.
+In sections 3-5, to speed up the compling of this document we put the number of bootstrap samples in each estimator function call at 99, which is clearly too small. The default in the package is 999.
 
-The additional Section 6 includes some manual code that shows the gist of each method. We recommend reading the paper to fully understand the methods and their properties.
+The additional Section 6 includes some manual code that reminds of the gist of each method. We recommend reading the paper to properly understand the methods and their properties.
 
 Section 7 contains code that, if run, produces the results in the manuscript.
 
@@ -712,6 +712,7 @@ est.wtCadj$estimates
 ```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="wt-Cadj estimator: weight distributions"}
 est.wtCadj$plots$w.wt.distribution
 ```
+
 ```{r, fig.height=6, fig.width=7.5, fig.align='center', fig.cap="wt-Cadj estimator: key balance plot"}
 est.wtCadj$plots$key.balance
 ```
@@ -787,6 +788,7 @@ est.wpCadj$estimates
 ```{r, fig.height=3.5, fig.width=4, fig.align='center', fig.cap="wp-Cadj estimator: weight distributions"}
 est.wpCadj$plots$w.wt.distribution
 ```
+
 ```{r, fig.height=3.5, fig.width=7.5, fig.align='center', fig.cap="wp-Cadj estimator: key balance plot"}
 est.wpCadj$plots$key.balance
 ```
@@ -1289,6 +1291,10 @@ point.wpCadj <- c(NDE0 = nde0,
 \
 
 # Results in manuscript
+
+\
+
+# Acknowledgements
 
 \
 

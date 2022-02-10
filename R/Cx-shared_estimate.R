@@ -130,7 +130,7 @@
 #' @param b The mean of the second potential outcome.
 #' @param type The type of contrast. Options allowed: "MD", "MR", "OR".
 #' @return The contrast value.
-#' @noRd
+#' @keywords internal
 
 .get_contrast <- function(a, b, type) {
 
