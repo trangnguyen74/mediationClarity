@@ -138,7 +138,7 @@ estimate_psYpred <- function(
 
     .clean_weights.psYpred(top.env)
 
-    .clean_y.forms.psYpred(top.env)
+    .clean_y.psYpred(top.env)
 
     if (top.env$plot) .check_plot.ipw(top.env)
 }
@@ -180,12 +180,12 @@ estimate_psYpred <- function(
 
 
 
-#### OK  .clean_y.forms.psYpred ################################################
+#### OK  .clean_y.psYpred ################################################
 
 #' @rdname dot-clean_y
-#' @order 2
+#' @order 4
 
-.clean_y.forms.psYpred <- function(env) {
+.clean_y.psYpred <- function(env) {
 
     yes10 <- ("10" %in% env$cross.world)
     yes01 <- ("01" %in% env$cross.world)

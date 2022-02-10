@@ -102,7 +102,7 @@ estimate_Y2pred <- function(
 
     .clean_a.var(top.env)
 
-    .clean_y.forms.Y2pred(top.env)
+    .clean_y.Y2pred(top.env)
 }
 
 
@@ -129,12 +129,12 @@ estimate_Y2pred <- function(
 
 
 
-#### OK  .clean_y.forms.Y2pred #################################################
+#### OK  .clean_y.Y2pred #################################################
 
 #' @rdname dot-clean_y
-#' @order 6
+#' @order 2
 
-.clean_y.forms.Y2pred <- function(env) {
+.clean_y.Y2pred <- function(env) {
 
     yes10 <- ("10" %in% env$cross.world)
     yes01 <- ("01" %in% env$cross.world)

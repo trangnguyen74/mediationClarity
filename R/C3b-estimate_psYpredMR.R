@@ -151,7 +151,7 @@ estimate_psYpredMR <- function(
 #### OK  .clean_y.psYpredMR ##############################################
 
 #' @rdname dot-clean_y
-#' @order 3
+#' @order 4
 #'
 .clean_y.psYpredMR <- function(env) {
 

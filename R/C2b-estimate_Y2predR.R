@@ -148,7 +148,7 @@ estimate_Y2predR <- function(
 
     .clean_weights.med(top.env)
 
-    .clean_y.forms.Y2predR(top.env)
+    .clean_y.Y2predR(top.env)
 
     if (top.env$plot) .check_plot.med(top.env)
 }
@@ -156,12 +156,12 @@ estimate_Y2predR <- function(
 
 
 
-#### OK  .clean_y.forms.Y2preR #################################################
+#### OK  .clean_y.Y2preR #################################################
 
 #' @rdname dot-clean_y
-#' @order 7
+#' @order 3
 
-.clean_y.forms.Y2predR <- function(env) {
+.clean_y.Y2predR <- function(env) {
 
     yes10 <- ("10" %in% env$cross.world)
     yes01 <- ("01" %in% env$cross.world)

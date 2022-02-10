@@ -140,7 +140,7 @@ estimate_Ypred <- function(
 
     .clean_weights.Ypred(top.env)
 
-    .clean_y.forms.Ypred(top.env)
+    .clean_y.Ypred(top.env)
 
     if (top.env$plot) .check_plot.Ypred(top.env)
 }
@@ -183,12 +183,12 @@ estimate_Ypred <- function(
 
 
 
-#### OK  .clean_y.forms.Ypred ##################################################
+#### OK  .clean_y.Ypred ##################################################
 
 #' @rdname dot-clean_y
-#' @order 4
+#' @order 5
 
-.clean_y.forms.Ypred <- function(env) {
+.clean_y.Ypred <- function(env) {
 
     yes10 <- ("10" %in% env$cross.world)
     yes01 <- ("01" %in% env$cross.world)
