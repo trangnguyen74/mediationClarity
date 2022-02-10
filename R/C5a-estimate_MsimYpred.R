@@ -28,7 +28,7 @@
 #' @inheritParams estimate_Y2pred
 #' @param m.c1.form,m.c0.form blah
 #' @param m.c.form blah
-#' @param m.link blah
+#' @param m.dist blah
 #' @export
 
 estimate_MsimYpred <- function(
@@ -43,7 +43,7 @@ estimate_MsimYpred <- function(
     m.c0.form = NULL,
     m.c.form  = NULL,
 
-    m.link    = "identity",
+    m.dist    = NULL,
 
     y.c1.form = NULL,
     y.c0.form = NULL,
@@ -64,12 +64,13 @@ estimate_MsimYpred <- function(
 
     # CLEAN INPUTS
 
-    m.family <- y.family <- NULL
+    c.vars <- m.vars <- m.family <- y.family <- NULL
 
     .prep_MsimYpred()
 
     key.inputs <- mget(c("effect.scale",
                          "cross.world",
+                         "m.vars",
                          "m.c1.form", "m.c0.form",
                          "m.family",
                          "y.c1.form", "y.c0.form",
@@ -138,23 +139,77 @@ estimate_MsimYpred <- function(
     yes10 <- ("10" %in% env$cross.world)
     yes01 <- ("01" %in% env$cross.world)
 
-    m.c1 <- env$m.c1.form
-    m.c0 <- env$m.c0.form
-    m.c  <- env$m.c.form
+    m.c1   <- env$m.c1.form
+    m.c0   <- env$m.c0.form
+    m.c    <- env$m.c.form
+    m.dist <- env$m.dist
 
 
     if (is.null(m.c)) {
 
-        if (yes10 && is.null(m.c1))
+        if (yes10 && is.null(m.c0))
+            stop("Must specify either m.c0.form or m.c.form.")
+
+        if (yes01 && is.null(m.c1))
             stop("Must specify either m.c1.form or m.c.form.")
 
-        if (yes01 && is.null(m.c0))
-            stop("Must specify either m.c0.form or m.c.form.")
+    } else {
+
+        if (yes10 && is.null(m.c1)) env$m.c1.form <- m.c1 <- m.c
+        if (yes01 && is.null(m.c0)) env$m.c0.form <- m.c0 <- m.c
     }
 
 
-    env$m.vars <- m.vars <-
-        sapply(m.c, function(z) all.vars(formula(z)[[2]]))
+
+    if (yes10) m0.vars <- sapply(m.c0, function(z) all.vars(formula(z)[[2]]))
+    if (yes01) m1.vars <- sapply(m.c1, function(z) all.vars(formula(z)[[2]]))
+
+
+    if (yes10 && yes01 && !setequal(m0.vars, m1.vars)) {
+        stop("mediators in m.c1.form and m.c0.form not the same")
+
+    } else if (yes10) { env$m.vars <- m.vars <- m0.vars
+    } else if (yes01) { env$m.vars <- m.vars <- m1.vars
+    }
+
+
+    c.vars <- NULL
+
+    if (yes10)
+        c.vars <- c(c.vars,
+                    unlist(lapply(m.c0, function(z) all.vars(formula(z)))))
+    if (yes01)
+        c.vars <- c(c.vars,
+                    unlist(lapply(m.c1, function(z) all.vars(formula(z)))))
+
+    env$c.vars <- c.vars <- setdiff(unique(c.vars), m.vars)
+
+
+
+    if (is.null(m.dist))  stop("m.dist must be provided")
+
+
+    m.family <- list()
+
+    for (i in 1:length(m.dist)) {
+
+        if (tolower(m.dist[[i]]) %in% c("normal", "gaussian",
+                                        "continuous", "linear", "identity")) {
+            m.family[[i]] <- "gaussian"
+
+        } else if (tolower(m.dist[[i]]) %in% c("binary", "bernouli")) {
+
+            m.family[[i]] <- "quasibinomial"
+
+        } else
+            stop("m.dist ", m.dist[[i]], " not recognized or supported. Only handles normal and binary simulation for now.")
+
+    }
+
+    # TODO: add checks whether specific M variables are binary or continuous
+
+    env$m.family <- m.family
+
 }
 
 
@@ -234,11 +289,15 @@ estimate_MsimYpred <- function(
         stop("The function does not support simulating based on an object of this class: ", paste(class(object), collapse = ", "))
 
 
+    newdata <- NULL
 
-    if ("newdata" %in% ls(...)) {
-        means <- predict(object, newdata = get("newdata"), type = "response")
-    } else {
-        means <- predict(object, type = "response")
+
+    .extract_dots()
+
+
+    if (is.null(newdata)) { means <- predict(object, type = "response")
+    } else                { means <- predict(object, type = "response",
+                                             newdata = newdata)
     }
 
 
@@ -255,6 +314,22 @@ estimate_MsimYpred <- function(
     }
 
     sims
+
+
+}
+
+
+.extract_dots <- function() {
+    pa <- parent.frame()
+
+    with(pa, {
+        dots <- list(...)
+
+        for (i in 1:length(dots))
+            assign(x = names(dots)[i], value = dots[[i]])
+
+        rm(dots)
+    })
 }
 
 
@@ -278,12 +353,12 @@ estimate_MsimYpred <- function(
 
     y.c1.fit <- glm(formula = y.c1.form,
                     data    = dat1,
-                    weights = dat1$wt,
+                    weights = data$wt,
                     family  = y.family)
 
     y.c0.fit <- glm(formula = y.c0.form,
                     data    = dat0,
-                    weights = dat0$wt,
+                    weights = data$wt,
                     family  = y.family)
 
     y11.pred <- predict(y.c1.fit, newdata = dat, type = "response")
@@ -299,6 +374,7 @@ estimate_MsimYpred <- function(
 
 
 #' @noRd
+#' @importFrom stats glm
 
 .crw_MsimYpred <- function(dat,
                            m.vars,
@@ -322,10 +398,10 @@ estimate_MsimYpred <- function(
 
     m.mod <- lapply(1:length(m.c.form), function(z) {
 
-        glm(formula = m.c.form[z],
+        glm(formula = m.c.form[[z]],
             data    = mdat,
-            weights = mdat$wt,
-            family  = m.family[z])
+            weights = data$wt,
+            family  = m.family[[z]])
     })
 
     for (i in 1:length(m.vars))
@@ -335,7 +411,7 @@ estimate_MsimYpred <- function(
 
     y.mod <- glm(formula = y.cm.form,
                  data    = ydat,
-                 weights = ydat$wt,
+                 weights = data$wt,
                  family  = y.family)
 
     y10.pred <- predict(y.mod, newdata = dat, type = "response")

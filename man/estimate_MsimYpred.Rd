@@ -13,7 +13,7 @@ estimate_MsimYpred(
   m.c1.form = NULL,
   m.c0.form = NULL,
   m.c.form = NULL,
-  m.link = "identity",
+  m.dist = NULL,
   y.c1.form = NULL,
   y.c0.form = NULL,
   y.c.form = NULL,
@@ -42,7 +42,7 @@ estimate_MsimYpred(
 
 \item{m.c.form}{blah}
 
-\item{m.link}{blah}
+\item{m.dist}{blah}
 
 \item{y.c1.form}{blah}
 

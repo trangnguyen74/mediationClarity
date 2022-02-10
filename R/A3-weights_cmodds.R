@@ -2,6 +2,10 @@
 
 
 
+# TODO: change cross.world argument to 'direction'
+
+
+
 #### weights_odds ###########################################################
 
 

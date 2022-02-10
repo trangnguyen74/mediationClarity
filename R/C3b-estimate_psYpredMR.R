@@ -141,7 +141,7 @@ estimate_psYpredMR <- function(
 
     .clean_weights.med(top.env)
 
-    .clean_y.forms.psYpredMR(top.env)
+    .clean_y.psYpredMR(top.env)
 
     if (top.env$plot) .check_plot.med(top.env)
 }
