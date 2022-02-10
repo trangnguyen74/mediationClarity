@@ -9,20 +9,20 @@ estimate_Y2pred(
   s.wt.var = NULL,
   cross.world = "10",
   effect.scale = "additive",
-  boot.num = 999,
-  boot.seed = NULL,
-  boot.method = "cont-wt",
-  boot.stratify = TRUE,
   a.var,
-  y.cm.form = NULL,
   y.cm1.form = NULL,
   y.cm0.form = NULL,
-  y.c.form = NULL,
+  y.cm.form = NULL,
   y.c1.form = NULL,
   y.c0.form = NULL,
   y10.c.form = NULL,
   y01.c.form = NULL,
-  y.link = "identity"
+  y.c.form = NULL,
+  y.link = "identity",
+  boot.num = 999,
+  boot.seed = NULL,
+  boot.method = "cont-wt",
+  boot.stratify = TRUE
 )
 }
 \arguments{
@@ -34,23 +34,13 @@ estimate_Y2pred(
 
 \item{effect.scale}{The scale of effect of choice. Defaults to "MD" (i.e., mean/risk difference or additive). If outcome is non-negative, also allows "mean ratio" (which could also be specified as "ratio", "MR", "risk ratio", "rate ratio", "RR"). If outcome is binary or bounded within the (0,1) interval, also allows "odds ratio" (which could also be specified as "OR").}
 
-\item{boot.num}{Number of bootstrap samples used for interval estimation, defaults to 999. If just want point estimate, set to 0.}
-
-\item{boot.seed}{Optional, specify bootstrap seed for reproducibility.}
-
-\item{boot.method}{Method for drawing bootstrap samples. Options: "cont-wt" for continuous weights bootstrap, and "resample" for bootstrap by simple resampling (i.e., integer weights bootstrap).}
-
-\item{boot.stratify}{Whether bootstrap samples are drawn stratified by treatment variable. Defaults to TRUE.}
-
 \item{a.var}{Name of treatment variable.}
-
-\item{y.cm.form}{blah}
 
 \item{y.cm1.form}{blah}
 
 \item{y.cm0.form}{blah}
 
-\item{y.c.form}{blah}
+\item{y.cm.form}{blah}
 
 \item{y.c1.form}{blah}
 
@@ -60,7 +50,17 @@ estimate_Y2pred(
 
 \item{y01.c.form}{Model formula for E[Y(0,M1)|C]}
 
+\item{y.c.form}{blah}
+
 \item{y.link}{blah}
+
+\item{boot.num}{Number of bootstrap samples used for interval estimation, defaults to 999. If just want point estimate, set to 0.}
+
+\item{boot.seed}{Optional, specify bootstrap seed for reproducibility.}
+
+\item{boot.method}{Method for drawing bootstrap samples. Options: "cont-wt" for continuous weights bootstrap, and "resample" for bootstrap by simple resampling (i.e., integer weights bootstrap).}
+
+\item{boot.stratify}{Whether bootstrap samples are drawn stratified by treatment variable. Defaults to TRUE.}
 }
 \description{
 Function that implements estimator Y2pred

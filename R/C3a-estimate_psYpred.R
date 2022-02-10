@@ -20,25 +20,28 @@ estimate_psYpred <- function(
     cross.world  = "10",
     effect.scale = "additive",
 
-    boot.num      = 999,
-    boot.seed     = NULL,
-    boot.method   = "cont-wt",
-    boot.stratify = TRUE,
-
     a.c.form,
     max.stabilized.wt = 30,
 
-    plot = TRUE,
-    c.std = NULL,
+    plot    = TRUE,
+    c.std   = NULL,
     c.order = NULL,
 
-    y.c.form = NULL,
     y.c1.form = NULL,
     y.c0.form = NULL,
-    y.cm.form = NULL,
+    y.c.form  = NULL,
+
     y.cm1.form = NULL,
     y.cm0.form = NULL,
-    y.link = "gaussian") {
+    y.cm.form  = NULL,
+
+    y.link = "gaussian",
+
+    boot.num      = 999,
+    boot.seed     = NULL,
+    boot.method   = "cont-wt",
+    boot.stratify = TRUE
+) {
 
 
     # CLEAN INPUTS
@@ -189,8 +192,14 @@ estimate_psYpred <- function(
 
     in_c.vars <- env$c.vars
 
-    y.c    <- env$y.c.form
-    y.cm   <- env$y.cm.form
+    y.c1 <- env$y.c1.form
+    y.c0 <- env$y.c0.form
+    y.c  <- env$y.c.form
+
+    y.cm1 <- env$y.cm1.form
+    y.cm0 <- env$y.cm0.form
+    y.cm  <- env$y.cm.form
+
     y.link <- env$y.link
 
 
@@ -198,37 +207,31 @@ estimate_psYpred <- function(
     # populate formulas
     if (is.null(y.c)) {
 
-        if (yes10 && is.null(env$y.c1.form))
+        if (yes10 && is.null(y.c1))
             stop("Must specify either y.c1.form or y.c.form.")
 
-        if (yes01 && is.null(env$y.c0.form))
+        if (yes01 && is.null(y.c0))
             stop("Must specify either y.c0.form or y.c.form.")
 
     } else {
 
-        if (yes10 && is.null(env$y.c1.form))
-            env$y.c1.form <- y.c
-
-        if (yes01 && is.null(env$y.c0.form))
-            env$y.c0.form <- y.c
+        if (yes10 && is.null(y.c1)) env$y.c1.form <- y.c1 <- y.c
+        if (yes01 && is.null(y.c0)) env$y.c0.form <- y.c0 <- y.c
     }
 
 
     if (is.null(y.cm)) {
 
-        if (yes10 && is.null(env$y.cm1.form))
+        if (yes10 && is.null(y.cm1))
             stop("Must specify either y.cm1.form or y.cm.form.")
 
-        if (yes01 && is.null(env$y.cm0.form))
+        if (yes01 && is.null(y.cm0))
             stop("Must specify either y.cm0.form or y.cm.form.")
 
     } else {
 
-        if (yes10 && is.null(env$y.cm1.form))
-            env$y.cm1.form <- y.cm
-
-        if (yes01 && is.null(env$y.cm0.form))
-            env$y.cm0.form <- y.cm
+        if (yes10 && is.null(y.cm1)) env$y.cm1.form <- y.cm1 <- y.cm
+        if (yes01 && is.null(y.cm0)) env$y.cm0.form <- y.cm0 <- y.cm
     }
 
 
@@ -239,19 +242,19 @@ estimate_psYpred <- function(
 
     if (yes10) {
         y.var <- unique(c(y.var,
-                          all.vars(formula(env$y.c1.form)[[2]]),
-                          all.vars(formula(env$y.cm1.form)[[2]])))
+                          all.vars(formula(y.c1)[[2]]),
+                          all.vars(formula(y.cm1)[[2]])))
         c.vars <- unique(c(c.vars,
-                           all.vars(formula(env$y.c1.form)[[3]])))
+                           all.vars(formula(y.c1)[[3]])))
     }
 
 
     if (yes01) {
         y.var <- unique(c(y.var,
-                          all.vars(formula(env$y.c0.form)[[2]]),
-                          all.vars(formula(env$y.cm0.form)[[2]])))
+                          all.vars(formula(y.c0)[[2]]),
+                          all.vars(formula(y.cm0)[[2]])))
         c.vars <- unique(c(c.vars,
-                           all.vars(formula(env$y.c0.form)[[3]])))
+                           all.vars(formula(y.c0)[[3]])))
     }
 
 

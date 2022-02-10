@@ -2,18 +2,17 @@
 % Please edit documentation in R/C1-estimate_wtd.R, R/C3a-estimate_psYpred.R,
 %   R/C3b-estimate_psYpredMR.R, R/C4a-estimate_Ypred.R,
 %   R/C4b-estimate_YpredMR.R, R/C2a-estimate_Y2pred.R, R/C2b-estimate_Y2predR.R,
-%   R/D1a-estimate_NDEpred.R, R/C5a-estimate_MsimYpred.R,
-%   R/E1-estimate_wtCadj.R, R/E2a-estimate_wpCadj.R, R/E2b-estimate_wpMRCadj.R
+%   R/D1a-estimate_NDEpred.R, R/E1-estimate_wtCadj.R, R/E2a-estimate_wpCadj.R,
+%   R/E2b-estimate_wpMRCadj.R
 \name{.clean_y.wtd}
 \alias{.clean_y.wtd}
 \alias{.clean_y.forms.psYpred}
-\alias{.clean_y.forms.psYpredMR}
+\alias{.clean_y.psYpredMR}
 \alias{.clean_y.forms.Ypred}
 \alias{.clean_y.forms.YpredMR}
 \alias{.clean_y.forms.Y2pred}
 \alias{.clean_y.forms.Y2predR}
 \alias{.clean_ye.forms.NDEpred}
-\alias{.clean_y.MsimYpred}
 \alias{.clean_y.wtCadj}
 \alias{.clean_y.wpCadj}
 \alias{.clean_y.wpMRCadj}
@@ -24,7 +23,7 @@
 
 .clean_y.forms.psYpred(env)
 
-.clean_y.forms.psYpredMR(env)
+.clean_y.psYpredMR(env)
 
 .clean_y.forms.Ypred(env)
 
@@ -35,8 +34,6 @@
 .clean_y.forms.Y2predR(env)
 
 .clean_ye.forms.NDEpred(env)
-
-.clean_y.MsimYpred(env)
 
 .clean_y.wtCadj(env)
 

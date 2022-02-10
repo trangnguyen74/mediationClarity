@@ -9,22 +9,22 @@ estimate_psYpred(
   s.wt.var = NULL,
   cross.world = "10",
   effect.scale = "additive",
-  boot.num = 999,
-  boot.seed = NULL,
-  boot.method = "cont-wt",
-  boot.stratify = TRUE,
   a.c.form,
   max.stabilized.wt = 30,
   plot = TRUE,
   c.std = NULL,
   c.order = NULL,
-  y.c.form = NULL,
   y.c1.form = NULL,
   y.c0.form = NULL,
-  y.cm.form = NULL,
+  y.c.form = NULL,
   y.cm1.form = NULL,
   y.cm0.form = NULL,
-  y.link = "gaussian"
+  y.cm.form = NULL,
+  y.link = "gaussian",
+  boot.num = 999,
+  boot.seed = NULL,
+  boot.method = "cont-wt",
+  boot.stratify = TRUE
 )
 }
 \arguments{
@@ -35,14 +35,6 @@ estimate_psYpred(
 \item{cross.world}{The cross-world condition involved in the effect decomposition of choice. Should be "10" if want the (NDE0, NIE1) pair, "01" if want the (NIE0, NDE1) pair, or "both" if want both decompositions.}
 
 \item{effect.scale}{The scale of effect of choice. Defaults to "MD" (i.e., mean/risk difference or additive). If outcome is non-negative, also allows "mean ratio" (which could also be specified as "ratio", "MR", "risk ratio", "rate ratio", "RR"). If outcome is binary or bounded within the (0,1) interval, also allows "odds ratio" (which could also be specified as "OR").}
-
-\item{boot.num}{Number of bootstrap samples used for interval estimation, defaults to 999. If just want point estimate, set to 0.}
-
-\item{boot.seed}{Optional, specify bootstrap seed for reproducibility.}
-
-\item{boot.method}{Method for drawing bootstrap samples. Options: "cont-wt" for continuous weights bootstrap, and "resample" for bootstrap by simple resampling (i.e., integer weights bootstrap).}
-
-\item{boot.stratify}{Whether bootstrap samples are drawn stratified by treatment variable. Defaults to TRUE.}
 
 \item{a.c.form}{Formula for the P(A|C) model (the propensity score model).}
 
@@ -59,6 +51,14 @@ estimate_psYpred(
 \item{y.cm.form, y.cm1.form, y.cm0.form}{blah}
 
 \item{y.link}{blah}
+
+\item{boot.num}{Number of bootstrap samples used for interval estimation, defaults to 999. If just want point estimate, set to 0.}
+
+\item{boot.seed}{Optional, specify bootstrap seed for reproducibility.}
+
+\item{boot.method}{Method for drawing bootstrap samples. Options: "cont-wt" for continuous weights bootstrap, and "resample" for bootstrap by simple resampling (i.e., integer weights bootstrap).}
+
+\item{boot.stratify}{Whether bootstrap samples are drawn stratified by treatment variable. Defaults to TRUE.}
 }
 \description{
 Function that implements estimator psYpred

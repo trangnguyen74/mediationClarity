@@ -148,12 +148,12 @@ estimate_psYpredMR <- function(
 
 
 
-#### OK  .clean_y.forms.psYpredMR ##############################################
+#### OK  .clean_y.psYpredMR ##############################################
 
 #' @rdname dot-clean_y
 #' @order 3
 #'
-.clean_y.forms.psYpredMR <- function(env) {
+.clean_y.psYpredMR <- function(env) {
 
     yes10 <- ("10" %in% env$cross.world)
     yes01 <- ("01" %in% env$cross.world)

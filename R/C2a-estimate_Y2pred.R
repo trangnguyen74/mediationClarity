@@ -19,21 +19,24 @@ estimate_Y2pred <- function(
     cross.world  = "10",
     effect.scale = "additive",
 
+    a.var,
+
+    y.cm1.form = NULL,
+    y.cm0.form = NULL,
+    y.cm.form  = NULL,
+
+    y.c1.form  = NULL,
+    y.c0.form  = NULL,
+    y10.c.form = NULL,
+    y01.c.form = NULL,
+    y.c.form   = NULL,
+
+    y.link = "identity",
+
     boot.num      = 999,
     boot.seed     = NULL,
     boot.method   = "cont-wt",
-    boot.stratify = TRUE,
-
-    a.var,
-    y.cm.form = NULL,
-    y.cm1.form = NULL,
-    y.cm0.form = NULL,
-    y.c.form = NULL,
-    y.c1.form = NULL,
-    y.c0.form = NULL,
-    y10.c.form = NULL,
-    y01.c.form = NULL,
-    y.link = "identity") {
+    boot.stratify = TRUE) {
 
 
     # CLEAN INPUTS

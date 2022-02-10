@@ -42,6 +42,7 @@ estimate_MsimYpred <- function(
     m.c1.form = NULL,
     m.c0.form = NULL,
     m.c.form  = NULL,
+
     m.link    = "identity",
 
     y.c1.form = NULL,
@@ -51,6 +52,7 @@ estimate_MsimYpred <- function(
     y.cm1.form = NULL,
     y.cm0.form = NULL,
     y.cm.form  = NULL,
+
     y.link     = "identity",
 
     boot.num      = 999,
@@ -123,7 +125,7 @@ estimate_MsimYpred <- function(
 
     .clean_m.MsimYpred(top.env)
 
-    .clean_y.MsimYpred(top.env)
+    .clean_y.psYpredMR(top.env)
 }
 
 
@@ -133,19 +135,32 @@ estimate_MsimYpred <- function(
 
 .clean_m.MsimYpred <- function(env) {
 
+    yes10 <- ("10" %in% env$cross.world)
+    yes01 <- ("01" %in% env$cross.world)
+
+    m.c1 <- env$m.c1.form
+    m.c0 <- env$m.c0.form
+    m.c  <- env$m.c.form
+
+
+    if (is.null(m.c)) {
+
+        if (yes10 && is.null(m.c1))
+            stop("Must specify either m.c1.form or m.c.form.")
+
+        if (yes01 && is.null(m.c0))
+            stop("Must specify either m.c0.form or m.c.form.")
+    }
+
+
+    env$m.vars <- m.vars <-
+        sapply(m.c, function(z) all.vars(formula(z)[[2]]))
 }
 
 
 
 
-#### .clean_y.MsimYpred ###################################################
 
-#' @rdname dot-clean_y
-#' @order 9
-
-.clean_y.MsimYpred <- function(env) {
-
-}
 
 
 
