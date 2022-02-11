@@ -1,9 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-^06070809_PAS data\.sav$
-^Edit1_selectie_paper Trang\.sps$
-^PAS-synth\.R$
 ^data-raw$
 ^doc$
 ^Meta$
