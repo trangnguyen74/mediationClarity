@@ -215,7 +215,7 @@ NULL
     if (!output.data) return(estimates)
 
     list(estimates = estimates,
-         w.dat    = w.dat)
+         w.dat     = w.dat)
 
 }
 

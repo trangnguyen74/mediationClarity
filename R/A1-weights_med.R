@@ -321,8 +321,8 @@ NULL
         p10 <- data[data$.a==1, ];  p10$.samp <- "p10"
 
         p10$.w.wt <-
-            exp(-predict(a.cm.fu, newdata = p10, type = "link")) *
-            (1 + exp(predict(a.c.fu, newdata = p10, type = "link")))
+            exp(-predict(a.cm.fu, newdata = p10, type = "link")) *    # odds
+            (1 + exp(predict(a.c.fu, newdata = p10, type = "link")))  # inv.prob
 
         p10$.w.wt <- .trunc_right(p10$.w.wt, max.wt$treat)
 
@@ -337,8 +337,8 @@ NULL
         p01 <- data[data$.a==0, ];  p01$.samp <- "p01"
 
         p01$.w.wt <-
-            exp(predict(a.cm.fu, newdata = p01, type = "link")) *
-            (1 + exp(-predict(a.c.fu, newdata = p01, type = "link")))
+            exp(predict(a.cm.fu, newdata = p01, type = "link")) *     # odds
+            (1 + exp(-predict(a.c.fu, newdata = p01, type = "link"))) # inv.prob
 
         p01$.w.wt <- .trunc_right(p01$.w.wt, max.wt$control)
 

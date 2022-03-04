@@ -29,14 +29,18 @@ library(ggplot2)
 
 # First things first
 
-The package `mediationClarity` implements the methods covered in the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048). The key documentation of the package is the paper itself, which contains all the technical details of the methods. This vignette, which presents the functions that implement the methods, is the computing appendix to the paper.
+The package `mediationClarity` implements the methods covered in the manuscript @nguyen2022MediationEstimation titled *Causal mediation analysis: from simple to more robust estimation strategies for marginal natural (in)direct effects.* (arxiv:2102.06048). 
+
+The key documentation of the package is the paper itself, which contains all the technical details of the methods. 
+
+This vignette, which presents the functions that implement the methods, is the computing appendix to the paper.
 
 
 
 ## Vignette structure
 
 
-We will briefly describe the data, which will help make things concrete, in Section 1.2.
+We will briefly describe the illustrative data, which will help make things concrete, in Section 1.3.
 
 Before getting to the estimators (what you are most likely here for), we will cover all the relevant weighting business in Section 2, as weighting is involved in multiple estimators. Sections 3-5 then track the three groups of estimators presented in the paper. For each weighting method or estimator, we present the function that implements the method and explain its outputs.
 
@@ -44,16 +48,17 @@ In sections 3-5, to speed up the compling of this document we put the number of 
 
 <!-- The additional Section 6 includes some manual code that reminds of the gist of each method. We recommend reading the paper to properly understand the methods and their properties. -->
 
-Section 6 contains code that, if run, produces the results in the manuscript.
+Section 6 plots the estimates, and reproduces Figure 8 of the manuscript.
 
 
 ## Acknowledgements
 
 In @nguyen2022MediationEstimation we acknowledge the sources on which we built the technical content of this work. Here we acknowledge the most important resources that helped the construction of this R package: the R packages `devtools` [@devtools], `usethis` [@usethis], `roxygen2` [@roxygen2], the super helpful R Packages book [@wickhamPackages], R-bloggers posts such as @pang2013NewTrickMe, many helpful posts on Stack Overflow, and our Stuart lab colleagues who kindly share their programming tips Nick Seewald, Leon Di Stefano, Yongqi Zhong and Elena Badillo Goicoechea. 
 
-## A bit about data
+## The data example
 
-We use a synthetic dataset `synth` that was created based on the PAS trial [@koning2011WhyTargetEarly]. It is available when you load the package. See description in the paper. 
+We use a synthetic dataset `synth` that was created based on the PAS trial [@koning2011WhyTargetEarly]. <!-- It is available when you load the package. See description in the paper.  -->
+Detailed description is provided in the paper. 
 
 Let's have a quick look at the data. The variables include:
 
@@ -236,9 +241,9 @@ est.wtd <- estimate_wtd(
     
     y.var       = "drink", # outcome variable
     
-    plot        = TRUE,
-    c.std  = "sfc0",
-    m.std  = "sfc",
+    plot        = TRUE,   # default
+    c.std       = "sfc0",
+    m.std       = "sfc",
     
     boot.num    = 99,        # default value is 999
     boot.method = "cont-wt", # default
@@ -279,13 +284,25 @@ This balance plot is the same plot as that from `weights_med()`, with two subtle
 - The tab labels have been added to with comments "(anchor)" meaning the specific balance is to anchor the pseudo sample on the covariate distribution of the full sample, and "(for \<effect\>)" meaning the specific balance is important to the estimation of said \<effect\>.
 
 
+```{r, eval=FALSE, echo=FALSE}
+pdf(here::here("vignettes", "results", "fig7.pdf"), width = 4, height = 3.5)
+est.wtd$plots$w.wt.distribution
+dev.off()
+
+pdf(here::here("vignettes", "results", "fig8.pdf"), width = 7.5, height = 6)
+est.wtd$plots$key.balance
+dev.off()
+```
+
+
 \
 
 ## Y2pred pair
 
+
 ### Functions
 
-```{r Y2pred=TRUE}
+```{r Y2pred, cache=TRUE}
 # the nonrobust Y2pred estimator
 est.Y2pred <- estimate_Y2pred(
     data        = synth,
@@ -318,8 +335,8 @@ est.Y2predR <- estimate_Y2predR(
     a.cm.form   = "treat ~ sex + age + edu + religion + drink0 + att0 * att + rul0 * rul + splines::ns(sfc0, 4) * splines::ns(sfc, 4)",
     
     plot        = TRUE,
-    c.std  = "sfc0",
-    m.std  = "sfc",
+    c.std       = "sfc0",
+    m.std       = "sfc",
     
     # formulas for E[Y|C,A=0], E[Y|C,A=1], E[Y|C,M,A=1], E[Y(1,M0)|C]
     y.c0.form   = "drink ~ sex + age + edu + religion + drink0 + att0 + rul0 + splines::ns(sfc0, 3)",
@@ -906,8 +923,125 @@ gridExtra::grid.arrange(
 
 \
 
-# Results in the manuscript
+# All estimates
 
+Here we want to show all the estimates from all the estimators. Let's collect all the results from the different estimators into a list.
+
+```{r}
+est.names <- c("wtd", 
+               "Y2pred", "Y2predR",
+               "psYpred", "psYpredMR",
+               "Ypred", "YpredMR",
+               "MsimYpred", "MsimYpredMR",
+               "NDEpred", "NDEpredR",
+               "wtCadj",
+               "wpCadj", "wpMRCadj")
+estimates <- mget(paste0("est.", est.names))
+names(estimates) <- est.names
+```
+
+
+
+```{r, echo=FALSE, eval=FALSE}
+# This is a boot.num workaround.
+# to obtain useful confidence intervals, 
+# change boot.num to 999 and rerun all estimation chunks plus the above chunk,
+# then run this to save the results.
+# attn: you don't need to do those, because this has previously been done,
+# so the file here::here("vignettes", "results", "estimates.rds") has already been saved.
+
+saveRDS(estimates, here::here("vignettes", "results", "estimates.rds"))
+```
+
+
+
+```{r, echo=FALSE}
+# grab the results with the confidence intervals based on boot.num = 999
+estimates <- readRDS(here::here("vignettes", "results", "estimates.rds"))
+```
+
+We process the list into a data frame with relevant information.
+
+```{r}
+estimates <- lapply(est.names, function(z) {
+    tmp <- estimates[[z]]$estimates
+    tmp <- tmp[c("NDE0", "NIE1"), c("estimate", "2.5%", "97.5%")]
+    colnames(tmp) <- c("estimate", "lb", "ub")
+    est <- as.data.frame(tmp, row.names = FALSE)
+    est$effect <- rownames(tmp)
+    est$estimator <- z
+    est
+})
+
+estimates <- do.call(rbind, estimates)
+
+estimates$estimator <- factor(estimates$estimator, levels = est.names)
+
+estimates$properties <- 
+    ifelse(estimates$estimator %in% c("wtd", 
+                                      "Y2pred", "psYpred", "Ypred", "MsimYpred", 
+                                      "NDEpred", 
+                                      "wtCadj", "wpCadj"),
+           "non-robust",
+           ifelse(estimates$estimator %in% c("psYpredMR", "YpredMR", "MsimYpredMR", 
+                                             "wpMRCadj"),
+                  "more robust",
+                  "robust"))
+estimates$properties = factor(estimates$properties, 
+                              levels = c("non-robust", "more robust", "robust"))
+
+head(estimates)
+```
+
+Now we are ready to plot.
+
+```{r, fig.width=7, fig.height=5}
+ggplot(data = estimates, 
+       aes(x = estimator, 
+           # flip the sign of y, as we will present effects as reductions
+           y = -estimate, ymin = -ub, ymax = -lb, 
+           color = properties, shape = properties)) +
+    geom_hline(yintercept = 0, color = "gray") +
+    geom_linerange() +
+    geom_point(aes(size = properties)) +
+    scale_color_manual(values = c("gray50", "blue", "purple")) +
+    scale_shape_manual(values = c(17, 18, 19)) +
+    scale_size_manual(values = c(3, 4.5, 3.7)) +
+    scale_x_discrete(limits = rev, position = "top") +
+    coord_flip() +
+    labs(x = "", y = "estimate and 95% confidence interval") +
+    facet_wrap(~ effect) +
+    theme_bw() +
+    theme(legend.position = "left")
+```
+
+This plot shows, for all the estimators, the $\text{NDE}_0$ and $\text{NIE}_1$ point estimates and with 95\% confidence intervals. These effects are in terms of reductions in weekly drinking prevalence at 22 months.
+
+But wait! Should we trust these confidence intervals with `boot.num = 99`? 
+
+Well, actually, the results here are based on `boot.num = 999`. (This is the plot in Figure 9 in the manuscript.) We had swapped out the toy results from previous sections for the serious results here using some hidden code right before making the plot. The code is shown in the .Rmd file used to compile this vignette.
+
+```{r, eval=FALSE, echo=FALSE}
+pdf(here::here("vignettes", "results", "fig9.pdf"), width = 7, height = 4.5)
+ggplot(data = estimates, 
+       aes(x = estimator, 
+           # flip the sign of y, as we will present effects as reductions
+           y = -estimate, ymin = -ub, ymax = -lb, 
+           color = properties, shape = properties)) +
+    geom_hline(yintercept = 0, color = "gray") +
+    geom_linerange() +
+    geom_point(aes(size = properties)) +
+    scale_color_manual(values = c("gray50", "blue", "purple")) +
+    scale_shape_manual(values = c(17, 18, 19)) +
+    scale_size_manual(values = c(3, 4.5, 3.7)) +
+    scale_x_discrete(limits = rev, position = "top") +
+    coord_flip() +
+    labs(x = "", y = "estimate and 95% confidence interval") +
+    facet_wrap(~ effect) +
+    theme_bw() +
+    theme(legend.position = "left")
+dev.off()
+```
 
 
 \
