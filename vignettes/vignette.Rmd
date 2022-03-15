@@ -57,7 +57,7 @@ In @nguyen2022MediationEstimation we acknowledge the sources on which we built t
 
 ## The data example
 
-We use a synthetic dataset `synth` that was created based on the PAS trial [@koning2011WhyTargetEarly]. <!-- It is available when you load the package. See description in the paper.  -->
+We use a synthetic dataset `synth` that was created based on the PAS trial [@koning2011WhyTargetEarly]. 
 Detailed description is provided in the paper. 
 
 Let's have a quick look at the data. The variables include:
@@ -299,6 +299,16 @@ dev.off()
 
 ## Y2pred pair
 
+This pair includes two estimators Y2pred and Y2pred.R. 
+
+The nonrobust Y2pred is consistent if all modeling components are correctly specified, including the models for $\mathrm{E}[Y\mid C,A=1]$, $\mathrm{E}[Y\mid C,A=0]$, $\mathrm{E}[Y\mid C,M,A=1]$, and $\mathrm{E}[Y_{1M_0}\mid C]$.
+
+The robust Y2pred.R is consistent under the following conditions
+
+- either $\omega_1(C)$ or $\mathrm{E}[Y\mid C,A=1]$ is correct specified; and
+- either $\omega_0(C)$ is correct, or both $\mathrm{E}[Y\mid C,A=0]$ and $\mathrm{E}[Y_{1M_0}\mid C]$ are correct; and
+- either $\omega_\text{x}(C,M)$ or $\mathrm{E}[Y\mid C,M,A=1]$ is correct.
+
 
 ### Functions
 
@@ -398,6 +408,16 @@ round(est.Y2predR$estimates, 4)
 
 The paper mentions two versions, here we implement the second version.
 
+This pair includes two esitmators psYpred and psYpred.MR.
+
+The nonrobust psYpred is consistent if all modeling components are correctly specified, including $\omega_0(C)$, $\mathrm{E}[Y\mid C,M,A=1]$, and $\mathrm{E}[Y\mid C,A=1]$.
+
+The more robust psYpred.MR is consistent under the following conditions:
+
+- $\omega_0(C)$ is correct; and
+- either $\omega_1(C)$ or $\mathrm{E}[Y\mid C,A=1]$ is correct; and
+- either $\omega_\text{x}(C,M)$ or $\mathrm{E}[Y\mid C,M,A=1]$ is correct.
+
 ### Functions
 
 ```{r psYpred, cache=TRUE}
@@ -494,6 +514,16 @@ gridExtra::grid.arrange(
 \
 
 ## Ypred pair
+
+This pair includes two estimators Ypred and Ypred.MR.
+
+The nonrobust Ypred is consistent if all modeling components are correctly specified, including $\mathrm{E}[Y\mid C,A=1]$, $\mathrm{E}[Y\mid C,A=0]$, $o_\text{x}(C,M)$, and $\mathrm{E}[Y_{1M_0}\mid C]$.
+
+The more robust Ypred.MR is consistent under the following conditions:
+
+- either $\omega_1(C)$ or $\mathrm{E}[Y\mid C,A=1]$ is correct; and
+- either $\omega_0(C)$ or $\mathrm{E}[Y\mid C,A=0]$ is correct; and
+- either $\omega_\text{x}(C,M)$ is correct, or the $M$-related part of$\omega_\text{x}(C,M)$ and $\mathrm{E}[Y_{1M_0}\mid C]$ are correct.
 
 ### Functions
 
@@ -599,6 +629,17 @@ gridExtra::grid.arrange(
 
 The paper mentioned two versions. Here we implement the first version.
 
+This pair includes the two estimators MsimYpred and MsimYpred.MR.
+
+The nonrobust MsimYpred is consistent if all modeling components are consistent, including $\mathrm{P}(M\mid C,A=0)$, $\mathrm{E}[Y\mid C,M,A=1]$, $\mathrm{E}[Y\mid C,A=1]$, and $\mathrm{E}[Y\mid C,A=0]$.
+
+The more robust MsimYpred.MR is consistent under the following conditions:
+
+- $\mathrm{P}(M\mid C,A=1)$ is correct; and
+- either $\omega_1(C)$ or $\mathrm{E}[Y\mid C,A=1]$ is correct; and
+- either $\omega_0(C)$ or $\mathrm{E}[Y\mid C,A=0]$ is correct; and
+- either $\omega_\text{x}(C,M)$ or $\mathrm{E}[Y\mid C,M,A=1]$ is correct.
+
 ### Functions
 
 ```{r MsimYpred, cache=TRUE}
@@ -684,6 +725,16 @@ est.MsimYpredMR$estimates
 # Estimators -- for additive effects only
 
 ## NDEpred pair
+
+This pair includes two estimators NDEpred and NDEpred.R. 
+
+The nonrobust NDEpred is consistent if all modeling components are correctly specified, including the models for $\mathrm{E}[Y\mid C,A=1]$, $\mathrm{E}[Y\mid C,A=0]$, $\mathrm{E}[Y\mid C,M,A=1]$, and $\mathrm{E}[{NDE}_0\mid C]$.
+
+The robust NDEpred.R is consistent under the following conditions
+
+- either $\omega_1(C)$ or $\mathrm{E}[Y\mid C,A=1]$ is correct specified; and
+- either $\omega_0(C)$ is correct, or both $\mathrm{E}[Y\mid C,A=0]$ and $\mathrm{E}[{NDE}_0\mid C]$ are correct; and
+- either $\omega_\text{x}(C,M)$ or $\mathrm{E}[Y\mid C,M,A=1]$ is correct.
 
 ### Functions
 
@@ -824,6 +875,12 @@ These weight distribution and key balance plots are exactly the same as what we 
 ## wp-Cadj pair
 
 The paper mentions two versions. We implement the version where the two effects are estimated separately.
+
+This pair includes two estimators wp-Cadj and wp.MR-Cadj.
+
+The nonrobust wp-Cadj is consistent if all modeling components except the working regression model are correctly specified, including $\omega_0(C)$, $\omega_1(C)$, and $\mathrm{E}[Y\mid C,M,A=1]$.
+
+The (slightly) more robust wp.MR-Cadj is consistent if $\omega_0(C)$ and $\omega_1(C)$ are correct, and either $\omega_\text{x}(C,M)$ or $\mathrm{E}[Y\mid C,M,A=1]$ is correct.
 
 ### Functions
 
