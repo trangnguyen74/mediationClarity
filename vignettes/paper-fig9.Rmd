@@ -1,0 +1,87 @@
+---
+title: "final results figure"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{final results figure}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This is code to make the version of the results figure that is included in the final article. This version differs from the one in the package vignette only in that it does not include the estimators from the old (ie preprint v3) section on leveraging covariates to improve precision. During the review of this paper we decided to cut that section from the final manuscript.
+
+```{r setup}
+library(mediationClarity)
+library(ggplot2)
+```
+
+
+```{r}
+# grab the results with the confidence intervals based on boot.num = 999
+estimates <- readRDS(here::here("vignettes", "results", "estimates.rds"))
+
+est.names <- c("wtd", 
+               "Y2pred", "Y2predR",
+               "psYpred", "psYpredMR",
+               "Ypred", "YpredMR",
+               "MsimYpred", "MsimYpredMR",
+               "NDEpred", "NDEpredR")
+```
+
+
+```{r}
+estimates <- lapply(est.names, function(z) {
+    tmp <- estimates[[z]]$estimates
+    tmp <- tmp[c("NDE0", "NIE1"), c("estimate", "2.5%", "97.5%")]
+    colnames(tmp) <- c("estimate", "lb", "ub")
+    est <- as.data.frame(tmp, row.names = FALSE)
+    est$effect <- rownames(tmp)
+    est$estimator <- z
+    est
+})
+
+estimates <- do.call(rbind, estimates)
+
+estimates$estimator <- factor(estimates$estimator, levels = est.names)
+
+estimates$properties <- 
+    ifelse(estimates$estimator %in% c("wtd", 
+                                      "Y2pred", "psYpred", "Ypred", "MsimYpred", 
+                                      "NDEpred"),
+           "non-robust",
+           ifelse(estimates$estimator %in% c("psYpredMR", "YpredMR", "MsimYpredMR"),
+                  "more robust",
+                  "robust"))
+estimates$properties = factor(estimates$properties, 
+                              levels = c("non-robust", "more robust", "robust"))
+```
+
+
+
+```{r}
+pdf(here::here("vignettes", "results", "fig9-article.pdf"), width = 7, height = 4)
+ggplot(data = estimates, 
+       aes(x = estimator, 
+           # flip the sign of y, as we will present effects as reductions
+           y = -estimate, ymin = -ub, ymax = -lb, 
+           color = properties, shape = properties)) +
+    geom_hline(yintercept = 0, color = "gray") +
+    geom_linerange() +
+    geom_point(aes(size = properties)) +
+    scale_color_manual(values = c("gray50", "blue", "purple")) +
+    scale_shape_manual(values = c(17, 18, 19)) +
+    scale_size_manual(values = c(3, 4.5, 3.7)) +
+    scale_x_discrete(limits = rev, position = "top") +
+    coord_flip() +
+    labs(x = "", y = "estimate and 95% confidence interval") +
+    facet_wrap(~ effect) +
+    theme_bw() +
+    theme(legend.position = "left")
+dev.off()
+```
