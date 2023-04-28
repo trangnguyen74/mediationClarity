@@ -3,7 +3,7 @@ library(tidyverse)
 
 ### GET DATA ###################################################################
 
-dat <- foreign::read.spss("06070809_PAS data.sav",
+dat <- foreign::read.spss(here::here("data-raw", "06070809_PAS_data.sav"),
                           use.value.labels = FALSE,
                           to.data.frame = TRUE)
 
